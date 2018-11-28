@@ -1,6 +1,6 @@
 const latestiOSVersion = "V.VersionV2";
-var trackHost = "http://catonmap.info:3001";
-var tileHost = "http://catonmap.info:8080";
+var trackHost = "https://bigger.space?url=catonmap.info:3001";
+var tileHost = "https://bigger.space?url=catonmap.info:8080";
 
 var baseTileLayerOpts = {
     rendererFactory: L.canvas.tile,
@@ -13,6 +13,7 @@ var baseTileLayerOpts = {
 
 var bootstrapCSSLinks = {
     // "light": "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css",
+    // /vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css
     "light": "/vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css",
     "dark": "/css/bootstrap.min.css",
 };

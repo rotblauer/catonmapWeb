@@ -31,6 +31,9 @@ function sleep(delay) {
 
 var queryURL = function queryURL(host, path, paramsObj) {
     var q = "?";
+    if (host.indexOf(q) >=0 || path.indexOf(q) >=0) {
+        q = "";
+    }
     var n = 0;
     for (var key in paramsObj) {
         if (!paramsObj.hasOwnProperty(key) || typeof paramsObj[key] === "function") {

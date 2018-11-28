@@ -115,6 +115,8 @@ model.setLastKnown = function(data) {
         model.lastKnownData.add(cats[k]);
     }
 
+    cd("lastknown cats", model.lastKnownData);
+
     return model.lastKnownData;
 };
 
@@ -189,14 +191,7 @@ model.logAndMockInstead = function(err) {
     model.doneLastKnownCats(mockLastknown);
 };
 
-ct.init = (function() {
-    setWindowTitle();
-    ct.browserSupportsLocal = browserSupportsLocalStorage;
-    model.visitsOn = localOrDefault("von", "yes");
-    (model.visitsOn === "yes") ? view.$visitsCheckbox.val("yes").attr("checked", true): view.$visitsCheckbox.val("no").attr("checked", false);
-
-    view.mapState.init();
-
+ct.dataLoop = function() {
     model.getMetadata()
         .done(model.doneMetadata)
         .catch(model.errorMetadata);
@@ -204,7 +199,7 @@ ct.init = (function() {
     model.getLastKnownCats()
         .done(model.doneLastKnownCats)
         .catch(model.logAndMockInstead)
-        // visits assigning to cats depends on cats being there
+    // visits assigning to cats depends on cats being there
         .then(function() {
             model.visitsParams
                 .set("startReportedT", moment().add(-14, "days").format())
@@ -214,6 +209,19 @@ ct.init = (function() {
                 .done(model.setVisits)
                 .catch(model.errVisits);
         });
+
+    setTimeout(ct.dataLoop, 30*1000);
+};
+
+ct.init = (function() {
+    setWindowTitle();
+    ct.browserSupportsLocal = browserSupportsLocalStorage;
+    model.visitsOn = localOrDefault("von", "yes");
+    (model.visitsOn === "yes") ? view.$visitsCheckbox.val("yes").attr("checked", true): view.$visitsCheckbox.val("no").attr("checked", false);
+
+    view.mapState.init();
+
+    ct.dataLoop();
 });
 
 ct.onLastKnown = function(data) {
@@ -236,7 +244,8 @@ ct.onLastKnown = function(data) {
 
     for (var i = 0; i < catsort.length; i++) {
         var entry = catsort[i];
-        view.$lastKnown.append(entry.el());
+        var existEl = $(`#${entry.elid()}`);
+        entry.elInit(view.$lastKnown);
     }
 
     var lg = model.lastKnownData.where(function(k, cat) {

@@ -58,6 +58,9 @@ var dataLastKnownEntry = {
     iid: function() {
         return this.getColor(); // TODO
     },
+    elid: function() {
+        return this.getColor().replace(",","").replace(",","").replace("(", "").replace(")","");
+    },
     getColor: function() {
         return catColors()[this.name] || "lightgray";
     },
@@ -86,13 +89,13 @@ var dataLastKnownEntry = {
         this.notes = this.parseNotes();
         this.time = this.parseTime();
         this.aliases = [this.name];
-        this.elInit();
+        // this.elInit();
         return this;
     },
     el: function() {
         return this.e;
     },
-    elInit: function(e) {
+    elInit: function(ln) {
         var fly = function(e) {
             var et = $(e.target).closest(".lastKnown");
             var lat = +et.attr("data-lat");
@@ -131,9 +134,9 @@ var dataLastKnownEntry = {
                 .catch(model.errVisits);
         };
 
-        if (!objExists(e)) {
+        if (!objExists(this.el())) {
             this.e = $(`
-<div href="#" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
+<div href="#" id="${this.elid()}" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
     <div class="d-flex w-100 justify-content-between">
         <h6 class="mb-1" style="color: ${this.getColor()};">${this.name}</h6>
         <small class="text-muted" >${this.time.fromNow()}</small>
@@ -146,6 +149,7 @@ var dataLastKnownEntry = {
                 .attr("data-name", this.name)
                 .attr("data-lat", this.lat)
                 .attr("data-lng", this.long);
+            ln.append(this.e);
 
                 // .css("color", this.getColor());
             // <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
@@ -153,7 +157,12 @@ var dataLastKnownEntry = {
 
             // this.e = $("<div>").addClass("row").addClass("m-0").addClass("p-1").addClass("lastKnown");
         } else {
-            this.e = e;
+            this.e
+                .attr("data-uid", this.uid())
+                .attr("data-iid", this.iid())
+                .attr("data-name", this.name)
+                .attr("data-lat", this.lat)
+                .attr("data-lng", this.long);
         }
 
         if (this.time.isBefore(moment().add(-3, "days"))) {
@@ -180,16 +189,18 @@ var dataLastKnownEntry = {
         if (this.hasNoteObject()) {
             var no = this.notes;
             var subtitle = "" + no.activity + ", altitude: " + this.elevation.toFixed(0) + "m<br>" + no.numberOfSteps + " steps, distance: " + (no.distance / 1).toFixed(0) + "m since " + moment(no.currentTripStart).from(moment());
+
+            var existing = this.el().find(".lastup-notes").remove();
             var lastupNotes = $("<small>")
-                .addClass("mb-0")
+                .addClass("mb-0 lastup-notes")
                 .html(subtitle)
                 .addClass("text-muted");
-            this.e.find(".d-flex").last().append(lastupNotes);
+            this.el().find(".d-flex").last().append(lastupNotes);
         }
 
-        var d = $("<div>").addClass("m-0 p-0").append(flylink).append(filterlink);
-
-        this.e.append(d);
+        this.el().children(".maplinks").remove();
+        var d = $("<div>").addClass("m-0 p-0 maplinks").append(flylink).append(filterlink);
+        this.el().append(d);
 
         return this.e; // .append(filterlink).append(flylink).append(metadata);
     },
@@ -250,15 +261,13 @@ var dataLastKnown = {
                 for (var i = 0; i < existCat.aliases.length; i++) {
                     if ($.inArray(cat.aliases, existCat.aliases[i]) < 0) cat.aliases.push(existCat.aliases[i]);
                 }
-                // cat.aliases = existCat.aliases.slice();
-                // cat.aliases.push(existCat.name);
                 existCat.aliases.push(cat.name);
 
                 cat.alternateCats = $.extend({}, existCat.alternateCats); // shallow copy
                 existCat.alternateCats = {}; // clear old
 
                 cat.alternateCats[existCat.uid()] = existCat;
-                this.data[cat.iid()] = cat;
+                Object.assign(this.data[cat.iid()], cat);
             } else {
                 // else add this cat as an alternate
                 this.data[cat.iid()].alternateCats[cat.uid()] = cat;
