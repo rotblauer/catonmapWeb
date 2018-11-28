@@ -28,7 +28,13 @@ model.visitsParams = {
             cd("visits off");
             return $.ajax();
         } // return empty ajax to keep promise returnable
-        var url = queryURL(trackHost, "/visits2", this);
+        var d = $.extend({}, this);
+        for (var k in d) {
+            if (( typeof d[k] ).toLowerCase() !== "string") {
+                delete d[k];
+            }
+        }
+        var url = queryURL(trackHost, "/visits2?", d);
         cd("GET", url);
         return $.ajax(qJSON(url));
     }
