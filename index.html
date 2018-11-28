@@ -4,34 +4,93 @@
     <!-- // bootstrap responsive helper -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-    <!-- <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script> -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <!-- CDN -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" /> -->
+    <!-- <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script> -->
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script> -->
+
+    <!-- LOCAL -->
+    <link rel="stylesheet" href="/css/leaflet.css" />
+    <script src="/js/leaflet.js"></script>
+    <script src="/js/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="/js/moment.min.js"></script>
+
+    <!-- HARDLOCAL; not have CDNs yet -->
+    <script src="./vendor/whatwg-fetch/fetch.js"></script>
+    <script src="./vendor/leaflet.vectorgrid/dist/Leaflet.VectorGrid.bundled.js"></script>
     <script src="/vendor/bootstrap-4.0.0-alpha.6-dist/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
+    <!-- <link rel="stylesheet" href="/vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"> -->
     <!-- dark mode or custom -->
-    <!-- <link href="/bootstrap.min.css" rel="stylesheet" /> -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script>
+    <link rel="stylesheet" href="/leafletmarkercluster/MarkerCluster.css" />
+    <link rel="stylesheet" href="/leafletmarkercluster/MarkerCluster.Default.css" />
+    <!-- <script src="/leafletmarkercluster/leaflet.markercluster.js"></script> -->
+    <script src="/leafletmarkercluster/leaflet.markercluster-src.js"></script>
+
     <script src="/vendor/tz.js"></script>
     <script src="/vendor/moment-timezone-with-data-2012-2022.min.js"></script>
 
-    <link href="/css/app.css" rel="stylesheet"/>
+    <!-- CUSTOM -->
+    <link href="/css/app.css" rel="stylesheet" />
 </head>
 
-<body class="container-fluid">
+<body class="container-fluid p-0">
 
-    <code id="processedata">
+    <div class="box">
+        <div id="map">
+        </div>
+    </div>
+
+    <div class="row m-0 p-0">
+        <div class="d-flex w-100 justify-content-between">
+            <span id="metadata-display" class="text-info">
+            </span>
+            <span>
+                <a id="url-location" href="">link to this map</a> | <a href="http://www.catstats.rotblauer.com/" style="" target="_">catstats</a> | <a id="install-ios-link" href="http://punktlich.rotblauer.com/install" target="_">download latest iOS: <span id="latest-version-ios"></span></a>
+            </span>
+        </div>
+    </div>
+
+    <div class="row m-0 p-0">
+        <div class="col-sm-6 col-lg-7 m-0 p-0">
+            <select id="settings-select-drawopts" name="">
+                <option value="activity">Points: activity</option>
+                <option value="density">Points: density</option>
+                <option value="recent">Points: recency (by cat)</option>
+                <option value="speed">Points: speed (by cat)</option>
+            </select>
+            <input id="visits-checkbox" name="" type="checkbox" value="yes" />
+            <label for="visits-checkbox">Show visits</label>
+        </div>
+
+        <div class="col-sm-6 col-lg-5 m-0">
+            <div id="lastknown" class="list-group">
+            </div>
+        </div>
+    </div>
+
+    <code id="processedata" class="log log-debug">
     </code>
 
-    <hr/>
-
-    <code id="rawjson">
+    <code id="rawjson" class="log log-debug">
     </code>
 
     <script src="/js/mock.lastknown.js"></script>
+    <script src="/js/settings.js"></script>
+    <script src="/js/util.js"></script>
+    <script src="/js/icons.js"></script>
+    <script src="/js/colors.js"></script>
+    <script src="/js/tile.js"></script>
+    <script src="/js/lastknown.js"></script>
+    <script src="/js/visits.js"></script>
     <script src="/js/controller.js"></script>
+    <script src="/js/pbfopts.js"></script>
+    <script src="/js/mapstate.js"></script>
 </body>
 
 </html>

@@ -2,239 +2,309 @@ var ct = ct || {};
 var view = view || {};
 var model = model || {};
 
-view.$rawjson = $("#rawjson");
-view.$processedata = $("#processedata");
-
-ct.cats = null;
-
-ct.setCats = function(data) {
-    ct.cats = Object.create(cats).set(model.parseCatsFromData(data));
-    return ct.cats;
-};
-
-var catsData = {
-    arr: function() {
-        var a = [];
-        var thisKeys = Object.keys(this);
-        for (var i = 0 ; i < thisKeys.length; i++) {
-            var key = thisKeys[i];
-            cd(i, this[key]);
-                a.push(this[key]);
+model.lastKnownData = null;
+model.visitsData = {};
+model.visitsParams = {
+    // defacto defaults
+    "endI": 100,
+    "stats": true,
+    "googleNearby": true,
+    set: function(key, val) {
+        // use 'null' val to unset key (acts as delete)
+        if (val === null) {
+            delete this[key];
+            return this;
         }
-        return a;
+        // allow assigning entire object
+        if ((typeof key).toLowerCase() === "object") {
+            Object.assign(this, key);
+            return this;
+        }
+        this[key] = val;
+        return this;
     },
-    // don't use these. just use arr
-    first: function(n) {
-        return this.arr().splice(0, n);
-    },
-    last: function(n) {
-        return this.arr().splice(n);
+    get: function() {
+        if (model.visitsOn !== "yes") return $.ajax(); // return empty ajax to keep promise returnable
+        var url = queryURL(trackHost, "/visits2", this);
+        cl("GET", url);
+        return $.ajax(qJSON(url));
     }
 };
 
-var cats = {
-    data: Object.create(catsData),
-    add: function(cat) {
-        this.data[cat.key] = cat;
-        return this;
-    },
-    remove: function(cat) {
-        this.data[cat.key] = null;
-        return this;
-    },
-    set: function(data) {
-        this.data = data;
-        return this;
-    },
-    all: function() {
-        return Object.assign(Object.create(catsData), this.data);
-    },
-    where: function(fn) {
-        var out = Object.create(catsData);
-        for (k in this.data) {
-            var v = this.data[k];
-            if (fn(k, v)) {
-                out[k] = v;
-            }
-        }
-        return out;
-    },
-    // filter is like where, but actually modifies the object's catsdata
-    filter: function(fn) {
-        for (k in this.data) {
-            var v = this.data[k];
-            if (!fn(k, v)) {
-                delete this.data[k];
-            }
-        }
-        return this;
-    },
-    length: function() {
-        return this.data.length;
-    },
+model.getMetadata = function() {
+    var url = queryURL(trackHost, "/metadata");
+    cd("GET", url);
+    return $.ajax(qJSON(url));
 };
 
-var trackHost = "http://catonmap.info:3001";
+ct.doneMetadata = function(data) {
+    console.log("mdata", data);
+    var content = `${data.KeyN} points added in the last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}. TileDB last updated ${moment(data.TileDBLastUpdated).fromNow()}.`;
+    view.$metadataDisplay.html(content);
+};
 
-// todo: or load from persister
-var catColors = (function() {
-    return {
-        "Big Papa": "rgb(255,0,0)"
-    };
-});
+ct.errorMetadata = function(err) {
+    ce("metadata err", err);
+};
 
-// https://codepen.io/code_monk/pen/FvpfI
-//  random hex string generator
-var randHex = function(len) {
-    var maxlen = 8,
-        min = Math.pow(16, Math.min(len, maxlen) - 1)
-    max = Math.pow(16, Math.min(len, maxlen)) - 1,
-        n = Math.floor(Math.random() * (max - min + 1)) + min,
-        r = n.toString(16);
-    while (r.length < len) {
-        r = r + randHex(len - maxlen);
+ct.settings = {
+    on: false,
+    filter: {}
+};
+ct.settingsFilter = function(props, zoom, layer) {
+    if (!ct.settings.hasOwnProperty("on") ||
+        !ct.settings["on"] ||
+        !ct.settings.hasOwnProperty("filter")) return true; // no filter settings applied, or disabled (on=false)
+
+    for (var k in ct.settings.filter) {
+        if (!ct.settings.filter.hasOwnProperty(k)) {
+            continue;
+        }
+        var fn = ct.settings.filter[k];
+        if (!fn(props, zoom, layer)) {
+            return false;
+        }
     }
-    return r;
+    return true;
 };
 
-var cat = {
-    key: "123-abc",
-    name: "boots",
-    aliases: [],
-    lat: 0,
-    lng: 0,
-    notes: "", // JSON
-    color: "rgb(123,123,123)",
-    getColor: function() {
-        return catColors()[this.name];
-    },
-    parseNotes: function() {
-        // parse notes
-        if (this.notes !== "") {
-            try {
-                var jnotes = JSON.parse(this.notes);
-                return jnotes;
-            } catch {
-                return this.notes;
+ct.setSettingsFilter = function(key, fn) {
+    if (objExists(fn)) {
+        ct.settings["on"] = true;
+        ct.settings["filter"] = ct.settings["filter"] || {};
+        ct.settings["filter"][key] = fn;
+    } else {
+        if (ct.settings.hasOwnProperty("filter")) {
+            if (ct.settings.filter.hasOwnProperty(key)) {
+                delete ct.settings.filter[key];
+            }
+            if (Object.keys(ct.settings.filter).length === 0) {
+                ct.settings.on = false;
             }
         }
-        return false;
-    },
-    parseTime: function() {
-        if (this.time !== "") {
-            return moment(this.time);
-        } else {
-            return moment();
-        }
-    },
-    init: function() {
-        this.color = this.getColor();
-        this.key = randHex(8);
-        this.notes = this.parseNotes();
-        this.time = this.parseTime();
-        return this;
-    },
-    hasNoteObject: function() {
-        return typeof this.notes === "object" && this.notes.hasOwnProperty("activity");
-    },
+    }
+    cd("ct.settings", ct.settings);
 };
 
-model.buildCat = function(d) {
-    var bp = Object.create(cat);
-    Object.assign(bp, d);
-    return bp;
+model.getLocalStore = function(key) {
+    if (objExists(ct.browserSupportsLocal) && !ct.browserSupportsLocal) {
+        return null;
+    }
+    var v = window.localStorage.getItem(key);
+    if (v === "" || !objExists(v)) return null;
+    return v;
+};
+
+model.setLocalStore = function(key, val) {
+    if (ct.browserSupportsLocal) {
+        window.localStorage.setItem(key, val);
+    }
+};
+
+model.setLastKnown = function(data) {
+    var cats = model.parseCatsFromData(data);
+    model.lastKnownData = Object.create(dataLastKnown);
+
+    for (var k in cats) {
+        if (!cats.hasOwnProperty(k)) continue;
+        model.lastKnownData.add(cats[k]);
+    }
+
+    return model.lastKnownData;
 };
 
 model.parseCatsFromData = function(data) {
     var out = {};
     for (k in data) {
+        if (!data.hasOwnProperty(k)) {
+            continue;
+        }
         var v = data[k];
         var bp = model.buildCat(v).init();
-        out[bp.key] = bp;
+        out[bp.uid()] = bp;
     }
     return out;
 };
 
-ct.getLastKnownCats = function() {
-    return $.ajax({
-        type: 'GET',
-        url: trackHost + "/lastknown",
-        dataType: 'json'
-    });
+model.buildCat = function(d) {
+    var bp = Object.create(dataLastKnownEntry);
+    Object.assign(bp, d);
+    return bp;
 };
 
-function filterCat(k, cat) {
-    if (cat.name === "Big Papa") {
-        return true;
-    }
-    return false;
-}
+model.getLastKnownCats = function() {
+    var url = queryURL(trackHost, "/lastknown", null);
+    cl("GET", url);
+    return $.ajax(qJSON(url));
+};
 
-ct.handleLastKnownCats = function(data) {
-    ct.setCats(data); //
-    // TESTING
-    cl("catzz", ct.cats.all());
+model.setVisits = function(data) {
+    model.lastGotVisit = moment();
+    model.visitsData = {};
+    model.visitsByCat = {}; // TODO use array in lastKnownCat entry
+    $.each(data.visits, function(i, val) {
+        var v = Object.assign(Object.create(visitP), val).init();
+        var haveCat = model.visitsByCat.hasOwnProperty(v.iid()); // allow first incomplete visit / cat
+        if (!v.isComplete() && haveCat) {
+            return;
+        }
+        model.visitsByCat[v.iid()] = model.visitsByCat[v.iid()] || [];
+        model.visitsByCat[v.iid()].push(v);
+        model.visitsData[v.iid()] = v;
+    });
+    ct.onVisits(model.visitsData, true);
+};
 
-    var catsort = ct.cats
+model.appendVisits = function(data) {
+    model.lastGotVisit = moment();
+    var newVs = {};
+    model.visitsData = {};
+    $.each(data.visits, function(i, val) {
+        var v = Object.assign(Object.create(visitP), val).init();
+        if (model.visitsData.hasOwnProperty(v.iid())) {
+            return;
+        }
+        if (!v.isComplete()) {
+            return;
+        }
+        model.visitsData[v.iid()] = v;
+        newVs[v.iid()] = v;
+    });
+    ct.onVisits(newVs, false);
+};
+
+model.errVisits = function(err) {
+    ce(err);
+};
+
+model.doneLastKnownCats = function(data) {
+    ct.onLastKnown(model.setLastKnown(data));
+};
+
+model.logAndMockInstead = function(err) {
+    ce(err);
+    cw("WARNING: mocking data instead");
+    model.doneLastKnownCats(mockLastknown);
+};
+
+ct.init = (function() {
+    setWindowTitle();
+    ct.browserSupportsLocal = browserSupportsLocalStorage;
+    ct.visitsOn = localOrDefault("von", "yes");
+    (ct.visitsOn === "yes") ? view.$visitsCheckbox.val("yes").attr("checked", true): view.$visitsCheckbox.val("no").attr("checked", false);
+
+    view.mapState.init();
+
+    model.getMetadata()
+        .done(model.doneMetadata)
+        .catch(model.errorMetadata);
+
+    model.getLastKnownCats()
+        .done(model.doneLastKnownCats)
+        .catch(model.logAndMockInstead);
+
+    model.visitsParams
+        .set("startReportedT", moment().add(-14, "days").format())
+        .set("startArrivalT", moment().add(-500, "years").format())
+        .set("endDepartureT", moment().add(500, "years").format())
+        .get()
+        .done(model.setVisits)
+        .catch(model.errVisits);
+});
+
+ct.onLastKnown = function(data) {
+    var catsort = data
         .where(function(k, cat) {
             return cat.hasOwnProperty("time") &&
                 cat.time !== null &&
                 typeof cat.time != "undefined" &&
-                cat.time.add(3, "days").isAfter(moment());
+                moment().add(-30, "days").isBefore(cat.time);
         })
         .arr()
-        // .sort(function(a, b) {
-        //     // -1: a < b
-        //     //  0: a = b
-        //     //  1: a > b
-        //     cd("sort", a, b);
-        //     if (a.time.isBefore(b.time)) {
-        //         return 1;
-        //     } else if (a.time.isAfter(b.time)) {
-        //         return -1;
-        //     }
-        //     return 0;
-        // });
-    view.$rawjson.html(JSON.stringify(data));
-    view.$processedata.html(JSON.stringify(catsort));
+        .sort(function(a, b) {
+            if (a.time.isBefore(b.time)) {
+                return 1;
+            } else if (a.time.isAfter(b.time)) {
+                return -1;
+            }
+            return 0;
+        });
+
+    for (var i = 0; i < catsort.length; i++) {
+        var entry = catsort[i];
+        view.$lastKnown.append(entry.el());
+    }
+
+    var lg = model.lastKnownData.where(function(k, cat) {
+        return objExists(cat) &&
+            cat.hasOwnProperty("time") &&
+            objExists(cat.time) &&
+            moment().add(-3, "days").isBefore(cat.time);
+    }).asLayerGroup();
+
+    view.mapState.setLayer("lastKnown", lg);
 };
 
-ct.handleError = function(err) {
-    ce(err);
-    cw("WARNING: mocking data instead");
-    ct.handleLastKnownCats(mockLastknown);
+ct.onVisits = function(visits, overwrite) {
+    if (model.visitsOn !== "yes") {
+        view.mapState.setLayer("visits", null);
+        return;
+    }
+
+    if (visits.length === 0) return;
+
+    ct.markerClusterGroup = ct.markerClusterGroup || L.markerClusterGroup();
+    if (overwrite) ct.markerClusterGroup = L.markerClusterGroup();
+
+    // these should only be unique visits
+    for (var k in visits) {
+        if (!visits.hasOwnProperty(k)) {
+            continue;
+        }
+        var v = visits[k];
+        ct.markerClusterGroup.addLayer(v.marker(view.mapState.getMap()));
+        // cl("new visit marker", v);
+    }
+
+    view.mapState.setLayer("visits", ct.markerClusterGroup);
 };
 
 
-var cd = console.debug;
-var cl = console.log;
-var cw = console.warn;
-var ce = console.error;
+view.init = function() {
+    view.$rawjson = $("#rawjson");
+    view.$processedata = $("#processedata");
+    view.$lastKnown = $("#lastknown");
+    view.$metadataDisplay = $("#metadata-display");
+    view.$selectDrawOpts = $("#settings-select-drawopts");
+    view.$selectDrawOpts.val(localOrDefault("l", "activity"));
+    view.$selectDrawOpts.on("change", function(e) { // FIXME on._ change, select, whatever
+        view.mapState.setPBFOpt($(e.target).val());
+    });
+    view.$visitsCheckbox = $("#visits-checkbox")
+        .attr("checked", localOrDefault("von", "yes") === "yes" ? true : false)
+        .on("change", function(e) {
+            model.visitsOn = $(this).is(":checked") ? "yes" : "no";
+            model.setLocalStore("von", model.visitsOn);
+            model.visitsParams.get()
+                .done(model.setVisits)
+                .catch(model.errVisits);
+        });
+
+    $("#latest-version-ios").text(latestiOSVersion);
+};
+
 
 // http://gregfranko.com/jquery-best-practices/#/8
 // IIFE - Immediately Invoked Function Expression
 (function($, window, document) {
 
-    // The $ is now locally scoped
-    cd("$ local scope");
-    cd(trackHost);
-    cd($("#thing").text());
-
     // Listen for the jQuery ready event on the document
     $(function() {
 
-        // The DOM is ready!
-        cd("DOM ready");
-        cd(trackHost);
-        cd($("#thing").text());
-
-        ct.getLastKnownCats().done(ct.handleLastKnownCats).catch(ct.handleError);
+        view.mapState = (mapStateFn)();
+        view.init();
+        ct.init();
     });
-
-    // The rest of the code goes here!
-    cd("REST of code");
-    cd(trackHost);
-    cd($("#thing").text());
 
 }(window.jQuery, window, document));
 // The global jQuery object is passed as a parameter
