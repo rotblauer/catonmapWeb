@@ -3,6 +3,9 @@ var visitsData = {
     all: function() {
         return this.data;
     },
+    len: function() {
+        return this.data.length;
+    },
     push: function(item) {
         this.data.push(item);
         return this.data;
@@ -130,10 +133,10 @@ var dataLastKnownEntry = {
 
         if (!objExists(e)) {
             this.e = $(`
-<div href="#" class="list-group-item list-group-item-action flex-column align-items-start lastKnown">
+<div href="#" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
     <div class="d-flex w-100 justify-content-between">
-        <h6 class="mb-1">${this.name}</h6>
-        <small class="text-muted">${this.time.fromNow()}</small>
+        <h6 class="mb-1" style="color: ${this.getColor()};">${this.name}</h6>
+        <small class="text-muted" >${this.time.fromNow()}</small>
     </div>
     <div class="d-flex w-100 justify-content-between">
     </div>
@@ -142,8 +145,9 @@ var dataLastKnownEntry = {
                 .attr("data-iid", this.iid())
                 .attr("data-name", this.name)
                 .attr("data-lat", this.lat)
-                .attr("data-lng", this.long)
-                .css("color", this.getColor());
+                .attr("data-lng", this.long);
+
+                // .css("color", this.getColor());
             // <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
             // <small class="text-muted">Donec id elit non mi porta.</small>
 
@@ -156,14 +160,20 @@ var dataLastKnownEntry = {
             this.e.addClass("transparent50");
         }
 
-        var flylink = $("<button type='button'>")
-            .addClass("btn btn-sm btn-info")
-            .text("go")
+        var flylink = $("<a>")
+            .css("cursor", "pointer")
+            .css("font-size", "0.8em")
+            .addClass("")
+            .addClass("pr-3")
+            .text("flyto")
             // .css("color", "gray")
             .on("click", fly);
 
-        var filterlink = $("<button type='button'>")
-            .addClass("btn btn-sm btn-warning")
+        var filterlink = $("<a>")
+            .css("cursor", "pointer")
+            .css("font-size", "0.8em")
+            .addClass("")
+            .addClass("pr-3")
             .text("filter")
             .on("click", filter);
 
@@ -171,15 +181,15 @@ var dataLastKnownEntry = {
             var no = this.notes;
             var subtitle = "" + no.activity + ", altitude: " + this.elevation.toFixed(0) + "m<br>" + no.numberOfSteps + " steps, distance: " + (no.distance / 1).toFixed(0) + "m since " + moment(no.currentTripStart).from(moment());
             var lastupNotes = $("<small>")
-                .addClass("mb-1")
+                .addClass("mb-0")
                 .html(subtitle)
                 .addClass("text-muted");
             this.e.find(".d-flex").last().append(lastupNotes);
         }
 
-        var d = $("<div>").append(flylink).append(filterlink);
+        var d = $("<div>").addClass("m-0 p-0").append(flylink).append(filterlink);
 
-        this.e.find(".d-flex").last().append(d);
+        this.e.append(d);
 
         return this.e; // .append(filterlink).append(flylink).append(metadata);
     },

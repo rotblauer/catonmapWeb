@@ -24,7 +24,10 @@ model.visitsParams = {
         return this;
     },
     get: function() {
-        if (model.visitsOn !== "yes") {cd("visits off"); return $.ajax();} // return empty ajax to keep promise returnable
+        if (model.visitsOn !== "yes") {
+            cd("visits off");
+            return $.ajax();
+        } // return empty ajax to keep promise returnable
         var url = queryURL(trackHost, "/visits2", this);
         cd("GET", url);
         return $.ajax(qJSON(url));
@@ -200,15 +203,17 @@ ct.init = (function() {
 
     model.getLastKnownCats()
         .done(model.doneLastKnownCats)
-        .catch(model.logAndMockInstead);
-
-    model.visitsParams
-        .set("startReportedT", moment().add(-14, "days").format())
-        .set("startArrivalT", moment().add(-500, "years").format())
-        .set("endDepartureT", moment().add(500, "years").format())
-        .get()
-        .done(model.setVisits)
-        .catch(model.errVisits);
+        .catch(model.logAndMockInstead)
+        // visits assigning to cats depends on cats being there
+        .then(function() {
+            model.visitsParams
+                .set("startReportedT", moment().add(-14, "days").format())
+                .set("startArrivalT", moment().add(-500, "years").format())
+                .set("endDepartureT", moment().add(500, "years").format())
+                .get()
+                .done(model.setVisits)
+                .catch(model.errVisits);
+        });
 });
 
 ct.onLastKnown = function(data) {
@@ -280,6 +285,11 @@ view.init = function() {
     view.$lastKnown = $("#lastknown");
     view.$metadataDisplay = $("#metadata-display");
     view.$selectDrawOpts = $("#settings-select-drawopts");
+    view.$settingsStyleView = $("#settings-style-view").on("change", function(e) {
+        var ld = $(this).val();
+        ct.setViewStyle(ld);
+    });
+
     view.$selectDrawOpts.val(localOrDefault("l", "activity"));
     view.$selectDrawOpts.on("change", function(e) { // FIXME on._ change, select, whatever
         view.mapState.setPBFOpt($(e.target).val());
@@ -295,9 +305,19 @@ view.init = function() {
         });
 
     $("#latest-version-ios").text(latestiOSVersion);
-
 };
 
+ct.setViewStyle = function(lightOrDark) {
+    cd("setting view  style", lightOrDark);
+    model.setLocalStore("vm", lightOrDark);
+    var link = $("#bootstrap-css-link");
+    link.attr("href", bootstrapCSSLinks[lightOrDark]);
+    if (lightOrDark === "dark") {
+        $("#lastknown-col").addClass("dark");
+    } else {
+        $("#lastknown-col").removeClass("dark");
+    }
+};
 
 // http://gregfranko.com/jquery-best-practices/#/8
 // IIFE - Immediately Invoked Function Expression
@@ -305,17 +325,30 @@ view.init = function() {
 
     // Listen for the jQuery ready event on the document
     $(function() {
+        var b = $("body");
         view.mapState = (mapStateFn)();
         view.init();
+        if (isSmallScreen()) {
+            // $(".box").css("max-height", "60%");
+            $("#main-display").children(".col-sm-8").first().toggleClass("col-sm-8 col-12"); // .css("height", "60%");
+            $("#main-display").children(".col").first().css("z-index", "1001").css("position", "fixed").css("top", "60%");
+        } else if (b.width() < b.height()) {
+            // or portrait mode
+            // $(".box").css("max-height", "60%");
+            $("#main-display").children(".col-sm-8").first() .toggleClass("col-sm-8 col-12");//.css("height", "60%");
+            $("#main-display").children(".col").first().css("z-index", "1001").css("position", "fixed").css("top", "60%");
+            view.$lastKnown.closest(".col-sm-4").removeClass("col-sm-4").addClass("col-12");
+            $("#main-display").children(".col-sm-8").first().removeClass("col-sm-8").addClass("col-12");
+        }
+
         ct.init();
         var zin = $(".leaflet-top").first();
         view.$metadataDisplay
             .css("position", "fixed")
-            .css("left", zin.position().left +zin.width() + 10)
+            .css("left", zin.position().left + zin.width() + 10)
             .css("top", zin.position().top)
             .css("margin-top", "10px")
-            .css("z-index", 1000)
-        ;
+            .css("z-index", 1000);
 
         view.$viewSettingsToggleContainer = $("<div>").addClass("leaflet-control");
         view.$viewSettingsToggle = $(`
@@ -324,23 +357,14 @@ view.init = function() {
             .addClass("btn")
             .addClass("leaflet-control-viewsettings-toggle")
             .attr("data-toggle", "modal")
-            .attr("data-target", ".settings-modal")
-        // .attr("tabindex", "0")
-        // .addClass("btn")
-        // .attr("role", "button")
-        // .attr("data-container", "body")
-        // .attr("data-toggle", "popover")
-        // .attr("data-placement", "left")
-        // // .attr("data-trigger", "focus") // for next-click dismissability
-        // .attr("data-content", $("#viewsettings-div"))
-        // .popover({
-        //     // trigger: 'focus',
-        //     // html: true
-        // })
-        ;
-        view.$viewSettingsToggleContainer.append(view.$viewSettingsToggle);
+            .attr("data-target", ".settings-modal");
 
+        view.$viewSettingsToggleContainer.append(view.$viewSettingsToggle);
         $(".leaflet-top.leaflet-right").append(view.$viewSettingsToggleContainer);
+
+        var ld = localOrDefault("vm", "light");
+        view.$settingsStyleView.val(ld);
+        ct.setViewStyle(ld)
     });
 
 }(window.jQuery, window, document));

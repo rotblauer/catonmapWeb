@@ -11,4 +11,10 @@ var baseTileLayerOpts = {
     , interactive: true
 };
 
+var bootstrapCSSLinks = {
+    // "light": "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css",
+    "light": "/vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css",
+    "dark": "/css/bootstrap.min.css",
+};
+
 

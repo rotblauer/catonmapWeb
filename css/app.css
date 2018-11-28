@@ -13,7 +13,10 @@
     height: 100%;
 }
 .lastKnown {
-    background: transparent;
+    /* background: transparent; */
+    background: inherit;
+    border: none !important;
+    border-radius: 0 !important;
 }
 
 .transparent50 {
@@ -39,11 +42,35 @@
 	  opacity: 0.5;
 }
 
-#lastKnown {
+#lastknown-col {
+    background: rgba(255,255,255,0.3);
+    /* filter:blur(4px); */
+    /* -o-filter:blur(4px); */
+    /* -ms-filter:blur(4px); */
+    /* -moz-filter:blur(4px); */
+    /* -webkit-filter:blur(4px); */
+}
+#lastknown-col.dark {
+    background: rgba(0,0,0,0.1);
+}
+
+#lastknown {
+    background: inherit;
+    overflow: hidden;
+}
+
+#lastknown:before{
+    background: inherit;
+    /* filter:blur(10px); */
+    /* -o-filter:blur(10px); */
+    /* -ms-filter:blur(10px); */
+    /* -moz-filter:blur(10px); */
+    /* -webkit-filter:blur(10px); */
 }
 
 .lastKnown.filtering {
-    border-left: 0.5em solid;
+
+    border-left: 0.5em solid !important;
     font-weight: bold;
 }
 
@@ -56,8 +83,13 @@
 .leaflet-control-viewsettings-toggle {
     width: 44px;
     height: 44px;
-    background-image: url(images/icon-settings.png);
+    /* background-image: url(images/icon-settings.png); */
+    background-image: url(images/map-marker-icon.png);
     background-position: 50% 50%;
     background-repeat: no-repeat;
     display: block;
+}
+
+// overrides
+.list-group-item {
 }
