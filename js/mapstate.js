@@ -34,6 +34,11 @@ var mapStateFn = function() {
             delete _overlayLayers[name];
             return;
         }
+        if (objExists( _overlayLayers[name] )) {
+            cd("removing layer", name, layer);
+            _map.removeLayer(_overlayLayers[name]);
+        }
+        cd("adding layer", name, layer);
         _overlayLayers[name] = layer;
         _map.addLayer(layer);
     };

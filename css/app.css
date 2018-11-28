@@ -10,7 +10,10 @@
 .box {
     display: flex;
     flex-flow: column;
-    height: 66%;
+    height: 100%;
+}
+.lastKnown {
+    background: transparent;
 }
 
 .transparent50 {
@@ -36,6 +39,9 @@
 	  opacity: 0.5;
 }
 
+#lastKnown {
+}
+
 .lastKnown.filtering {
     border-left: 0.5em solid;
     font-weight: bold;
@@ -43,5 +49,15 @@
 
 .leaflet-container {
     /* background: white !important; */
-    background: #222 ;
+    /* background: #222 ; */
+    background: inherit !important ;
+}
+
+.leaflet-control-viewsettings-toggle {
+    width: 44px;
+    height: 44px;
+    background-image: url(images/icon-settings.png);
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    display: block;
 }

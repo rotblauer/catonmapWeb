@@ -24,9 +24,9 @@ model.visitsParams = {
         return this;
     },
     get: function() {
-        if (model.visitsOn !== "yes") return $.ajax(); // return empty ajax to keep promise returnable
+        if (model.visitsOn !== "yes") {cd("visits off"); return $.ajax();} // return empty ajax to keep promise returnable
         var url = queryURL(trackHost, "/visits2", this);
-        cl("GET", url);
+        cd("GET", url);
         return $.ajax(qJSON(url));
     }
 };
@@ -37,13 +37,15 @@ model.getMetadata = function() {
     return $.ajax(qJSON(url));
 };
 
-ct.doneMetadata = function(data) {
-    console.log("mdata", data);
-    var content = `${data.KeyN} points added in the last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}. TileDB last updated ${moment(data.TileDBLastUpdated).fromNow()}.`;
+model.doneMetadata = function(data) {
+    cd("got metadata", data);
+    var content = `<small>+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.</small>`;
+    cd("content", content);
+    var zin = $(".leaflet-top").first();
     view.$metadataDisplay.html(content);
 };
 
-ct.errorMetadata = function(err) {
+model.errorMetadata = function(err) {
     ce("metadata err", err);
 };
 
@@ -139,18 +141,15 @@ model.getLastKnownCats = function() {
 };
 
 model.setVisits = function(data) {
+    if (typeof data === "string") data = [];
     model.lastGotVisit = moment();
     model.visitsData = {};
-    model.visitsByCat = {}; // TODO use array in lastKnownCat entry
     $.each(data.visits, function(i, val) {
         var v = Object.assign(Object.create(visitP), val).init();
-        var haveCat = model.visitsByCat.hasOwnProperty(v.iid()); // allow first incomplete visit / cat
-        if (!v.isComplete() && haveCat) {
+        if (!v.isComplete()) {
             return;
         }
-        model.visitsByCat[v.iid()] = model.visitsByCat[v.iid()] || [];
-        model.visitsByCat[v.iid()].push(v);
-        model.visitsData[v.iid()] = v;
+        model.visitsData[v.id()] = v;
     });
     ct.onVisits(model.visitsData, true);
 };
@@ -190,8 +189,8 @@ model.logAndMockInstead = function(err) {
 ct.init = (function() {
     setWindowTitle();
     ct.browserSupportsLocal = browserSupportsLocalStorage;
-    ct.visitsOn = localOrDefault("von", "yes");
-    (ct.visitsOn === "yes") ? view.$visitsCheckbox.val("yes").attr("checked", true): view.$visitsCheckbox.val("no").attr("checked", false);
+    model.visitsOn = localOrDefault("von", "yes");
+    (model.visitsOn === "yes") ? view.$visitsCheckbox.val("yes").attr("checked", true): view.$visitsCheckbox.val("no").attr("checked", false);
 
     view.mapState.init();
 
@@ -247,14 +246,18 @@ ct.onLastKnown = function(data) {
 
 ct.onVisits = function(visits, overwrite) {
     if (model.visitsOn !== "yes") {
+        cd("removing visits layer");
         view.mapState.setLayer("visits", null);
         return;
     }
 
-    if (visits.length === 0) return;
+    if (visits.length === 0) {
+        cd("no visits, returning");
+        return;
+    };
 
     ct.markerClusterGroup = ct.markerClusterGroup || L.markerClusterGroup();
-    if (overwrite) ct.markerClusterGroup = L.markerClusterGroup();
+    if (overwrite) ct.markerClusterGroup = L.markerClusterGroup().setZIndex(11);;
 
     // these should only be unique visits
     for (var k in visits) {
@@ -263,8 +266,9 @@ ct.onVisits = function(visits, overwrite) {
         }
         var v = visits[k];
         ct.markerClusterGroup.addLayer(v.marker(view.mapState.getMap()));
-        // cl("new visit marker", v);
+        // cd("new visit marker", v);
     }
+    cd("marker cluster group", ct.markerClusterGroup);
 
     view.mapState.setLayer("visits", ct.markerClusterGroup);
 };
@@ -291,6 +295,7 @@ view.init = function() {
         });
 
     $("#latest-version-ios").text(latestiOSVersion);
+
 };
 
 
@@ -300,10 +305,42 @@ view.init = function() {
 
     // Listen for the jQuery ready event on the document
     $(function() {
-
         view.mapState = (mapStateFn)();
         view.init();
         ct.init();
+        var zin = $(".leaflet-top").first();
+        view.$metadataDisplay
+            .css("position", "fixed")
+            .css("left", zin.position().left +zin.width() + 10)
+            .css("top", zin.position().top)
+            .css("margin-top", "10px")
+            .css("z-index", 1000)
+        ;
+
+        view.$viewSettingsToggleContainer = $("<div>").addClass("leaflet-control");
+        view.$viewSettingsToggle = $(`
+                    <button>
+                `)
+            .addClass("btn")
+            .addClass("leaflet-control-viewsettings-toggle")
+            .attr("data-toggle", "modal")
+            .attr("data-target", ".settings-modal")
+        // .attr("tabindex", "0")
+        // .addClass("btn")
+        // .attr("role", "button")
+        // .attr("data-container", "body")
+        // .attr("data-toggle", "popover")
+        // .attr("data-placement", "left")
+        // // .attr("data-trigger", "focus") // for next-click dismissability
+        // .attr("data-content", $("#viewsettings-div"))
+        // .popover({
+        //     // trigger: 'focus',
+        //     // html: true
+        // })
+        ;
+        view.$viewSettingsToggleContainer.append(view.$viewSettingsToggle);
+
+        $(".leaflet-top.leaflet-right").append(view.$viewSettingsToggleContainer);
     });
 
 }(window.jQuery, window, document));
