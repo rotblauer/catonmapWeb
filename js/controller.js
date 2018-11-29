@@ -42,7 +42,8 @@ model.getMetadata = function() {
 
 model.doneMetadata = function(data) {
     cd("got metadata", data);
-    var content = `<small>+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.</small>`;
+    var m = moment();
+    var content = `<small>+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.<br>Status refreshed ${moment().format(" HH:mm:ss")}.</small>`;
     cd("content", content);
     var zin = $(".leaflet-top").first();
     view.$metadataDisplay.html(content);
@@ -199,12 +200,12 @@ ct.dataLoop = function() {
     model.getLastKnownCats()
         .done(model.doneLastKnownCats)
         .catch(model.logAndMockInstead)
-    // visits assigning to cats depends on cats being there
+        // visits assigning to cats depends on cats being there
         .then(function() {
             model.visitsParams
-                .set("startReportedT", moment().add(-14, "days").format())
+                .set("startReportedT", moment().add(-14, "days").format()) // TODO editable
                 .set("startArrivalT", moment().add(-500, "years").format())
-                .set("endDepartureT", moment().add(500, "years").format())
+                .set("endDepartureT", moment().add(500, "years").format()) // TODO allow last arrival/cat
                 .get()
                 .done(model.setVisits)
                 .catch(model.errVisits);
