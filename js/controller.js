@@ -6,9 +6,9 @@ model.lastKnownData = null;
 model.visitsData = {};
 model.visitsParams = {
     // defacto defaults
-    "endI": 100,
-    "stats": true,
-    "googleNearby": true,
+    "googleNearby": "true",
+    "endI": "100",
+    "stats": "true",
     set: function(key, val) {
         // use 'null' val to unset key (acts as delete)
         if (val === null) {
@@ -28,13 +28,7 @@ model.visitsParams = {
             cd("visits off");
             return $.ajax();
         } // return empty ajax to keep promise returnable
-        var d = $.extend({}, this);
-        for (var k in d) {
-            if (( typeof d[k] ).toLowerCase() !== "string") {
-                delete d[k];
-            }
-        }
-        var url = queryURL(trackHost, "/visits2?", d);
+        var url = queryURL(trackHost, "/visits2?", this);
         cd("GET", url);
         return $.ajax(qJSON(url));
     }

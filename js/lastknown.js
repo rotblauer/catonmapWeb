@@ -62,6 +62,9 @@ var dataLastKnownEntry = {
         return this.getColor().replace(",","").replace(",","").replace("(", "").replace(")","");
     },
     getColor: function() {
+        if (objExists(catColors()[this.uuid])) {
+            return catColors()[this.uuid];
+        }
         return catColors()[this.name] || "lightgray";
     },
     parseNotes: function() {

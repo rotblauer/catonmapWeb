@@ -30,10 +30,7 @@ function sleep(delay) {
 }
 
 var queryURL = function queryURL(host, path, paramsObj) {
-    var q = "?";
-    if (host.indexOf(q) >=0 || path.indexOf(q) >=0) {
-        q = "";
-    }
+    var q = "";
     var n = 0;
     for (var key in paramsObj) {
         if (!paramsObj.hasOwnProperty(key) || typeof paramsObj[key] === "function") {
@@ -45,15 +42,21 @@ var queryURL = function queryURL(host, path, paramsObj) {
         }
         if ( typeof v === "object" ) {
             for (var j = 0; j < v.length; j++) {
-                q = q + key + "=" + encodeURIComponent(v[j]);
+                // q = q + key + "=" + encodeURIComponent(v[j]);
+                q = q + key + "=" + (v[j]);
                 q = q + "&";
                 n++;
             }
             q = q.substring(0, q.length-1); // remove last &
         } else {
-            q = q + key + "=" + encodeURIComponent(v);
+            // q = q + key + "=" + encodeURIComponent(v);
+            q = q + key + "=" + (v);
             n++;
         }
+    }
+    q = encodeURIComponent(q);
+    if ((host+path).slice(-1) !== "?") {
+        q = "?" + q;
     }
     return host + path + q;
 };
@@ -63,7 +66,7 @@ var qJSON = function qJSON(url) {
         type: "GET",
         url: url,
         dataType: "json",
-        timeout: 3000 // sets timeout to 3 seconds
+        timeout: 5000 // sets timeout to 3 seconds
     };
 };
 
