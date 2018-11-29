@@ -37,7 +37,10 @@ var catColors = (function() {
         "coley": "rgb( 0, 176, 35 )", //dark green ish
         "pancho": "rgb(51, 153, 255)",
 
+        "Bob's iPhone 6": "rgb(255,170,0)",
         "D798FF32-67A1-4C6D-9DD9-8F117C47D837": "rgb(255,170,0)",
+
+        "Rathbone": "rgb(0,0,0)",
         "F5CE1D85-45FD-424E-AC36-55E23CB91ED4": "rgb(0,0,0)"
     };
 });
