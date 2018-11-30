@@ -1,3 +1,15 @@
+gl.catonmap.net {
+	root /www/gl.catonmap.net
+	header Access-Control-Allow-Origin *
+	header Access-Control-Allow-Methods "GET, POST"
+  log /var/log/gl.catonmap.net/access.log {
+    rotate_size 5   # Rotate after 50 MB
+    rotate_age  90  # Keep rotated files for 90 days
+    rotate_keep 20  # Keep at most 20 log files
+    rotate_compress # Compress rotated log files in gzip format
+  }
+}
+
 catonmap.net {
 	root /www/catonmap.net
 	header Access-Control-Allow-Origin *
@@ -9,3 +21,4 @@ catonmap.net {
     rotate_compress # Compress rotated log files in gzip format
   }
 }
+

@@ -50,6 +50,7 @@ var dataLastKnownEntry = {
     color: "rgb(123,123,123)",
     alternateCats: {}, // for other devices, keyed on color
     visits: Object.create(visitsData),
+    ln: null,
     // identifier per cat device or accomplices
     uid: function() {
         return "|COLOR|" + this.getColor() + "|NAME|" + this.name + "|UUID|" + this.uuid;
@@ -99,6 +100,7 @@ var dataLastKnownEntry = {
         return this.e;
     },
     elInit: function(ln) {
+        this.ln = ln; // cache parent selector
         var fly = function(e) {
             var et = $(e.target).closest(".lastKnown");
             var lat = +et.attr("data-lat");
@@ -160,12 +162,15 @@ var dataLastKnownEntry = {
 
             // this.e = $("<div>").addClass("row").addClass("m-0").addClass("p-1").addClass("lastKnown");
         } else {
-            this.e
-                .attr("data-uid", this.uid())
-                .attr("data-iid", this.iid())
-                .attr("data-name", this.name)
-                .attr("data-lat", this.lat)
-                .attr("data-lng", this.long);
+            this.e.remove();
+            this.e = null;
+            this.elInit(ln);
+            // this.e
+            //     .attr("data-uid", this.uid())
+            //     .attr("data-iid", this.iid())
+            //     .attr("data-name", this.name)
+            //     .attr("data-lat", this.lat)
+            //     .attr("data-lng", this.long);
         }
 
         if (this.time.isBefore(moment().add(-3, "days"))) {
@@ -191,12 +196,15 @@ var dataLastKnownEntry = {
 
         if (this.hasNoteObject()) {
             var no = this.notes;
-            var subtitle = "" + no.activity + ", altitude: " + this.elevation.toFixed(0) + "m<br>" + no.numberOfSteps + " steps, distance: " + (no.distance / 1).toFixed(0) + "m since " + moment(no.currentTripStart).from(moment());
+            var subtitle = `${no.activity}, speed: ${this.speed.toFixed(1)}m/s, elevation: ${this.elevation.toFixed(0)}m<br>
+healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, since: ${moment(no.currentTripStart).from(moment())} )`;
+            // var subtitle = "" + no.activity + ", elevation: " + this.elevation.toFixed(0) + "m<br>" + no.numberOfSteps + " steps, distance: " + (no.distance / 1).toFixed(0) + "m since " + moment(no.currentTripStart).from(moment());
 
             var existing = this.el().find(".lastup-notes").remove();
             var lastupNotes = $("<small>")
                 .addClass("mb-0 lastup-notes")
                 .html(subtitle)
+                // .addClass("text-muted");
                 .addClass("text-muted");
             this.el().find(".d-flex").last().append(lastupNotes);
         }

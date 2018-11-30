@@ -78,6 +78,10 @@ var mapStateFn = function() {
     };
 
     var setPBFOpt = function(name) {
+        if (name === "") {
+            lays[2].redraw(); // redraw edge layer... will it work?
+            return;
+        }
         for (var i = 0; i < lays.length; i++) {
             if (_map.hasLayer(lays[i])) {
                 // _map.removeLayer(lays[i]);
@@ -171,10 +175,16 @@ var mapStateFn = function() {
         return _map;
     };
 
+    var goUpdateEdge = function() {
+        setPBFOpt("");
+        setTimeout(goUpdateEdge, 60*1000);
+    };
+
     return {
         init: initMap,
         getMap: getMap,
         setLayer: setLayer,
-        setPBFOpt: setPBFOpt
+        setPBFOpt: setPBFOpt,
+        goUpdateEdge: goUpdateEdge
     };
 }

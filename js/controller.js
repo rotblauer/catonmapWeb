@@ -211,6 +211,8 @@ ct.dataLoop = function() {
                 .catch(model.errVisits);
         });
 
+    // setTimeout(view.mapState.goUpdateEdge, 60*1000);
+    view.mapState.setPBFOpt("");
     setTimeout(ct.dataLoop, 30*1000);
 };
 
@@ -323,9 +325,9 @@ ct.setViewStyle = function(lightOrDark) {
     var link = $("#bootstrap-css-link");
     link.attr("href", bootstrapCSSLinks[lightOrDark]);
     if (lightOrDark === "dark") {
-        $("#lastknown-col").addClass("dark");
+        $(".lastknown-col").addClass("dark");
     } else {
-        $("#lastknown-col").removeClass("dark");
+        $(".lastknown-col").removeClass("dark");
     }
 };
 
@@ -340,13 +342,13 @@ ct.setViewStyle = function(lightOrDark) {
         view.init();
         if (isSmallScreen()) {
             // $(".box").css("max-height", "60%");
-            $("#main-display").children(".col-sm-8").first().toggleClass("col-sm-8 col-12"); // .css("height", "60%");
-            $("#main-display").children(".col").first().css("z-index", "1001").css("position", "fixed").css("top", "60%");
+            $("#main1").toggleClass("col-sm-8 col-12"); // .css("height", "60%");
+            $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%");
         } else if (b.width() < b.height()) {
             // or portrait mode
             // $(".box").css("max-height", "60%");
-            $("#main-display").children(".col-sm-8").first() .toggleClass("col-sm-8 col-12");//.css("height", "60%");
-            $("#main-display").children(".col").first().css("z-index", "1001").css("position", "fixed").css("top", "60%");
+            $("#main1") .toggleClass("col-sm-8 col-12");//.css("height", "60%");
+            $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%");
             view.$lastKnown.closest(".col-sm-4").removeClass("col-sm-4").addClass("col-12");
             $("#main-display").children(".col-sm-8").first().removeClass("col-sm-8").addClass("col-12");
         }
