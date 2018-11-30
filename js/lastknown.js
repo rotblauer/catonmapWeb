@@ -101,7 +101,19 @@ var dataLastKnownEntry = {
     },
     elInit: function(ln) {
         this.ln = ln; // cache parent selector
-        var fly = function(e) {
+        var follow = function(e) {
+            $(".follow-highlight").removeClass("follow-highlight");
+            var t = $(e.target).closest(".lastKnown");
+            var iid = t.attr("data-iid");
+            ct.settings.follow === iid ? (ct.settings.follow = "") : (ct.settings.follow = iid);
+            ct.settings.follow === "" ? $(e.target).removeClass("follow-highlight") : $(e.target).addClass("follow-highlight");
+            model.setLocalStore("fc", ct.settings.follow);
+            var lat = t.attr("data-lat");
+            var lng = t.attr("data-lng");
+
+            view.mapState.getMap().flyTo([ lat, lng ]);
+        };
+        var find = function(e) {
             var et = $(e.target).closest(".lastKnown");
             var lat = +et.attr("data-lat");
             var lng = +et.attr("data-lng");
@@ -177,22 +189,22 @@ var dataLastKnownEntry = {
             this.e.addClass("transparent50");
         }
 
-        var flylink = $("<a>")
-            .css("cursor", "pointer")
-            .css("font-size", "0.8em")
-            .addClass("")
-            .addClass("pr-3")
-            .text("flyto")
-            // .css("color", "gray")
-            .on("click", fly);
+        var bsStyle = function(name, fn) {
+            return $("<a>")
+                .css("cursor", "pointer")
+                .css("font-size", "0.8em")
+                .addClass("mr-3")
+                .text(name)
+                .on("click", fn);
+        };
 
-        var filterlink = $("<a>")
-            .css("cursor", "pointer")
-            .css("font-size", "0.8em")
-            .addClass("")
-            .addClass("pr-3")
-            .text("filter")
-            .on("click", filter);
+        var findlink = bsStyle("find", find);
+        var filterlink = bsStyle("filter", filter);
+        var followLink = bsStyle("follow", follow);
+
+        if (ct.settings.follow === this.iid()) {
+            followLink.addClass("follow-highlight");
+        }
 
         if (this.hasNoteObject()) {
             var no = this.notes;
@@ -210,10 +222,20 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
         }
 
         this.el().children(".maplinks").remove();
-        var d = $("<div>").addClass("m-0 p-0 maplinks").append(flylink).append(filterlink);
+        var d = $("<div>").addClass("m-0 p-0 maplinks").append(findlink).append(filterlink).append(followLink);
         this.el().append(d);
 
-        return this.e; // .append(filterlink).append(flylink).append(metadata);
+        // init follow if following
+        if (ct.settings.follow !== "") {
+            if (objExists(model.lastKnownData)) {
+                var c =  model.lastKnownData.get(ct.settings.follow);
+                if (objExists(c)) {
+                    view.mapState.getMap().flyTo([ c.lat, c.long ]);
+                }
+            }
+        }
+
+        return this.e; // .append(filterlink).append(findlink).append(metadata);
     },
     hasNoteObject: function() {
         return typeof this.notes === "object" && this.notes.hasOwnProperty("activity");

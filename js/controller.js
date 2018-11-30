@@ -55,7 +55,8 @@ model.errorMetadata = function(err) {
 
 ct.settings = {
     on: false,
-    filter: {}
+    filter: {},
+    follow: null
 };
 ct.settingsFilter = function(props, zoom, layer) {
     if (!ct.settings.hasOwnProperty("on") ||
@@ -193,6 +194,8 @@ model.logAndMockInstead = function(err) {
 };
 
 ct.dataLoop = function() {
+    ct.settings.follow = localOrDefault("fc", "");
+
     model.getMetadata()
         .done(model.doneMetadata)
         .catch(model.errorMetadata);
