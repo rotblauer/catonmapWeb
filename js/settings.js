@@ -1,6 +1,7 @@
 const latestiOSVersion = "V.VersionV2";
 var trackHost = "https://bigger.space?reset=true&url=catonmap.info:3001";
 var tileHost =  "https://bigger.space?reset=true&url=catonmap.info:8080";
+// var tileHost =  "http://localhost:8081";
 
 var baseTileLayerOpts = {
     rendererFactory: L.canvas.tile,

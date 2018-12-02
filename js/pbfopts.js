@@ -19,18 +19,26 @@ ct.activityFn = function(props, z, layer) {
         return {};
     }
     var c = activityColorLegend[props["Activity"]];
-    if ( props.Speed > 80 || props.Elevation > 4000 ) {
+    if (props.Speed > 80 || props.Elevation > 4000) {
         c = activityColorLegend["Fly"];
     }
-    if (c === "lightgray") {
-        return {};
+    var pp = props.point_count ^ (1 / 2);
+    if (c === "lightgray" || typeof c === "undefined") {
+        return {
+            stroke: false,
+            fill: true,
+            fillColor: "black",
+            radius: pp > 1 ? pp : 1,
+            type: "Point"
+        };
+        //     return {};
     }
     return {
         stroke: false,
         fill: true,
         fillColor: c || "lightgray",
         fillOpacity: c !== "lightgray" ? 0.9 : 0.1,
-        radius: 2,
+        radius: pp > 1 ? pp : 1,
         type: "Point"
     };
 };
@@ -142,12 +150,6 @@ ct.speedFn = function(properties, zoom, layer) {
 // sqrt_point_count: 1.73
 // tippecanoe_feature_density: 8
 //
-function densityColor(density) {
-    var r = Math.floor(density * 2),
-        g = Math.floor(255 - density),
-        b = 0;
-    return "rgb(" + r + "," + g + "," + b + ")";
-}
 
 // https://stackoverflow.com/questions/340209/generate-colors-between-red-and-green-for-a-power-meter/340214#340214
 function percentToRGB(percent) {
@@ -165,43 +167,27 @@ function percentToRGB(percent) {
         r = 255;
         g = Math.floor(255 * ((50 - percent % 50) / 50));
     }
-    b = 0;
+    // b = 0;
+
+    b = g;
+    g = 0;
+
     return "rgb(" + r + "," + g + "," + b + ")";
 }
 
 // -ag or --calculate-feature-density: Add a new attribute, tippecanoe_feature_density, to each feature, to record how densely features are spaced in that area of the tile. You can use this attribute in the style to produce a glowing effect where points are densely packed. It can range from 0 in the sparsest areas to 255 in the densest.
-var maxDensity = 255;
-var maxRadius = 10;
+var maxDensity = 62; //255;
+var maxRadius = 8;
 
 var zRangeMin = 3;
-var zRangeMax = 18;
+var zRangeMax = 19;
 var zRangeDiff = zRangeMax - zRangeMin;
+
 // At lower (farther out) zooms, we should "desensitize" scaling since most points will be "clustered" in higher numbers,
 // whereas at higher (closer) zooms, we should adjust tolerance to be more centered around lower feature_density values.
 function getRelDensity(zoom, n) {
     var stepSize = maxDensity / zRangeDiff; // 255 / 17 = 15
-    // var zAdjust = zoom-1-zRangeMin; // zoom = 14-1-3 = 10, 20-1-3 = 16, 3-1-3 = -1
-    // var bound = maxDensity - stepSize*zoom;
-    // // if zoom == 3  --> 255-15*2 as lower bound, find ratio of feature_density between 221 <-> 255; eg. 238 = 50%
-    // max(255)-stepN(34) = lower(221)
-    // max(255)-lower(221) = mldiff(34)
-    // eg(238)-lower(221)= rel(17)
-    // rel(17)/mldiff(34) == .50
-    //
-    // //                   255 - (stepSize * zoom-1)
-    // // if zoom == 19 --> 255-(19-3-1);
-    // if (zoom === 3) {
-    //     return n -
-    // }
-
     var stepN = zoom - 1;
-    // if (zoom === 3) {
-    //     stepN = stepN + 1; // 2 * stepSize = 30, 255 - 30 = 225,
-    // } else if (zoom === 4) {
-    //     stepN = stepN + 2;
-    // } else if (zoom === 5) {
-    //     stepN = stepN + 3; // 4 * 15 = 60, 255 - 60 = 195,
-    // }
     var lower = maxDensity - (stepN * stepSize);
     if (n < lower) {
         n = lower;
@@ -212,70 +198,174 @@ function getRelDensity(zoom, n) {
     return relDensity;
 }
 
+var
+    tfds = [],
+    tfdSum = 0,
+    tfdMax = 0,
+    tfdMin = 0,
+    tfdAvg = 0,
+
+    pcs = [],
+    pcSum = 0,
+    pcMax = 0,
+    pcMin = 0,
+    pcAvg = 0,
+
+    ns = [],
+    nSum = 0,
+    nMax = 0,
+    nMin = 0,
+    nAvg = 0,
+
+    noClus = 0;
+
+var minPC = 2,
+    maxPC = 9,
+    rangePC = maxPC - minPC;
+
+var minTFD = 0,
+    maxTFD = 62,
+    rangeTFD = maxTFD - minTFD;
+
 ct.densityFn = function(properties, zoom, layer) {
+
+    properties.point_count = properties.point_count || minPC;
+    var n = properties.point_count > properties.tippecanoe_feature_density ? ((properties.point_count - minPC) / rangePC) : ((properties.tippecanoe_feature_density - minTFD) / rangeTFD);
+
+    // if (nnn % 1000 === 0) {
+    //     if (properties.clustered) {
+    //         pcs.push(properties.point_count);
+    //         pcSum += properties.point_count;
+    //         pcAvg = pcSum / pcs.length;
+    //         pcMax = Math.max.apply(Math, pcs);
+    //         pcMin = Math.min.apply(Math, pcs);
+    //         pcMin = Math.min.apply(Math, pcs);
+    //     } else {
+    //         noClus++;
+    //     }
+
+    //     ns.push(n);
+    //     nSum += n;
+    //     nAvg = nSum / ns.length;
+    //     nMax = Math.max.apply(Math, ns);
+    //     nMin = Math.min.apply(Math, ns);
+    //     nMin = Math.min.apply(Math, ns);
+
+    //     tfds.push(properties.tippecanoe_feature_density);
+    //     tfdSum += properties.tippecanoe_feature_density;
+    //     tfdAvg = tfdSum / tfds.length;
+    //     tfdMax = Math.max.apply(Math, tfds);
+    //     tfdMin = Math.min.apply(Math, tfds);
+    //     tfdMin = Math.min.apply(Math, tfds);
+
+    //     cd("1/1000", nnn, "n=", n, properties);
+
+    //     cd(
+    //         "n.len=", ns.length,
+    //         "n.avg=", nAvg,
+    //         "n.min=", nMin,
+    //         "n.max=", nMax,
+    //     );
+
+    //     cd(
+    //         "tfd.len=", tfds.length,
+    //         "tfd.avg=", tfdAvg,
+    //         "tfd.min=", tfdMin,
+    //         "tfd.max=", tfdMax,
+    //     );
+
+    //     cd(
+    //         "noclus(==nopc).ln=", noClus,
+    //         "pc.len=", pcs.length,
+    //         "pc.avg=", pcAvg,
+    //         "pc.min=", pcMin,
+    //         "pc.max=", pcMax,
+    //     );
+
+    // }
+    // nnn++;
+
     if (!ct.settingsFilter(properties, zoom, layer)) {
         return {};
     }
 
-    // anything above about zoom 14-15 will not be clustered!...
-    if (!properties.clustered) {
-        return {
-            stroke: false,
-            fill: true,
-            fillColor: "#FF10DE", // colors[properties.Name], // "#00A2EB", "#EB2900"
-            weight: 0,
-            radius: 1,
-            opacity: 0.05
-        };
-    }
+    var fillColor = function(p) {
+        return percentToRGB((p) * 100);
+    };
+    var fillOpacity = function(p) {
+        var o = 1- (1/p.toFixed(2));
+        return o > 0.2 ? o : 0.2;
+    };
+    var radius = function(p) {
+        var r = (maxRadius * p);
+        return r > 1 ? r : 1;
+    };
 
-    // var relAbsoluteDensity = (properties.tippecanoe_feature_density/maxDensity); // maxDensity is max
-    var relAbsoluteDensity = (properties.tippecanoe_feature_density / (maxDensity * (zRangeMin / zoom))); // scale max density by zoom linearly
-    var relAbsoluteDensityPercent = Math.floor(relAbsoluteDensity * 100);
-
-    // var relD = getRelDensity(zoom, properties.tippecanoe_feature_density);
-    // var relDPercent = Math.floor(relD*100);
-
+    // oldskool
     var out = {
+        type: "Point",
         stroke: false,
         fill: true,
-        fillColor: function() {
-            var factor = properties.sqrt_point_count;
-            factor = factor * (zoom / zRangeMax) * 2;
-            if (zoom <= 8 && zoom > 5) {
-                factor = factor * (zoom / zRangeDiff);
-            }
-            if (zoom <= 5) {
-                factor = properties.point_count * (zoom / zRangeDiff); // / (zoom/(zoom+1-zRangeMin));
-            }
-            var n = percentToRGB(relAbsoluteDensityPercent * factor); // densityColor(properties.tippecanoe_feature_density),
-            return n;
-        }(),
-        // fillColor: percentToRGB(relDPercent), // densityColor(properties.tippecanoe_feature_density),
-        // fillOpacity: 0.05, // (properties.points_count*0.55)/100, // 0.1, //relAbsoluteDensity//0.10 ,
-        fillOpacity: 0.05 * (zoom / zRangeDiff), // (properties.points_count*0.55)/100, // 0.1, //relAbsoluteDensity//0.10 ,
-        radius: function() {
-            var n = 0;
-            if (zoom > 14) {
-                n = Math.floor(relAbsoluteDensity * (properties.point_count) * maxRadius);
-            } else {
-                n = Math.floor(relAbsoluteDensity * (properties.point_count) * maxRadius);
-            }
-
-
-            if (n > maxRadius) {
-                n = maxRadius;
-                if (zoom < 5) {
-                    n = zRangeMin / 4 * n;
-                }
-            } else if (n < 1) {
-                n = Math.floor(relAbsoluteDensity * (properties.point_count + (zoom / zRangeDiff)) * maxRadius);
-            }
-            return n;
-        }(), // ~max 100 from maxDensity actual max // +1 ??
-        // radius: Math.floor(relDPercent*maxRadius), // ~max 100 from maxDensity actual max // +1 ??
-        type: "Point"
+        fillColor: fillColor(n),
+        fillOpacity: fillOpacity(n),
+        radius: radius(n)
     };
+
+    // if (!properties.clustered) {
+    //     return {
+    //         stroke: false,
+    //         fill: true,
+    //         fillColor: "black", // "#FF10DE", // colors[properties.Name], // "#00A2EB", "#EB2900"
+    //         weight: 0,
+    //         radius: 1,
+    //         opacity: 0.05
+    //     };
+    // }
+
+    // // var relAbsoluteDensity = (properties.tippecanoe_feature_density/maxDensity); // maxDensity is max
+    // var relAbsoluteDensity = (properties.tippecanoe_feature_density / (maxDensity * (zRangeMin / zoom))); // scale max density by zoom linearly
+    // var relAbsoluteDensityPercent = Math.floor(relAbsoluteDensity * 100);
+
+    // var out = {
+    //     stroke: false,
+    //     fill: true,
+
+    //     fillColor: function() {
+    //         var factor = properties.sqrt_point_count;
+    //         factor = factor * (zoom / zRangeMax) * 5;
+    //         if (zoom <= 8 && zoom > 5) {
+    //             factor = factor * (zoom / zRangeDiff);
+    //         }
+    //         if (zoom <= 5) {
+    //             factor = properties.point_count * (zoom / zRangeDiff); // / (zoom/(zoom+1-zRangeMin));
+    //         }
+    //         var n = percentToRGB(relAbsoluteDensityPercent * factor); // densityColor(properties.tippecanoe_feature_density),
+    //         return n;
+    //     }(),
+
+    //     fillOpacity: 0.05 * (zoom / zRangeDiff), // (properties.points_count*0.55)/100, // 0.1, //relAbsoluteDensity//0.10 ,
+    //     radius: function() {
+    //         var n = 0;
+    //         if (zoom > 14) {
+    //             n = Math.floor(relAbsoluteDensity * (properties.point_count) * maxRadius);
+    //         } else {
+    //             n = Math.floor(relAbsoluteDensity * (properties.point_count) * maxRadius);
+    //         }
+
+
+    //         if (n > maxRadius) {
+    //             n = maxRadius;
+    //             if (zoom < 5) {
+    //                 n = zRangeMin / 4 * n;
+    //             }
+    //         } else if (n < 1) {
+    //             n = Math.floor(relAbsoluteDensity * (properties.point_count + (zoom / zRangeDiff)) * maxRadius);
+    //         }
+    //         return n;
+    //     }(), // ~max 100 from maxDensity actual max // +1 ??
+    //     // radius: Math.floor(relDPercent*maxRadius), // ~max 100 from maxDensity actual max // +1 ??
+    //     type: "Point"
+    // };
 
     return out;
 };
@@ -304,4 +394,3 @@ ct.baseTilesLayerOptsF = function(name) {
     b["vectorTileLayerStyles"] = vectorTileLayerStyles[name];
     return b;
 };
-
