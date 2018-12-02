@@ -224,7 +224,7 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
                 .addClass("text-muted");
             this.el().find(".links").first().append(lastupNotes);
         }
-        if (this.lastVisit.exists()) {
+        if (this.lastVisit && this.lastVisit.exists()) {
             var vv = this.lastVisit;
             var con = vv.PlaceParsed.Identity;
             if (vv.isArrival()) {
