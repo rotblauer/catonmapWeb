@@ -28,7 +28,8 @@ ct.activityFn = function(props, z, layer) {
             stroke: false,
             fill: true,
             fillColor: "black",
-            radius: pp > 1 ? pp : 1,
+            // radius: pp > 1 ? pp : 1,
+            radius: 2,
             type: "Point"
         };
         //     return {};
@@ -38,7 +39,8 @@ ct.activityFn = function(props, z, layer) {
         fill: true,
         fillColor: c || "lightgray",
         fillOpacity: c !== "lightgray" ? 0.9 : 0.1,
-        radius: pp > 1 ? pp : 1,
+        radius: 2,
+        // radius: pp > 1 ? pp : 1,
         type: "Point"
     };
 };
@@ -232,58 +234,63 @@ ct.densityFn = function(properties, zoom, layer) {
     properties.point_count = properties.point_count || minPC;
     var n = properties.point_count > properties.tippecanoe_feature_density ? ((properties.point_count - minPC) / rangePC) : ((properties.tippecanoe_feature_density - minTFD) / rangeTFD);
 
-    // if (nnn % 1000 === 0) {
-    //     if (properties.clustered) {
-    //         pcs.push(properties.point_count);
-    //         pcSum += properties.point_count;
-    //         pcAvg = pcSum / pcs.length;
-    //         pcMax = Math.max.apply(Math, pcs);
-    //         pcMin = Math.min.apply(Math, pcs);
-    //         pcMin = Math.min.apply(Math, pcs);
-    //     } else {
-    //         noClus++;
-    //     }
+    if (nnn % 1000 === 0) {
+        if (properties.clustered) {
+            pcs.push(properties.point_count);
+            pcSum += properties.point_count;
+            pcAvg = pcSum / pcs.length;
+            pcMax = Math.max.apply(Math, pcs);
+            pcMin = Math.min.apply(Math, pcs);
+            pcMin = Math.min.apply(Math, pcs);
+        } else {
+            noClus++;
+        }
 
-    //     ns.push(n);
-    //     nSum += n;
-    //     nAvg = nSum / ns.length;
-    //     nMax = Math.max.apply(Math, ns);
-    //     nMin = Math.min.apply(Math, ns);
-    //     nMin = Math.min.apply(Math, ns);
+        ns.push(n);
+        nSum += n;
+        nAvg = nSum / ns.length;
+        nMax = Math.max.apply(Math, ns);
+        nMin = Math.min.apply(Math, ns);
+        nMin = Math.min.apply(Math, ns);
 
-    //     tfds.push(properties.tippecanoe_feature_density);
-    //     tfdSum += properties.tippecanoe_feature_density;
-    //     tfdAvg = tfdSum / tfds.length;
-    //     tfdMax = Math.max.apply(Math, tfds);
-    //     tfdMin = Math.min.apply(Math, tfds);
-    //     tfdMin = Math.min.apply(Math, tfds);
+        tfds.push(properties.tippecanoe_feature_density);
+        tfdSum += properties.tippecanoe_feature_density;
+        tfdAvg = tfdSum / tfds.length;
+        tfdMax = Math.max.apply(Math, tfds);
+        tfdMin = Math.min.apply(Math, tfds);
+        tfdMin = Math.min.apply(Math, tfds);
 
-    //     cd("1/1000", nnn, "n=", n, properties);
+        // cd("1/1000", nnn, "n=", n, properties);
 
-    //     cd(
-    //         "n.len=", ns.length,
-    //         "n.avg=", nAvg,
-    //         "n.min=", nMin,
-    //         "n.max=", nMax,
-    //     );
+        // cd(
+        //     "n.len=", ns.length,
+        //     "n.avg=", nAvg,
+        //     "n.min=", nMin,
+        //     "n.max=", nMax,
+        // );
 
-    //     cd(
-    //         "tfd.len=", tfds.length,
-    //         "tfd.avg=", tfdAvg,
-    //         "tfd.min=", tfdMin,
-    //         "tfd.max=", tfdMax,
-    //     );
+        // cd(
+        //     "tfd.len=", tfds.length,
+        //     "tfd.avg=", tfdAvg,
+        //     "tfd.min=", tfdMin,
+        //     "tfd.max=", tfdMax,
+        // );
 
-    //     cd(
-    //         "noclus(==nopc).ln=", noClus,
-    //         "pc.len=", pcs.length,
-    //         "pc.avg=", pcAvg,
-    //         "pc.min=", pcMin,
-    //         "pc.max=", pcMax,
-    //     );
+        // cd(
+        //     "noclus(==nopc).ln=", noClus,
+        //     "pc.len=", pcs.length,
+        //     "pc.avg=", pcAvg,
+        //     "pc.min=", pcMin,
+        //     "pc.max=", pcMax,
+        // );
 
-    // }
-    // nnn++;
+
+    }
+
+    if (properties.Visit && properties.Visit !== "") {
+        cd("visit", properties.Visit);
+    }
+    nnn++;
 
     if (!ct.settingsFilter(properties, zoom, layer)) {
         return {};
