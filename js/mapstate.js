@@ -68,18 +68,22 @@ var mapStateFn = function() {
             n = "activity";
         }
         return {
-            "master": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts(n))
+            "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n))
+            , "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n))
+            , "master": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts(n))
+
+            // "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n))
+            // , "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n))
+
             // .on("click", function(e) {
             //     console.log("event", e);
             // })
-            , "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n))
-            , "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n))
         };
     };
 
     var setPBFOpt = function(name) {
         if (name === "") {
-            lays[2].redraw(); // redraw edge layer... will it work?
+            lays[0].redraw(); // redraw edge layer... will it work?
             return;
         }
         for (var i = 0; i < lays.length; i++) {
