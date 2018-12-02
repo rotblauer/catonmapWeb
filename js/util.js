@@ -174,3 +174,7 @@ function isSmallScreen() {
     }
     return false;
 }
+
+var uniqueFilter = function(val, i, self) {
+    return self.indexOf(val) === i;
+}

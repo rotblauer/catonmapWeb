@@ -49,6 +49,7 @@ var dataLastKnownEntry = {
     notes: "", // JSON
     color: "rgb(123,123,123)",
     alternateCats: {}, // for other devices, keyed on color
+    lastVisit: Object.create(visitP),
     visits: Object.create(visitsData),
     ln: null,
     // identifier per cat device or accomplices
@@ -100,7 +101,13 @@ var dataLastKnownEntry = {
         return this.e;
     },
     elInit: function(ln) {
+        // FIXME
+        if (!objExists(ln) || !objExists(this.ln)) {
+            ln = view.$lastKnown;
+        }
+
         this.ln = ln; // cache parent selector
+
         var follow = function(e) {
             $(".follow-highlight").removeClass("follow-highlight");
             var t = $(e.target).closest(".lastKnown");
@@ -155,10 +162,12 @@ var dataLastKnownEntry = {
             this.e = $(`
 <div href="#" id="${this.elid()}" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
     <div class="d-flex w-100 justify-content-between">
-        <h6 class="mb-1" style="color: ${this.getColor()};">${this.name}</h6>
+        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name}</h6>
         <small class="text-muted" >${this.time.fromNow()}</small>
     </div>
-    <div class="d-flex w-100 justify-content-between">
+    <div class="d-flex w-100 justify-content-between links">
+    </div>
+    <div class="d-flex w-100 justify-content-between lastVisit">
     </div>
 </div>`)
                 .attr("data-uid", this.uid())
@@ -166,23 +175,18 @@ var dataLastKnownEntry = {
                 .attr("data-name", this.name)
                 .attr("data-lat", this.lat)
                 .attr("data-lng", this.long);
-            ln.append(this.e);
 
-                // .css("color", this.getColor());
-            // <p class="mb-1">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-            // <small class="text-muted">Donec id elit non mi porta.</small>
+            if (this.version !== latestiOSVersion && this.uuid.indexOf("XXX") < 0) {
+                this.e.find(".catname").append($("<a>").attr("href", "http://punktlich.rotblauer.com/install").attr("target", "_").text("Outdated Version " + this.version).addClass("badge badge-warning ml-2"));
+            }
 
-            // this.e = $("<div>").addClass("row").addClass("m-0").addClass("p-1").addClass("lastKnown");
+            // FIXME
+            this.ln.append(this.e);
+
         } else {
-            this.e.remove();
+            var ex = this.e;
             this.e = null;
-            this.elInit(ln);
-            // this.e
-            //     .attr("data-uid", this.uid())
-            //     .attr("data-iid", this.iid())
-            //     .attr("data-name", this.name)
-            //     .attr("data-lat", this.lat)
-            //     .attr("data-lng", this.long);
+            ex.replaceWith(this.elInit());
         }
 
         if (this.time.isBefore(moment().add(-3, "days"))) {
@@ -209,7 +213,7 @@ var dataLastKnownEntry = {
         if (this.hasNoteObject()) {
             var no = this.notes;
             var subtitle = `${no.activity}, speed: ${this.speed.toFixed(1)}m/s, elevation: ${this.elevation.toFixed(0)}m<br>
-healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, since: ${moment(no.currentTripStart).from(moment())} )`;
+healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, since: ${moment(no.currentTripStart).from(moment())})`;
             // var subtitle = "" + no.activity + ", elevation: " + this.elevation.toFixed(0) + "m<br>" + no.numberOfSteps + " steps, distance: " + (no.distance / 1).toFixed(0) + "m since " + moment(no.currentTripStart).from(moment());
 
             var existing = this.el().find(".lastup-notes").remove();
@@ -218,7 +222,24 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
                 .html(subtitle)
                 // .addClass("text-muted");
                 .addClass("text-muted");
-            this.el().find(".d-flex").last().append(lastupNotes);
+            this.el().find(".links").first().append(lastupNotes);
+        }
+        if (this.lastVisit.exists()) {
+            var vv = this.lastVisit;
+            var con = vv.PlaceParsed.Identity;
+            if (vv.isArrival()) {
+                con = "Arrived at " + con + " " + vv.arrivalDate.fromNow();
+            } else if (vv.isDeparture()) {
+                con = "Departed " + con + " " + vv.arrivalDate.fromNow();
+            } else {
+                // con = "Spent " + vv.departureDateLocal.to(vv.arrivalDateLocal, true) + " + " at " + con " 
+                con = `Spent ${vv.departureDateLocal.to(vv.arrivalDateLocal, true)} at ${vv.PlaceParsed.Identity}, left ${vv.departureDate.fromNow()}`;
+            }
+            var vis = $( `<small>${con}</small>`).css("cursor", "pointer").on("click", function() {
+                view.mapState.getMap().setView([ vv.PlaceParsed.Lat, vv.PlaceParsed.Lng ]);
+            });
+            this.el().find(".lastVisit").last().html("");
+            this.el().find(".lastVisit").last().append(vis);
         }
 
         this.el().children(".maplinks").remove();
@@ -290,11 +311,17 @@ var dataLastKnown = {
 
             if (cat.time.isAfter(existCat.time)) {
 
-                // swap cats, keeping newest as "parent"
-                for (var i = 0; i < existCat.aliases.length; i++) {
-                    if ($.inArray(cat.aliases, existCat.aliases[i]) < 0) cat.aliases.push(existCat.aliases[i]);
-                }
+                // // swap cats, keeping newest as "parent"
+                // for (var i = 0; i < existCat.aliases.length; i++) {
+                //     var as = cat.aliases.slice();
+                //     if (as.indexOf(existCat.aliases[i]) < 0) {
+                //         cat.aliases.push(existCat.aliases[i]);
+                //     }
+                // }
                 existCat.aliases.push(cat.name);
+
+                existCat.aliases = existCat.aliases.filter(uniqueFilter);
+                cat.aliases = cat.aliases.filter(uniqueFilter);
 
                 cat.alternateCats = $.extend({}, existCat.alternateCats); // shallow copy
                 existCat.alternateCats = {}; // clear old
@@ -305,6 +332,7 @@ var dataLastKnown = {
                 // else add this cat as an alternate
                 this.data[cat.iid()].alternateCats[cat.uid()] = cat;
                 this.get(cat.iid()).aliases.push(cat.name);
+                this.get(cat.iid()).aliases = this.get(cat.iid()).aliases.filter(uniqueFilter);
             }
         } else {
             this.data[cat.iid()] = cat;

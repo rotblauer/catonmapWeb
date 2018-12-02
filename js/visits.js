@@ -38,16 +38,20 @@ var visitsP = {
 // validVisit: true
 
 var visitP = {
+    // parsed as moment()s
     arrivalDate: null,
     depatureDate: null,
 
     // in localtz
     arrivalDateLocal: null,
-    depatureDateLocal: null,
+    departureDateLocal: null,
 
     // as strings
     ArrivalTime: null,
     DepartureTime: null,
+
+    ReportedTime: "",
+    reportedTime: null,
 
     Duration: null,
     PlaceParsed: {
@@ -63,6 +67,9 @@ var visitP = {
     googleNearby: {
         Results: []
     },
+    exists: function() {
+        return this.reportedTime !== null;
+    },
     id: function() {
         return this.uuid + this.name + this.ReportedTime ; // this.ArrivalTime + this.DepartureTime;
     },
@@ -71,6 +78,8 @@ var visitP = {
         return L.marker([this.PlaceParsed.Lat, this.PlaceParsed.Lng], {
             icon: this.isComplete() ? iconPinRed : iconPinGreen
         }).on("click", function(e) {
+            cd(e);
+            cd(props);
             return visitMarker(e, props, map);
         });
     },
@@ -81,7 +90,9 @@ var visitP = {
 
         var tzl = tzlookup(+this.PlaceParsed.Lat, +this.PlaceParsed.Lng);
         this.arrivalDateLocal = moment.tz(this.arrivalDate, tzl);
-        this.depatureDateLocal = moment.tz(this.departureDate, tzl);
+        this.departureDateLocal = moment.tz(this.departureDate, tzl);
+
+        this.reportedTime = moment(this.ReportedTime);
 
         return this;
     },
@@ -98,7 +109,7 @@ var visitP = {
 
 var visitMarker = function(e, props, map) {
     var start = props.arrivalDateLocal;
-    var end = props.depatureDateLocal;
+    var end = props.departureDateLocal;
     var timeSpent = end.to(start, true);
 
     var relTime = ", " + moment(props.ArrivalTime).from(moment());

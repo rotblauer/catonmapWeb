@@ -162,7 +162,27 @@ model.setVisits = function(data) {
     model.visitsData = {};
     $.each(data.visits, function(i, val) {
         var v = Object.assign(Object.create(visitP), val).init();
-        if (!v.isComplete()) {
+
+        var isLastVisit = false;
+        // assign to cat last known visit if after that cat's last known visit
+        if (objExists(model.lastKnownData)) {
+            var lookup = catColors()[v.uuid];
+            var c = model.lastKnownData.get(lookup);
+            if (objExists(c)) {
+                if (c.lastVisit.exists()) {
+                    if (c.lastVisit.reportedTime.isBefore(v.reportedTime)) {
+                        c.lastVisit = v;
+                        isLastVisit = true;
+                    }
+                } else {
+                    isLastVisit = true;
+                    c.lastVisit = v;
+                }
+                c.elInit();
+            }
+        }
+
+        if (!v.isComplete() && !isLastVisit) {
             return;
         }
         model.visitsData[v.id()] = v;
@@ -217,7 +237,8 @@ ct.dataLoop = function(n) {
             model.visitsParams
                 .set("startReportedT", moment().add(-14, "days").format()) // TODO editable
                 .set("startArrivalT", moment().add(-500, "years").format())
-                .set("endDepartureT", moment().add(500, "years").format()) // TODO allow last arrival/cat
+                // .set("startArrivalT", "")
+                // .set("endDepartureT", moment().add(500, "years").format()) // TODO allow last arrival/cat
                 .get()
                 .done(model.setVisits)
                 .catch(model.errVisits);
@@ -225,7 +246,7 @@ ct.dataLoop = function(n) {
 
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
     view.mapState.setPBFOpt("");
-    setTimeout(ct.dataLoop, (n || 30)*1000);
+    setTimeout(ct.dataLoop, (n || 30) * 1000);
 };
 
 ct.init = (function() {
@@ -359,7 +380,7 @@ ct.setViewStyle = function(lightOrDark) {
         } else if (b.width() < b.height()) {
             // or portrait mode
             // $(".box").css("max-height", "60%");
-            $("#main1") .toggleClass("col-sm-8 col-12");//.css("height", "60%");
+            $("#main1").toggleClass("col-sm-8 col-12"); //.css("height", "60%");
             $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%").toggleClass("col col-md-6 offset-md-6");
             view.$lastKnown.closest(".col-sm-4").removeClass("col-sm-4").addClass("col-12");
             $("#main-display").children(".col-sm-8").first().removeClass("col-sm-8").addClass("col-12");
