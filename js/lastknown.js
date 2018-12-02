@@ -135,6 +135,7 @@ var dataLastKnownEntry = {
             var t = $(e.target).closest(".lastKnown");
             t.toggleClass("filtering");
 
+            // FIXME: this should be peristable (ajax reqs every 30secs break the UI here)
             var filterers = [];
             $(".lastKnown.filtering").each(function(i, el) {
                 var n = $(el).attr("data-iid");
@@ -197,6 +198,8 @@ var dataLastKnownEntry = {
             return $("<a>")
                 .css("cursor", "pointer")
                 .css("font-size", "0.8em")
+                .css("color", "blue")
+                .css("text-decoration", "underline")
                 .addClass("mr-3")
                 .text(name)
                 .on("click", fn);
@@ -237,7 +240,10 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
             }
             var vis = $( `<small>${con}</small>`).css("cursor", "pointer").on("click", function() {
                 view.mapState.getMap().setView([ vv.PlaceParsed.Lat, vv.PlaceParsed.Lng ]);
-            });
+            })
+                // .css("color", "blue")
+                // .css("text-decoration", "underline")
+            ;
             this.el().find(".lastVisit").last().html("");
             this.el().find(".lastVisit").last().append(vis);
         }

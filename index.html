@@ -27,6 +27,9 @@
     <link rel="stylesheet" href="/vendor/leafletmarkercluster/MarkerCluster.css" />
     <link rel="stylesheet" href="/vendor/leafletmarkercluster/MarkerCluster.Default.css" />
 
+    <!-- <link href="/vendor/jquery.datetimepicker.min.css" rel="stylesheet"/> -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
     <!-- CUSTOM -->
     <!-- STYLE -->
     <link href="/css/app.css" rel="stylesheet" />
@@ -88,14 +91,26 @@
 
                             <!-- choose map drawing points style -->
                             <div class="form-group">
-                                <label for="settings-select-drawopts"></label>
+                                <label for="settings-select-drawopts">Draw points by</label>
                                 <select id="settings-select-drawopts" name="" class="form-control">
-                                    <option value="activity">Points: activity</option>
-                                    <option value="density">Points: density</option>
-                                    <option value="recent">Points: recency (by cat)</option>
-                                    <option value="speed">Points: speed (by cat)</option>
+                                    <option value="activity">Activity</option>
+                                    <option value="density">Density</option>
+                                    <option value="recent">Recency (by cat)</option>
+                                    <option value="speed">Speed (by cat)</option>
                                 </select>
                             </div>
+
+                            <div class="form-group">
+                                <label for="datetimepicker1">Period</label>
+                                <input id="datetimepicker1" name="" type="text" class="form-control" />
+                            </div>
+
+                            <!-- <div class="input-group"> -->
+                            <!-- <div class="input-group-prepend"> -->
+                            <!-- <span class="input-group-text">@</span> -->
+                            <!-- </div> -->
+                            <!-- <input id="datetimepicker1" name="" type="text" class="form-control" /> -->
+                            <!-- </div> -->
 
                             <hr />
 
@@ -145,6 +160,11 @@
 
     <script src="/vendor/tz.js"></script>
     <script src="/vendor/moment-timezone-with-data-2012-2022.min.js"></script>
+
+    <!-- <script src="/vendor/jquery.datetimepicker.min.js"></script> -->
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> -->
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script> -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <!-- CUSTOM -->
     <!-- SCRIPT -->

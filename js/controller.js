@@ -7,7 +7,7 @@ model.visitsData = {};
 model.visitsParams = {
     // defacto defaults
     "googleNearby": "true",
-    "endI": "100",
+    "endI": "200",
     "stats": "true",
     set: function(key, val) {
         // use 'null' val to unset key (acts as delete)
@@ -344,6 +344,9 @@ view.init = function() {
         .on("change", function(e) {
             model.visitsOn = $(this).is(":checked") ? "yes" : "no";
             model.setLocalStore("von", model.visitsOn);
+            if (model.visitsOn === "no") {
+                $(".lastVisit").remove();
+            }
             model.visitsParams.get()
                 .done(model.setVisits)
                 .catch(model.errVisits);
@@ -409,7 +412,51 @@ ct.setViewStyle = function(lightOrDark) {
 
         var ld = localOrDefault("vm", "light");
         view.$settingsStyleView.val(ld);
-        ct.setViewStyle(ld)
+        ct.setViewStyle(ld);
+
+        // $.datetimepicker.setDateFormatter({
+        //     parseDate: function (date, format) {
+        //         // var d = moment(date, format);
+        //         // return d.isValid() ? d.toDate() : false;
+        //         var d = moment(date);
+        //         return d.isValid() ? d.toDate() : false;
+        //     },
+        //     formatDate: function (date, format) {
+        //         return moment(date); // .format(format);
+        //     },
+        // });
+
+        // $("#datetimepicker1").datetimepicker({
+        //     // startDate:'+1971/05/01', //or 1986/12/08,
+        //     format: "unixtime",
+        //     onChangeDateTime: function(dp, $input) {
+        //         // alert($input.val());
+        //         cd("changedatetime", $input.val());
+        //     }
+        // });
+
+        $("#datetimepicker1").daterangepicker({
+            timePicker: true,
+            startDate: moment().startOf("year"),
+            endDate: moment().startOf("hour").add(32, "hour"),
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                "Last 6 Months": [moment().subtract(6, "months"), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'This Year': [moment().startOf('year'), moment()]
+                // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            locale: {
+                format: "M/DD hh:mm A"
+            }
+
+        }, function(start, end, label) {
+            cd(start, end, label);
+        });
+
     });
 
 }(window.jQuery, window, document));
