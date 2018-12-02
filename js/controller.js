@@ -44,7 +44,7 @@ model.doneMetadata = function(data) {
     cd("got metadata", data);
     var m = moment();
     var content = `<small>+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.<br>Status refreshed ${moment().format(" HH:mm:ss")}.</small>`;
-    cd("content", content);
+    // cd("content", content);
     var zin = $(".leaflet-top").first();
     view.$metadataDisplay.html(content);
 };
@@ -53,9 +53,18 @@ model.errorMetadata = function(err) {
     ce("metadata err", err);
 };
 
+var ago3days = moment().add(-3, "days").unix();
 ct.settings = {
     on: false,
-    filter: {},
+    // on: true,
+    filter: {
+        // "t": function(p, z, l) {
+        //     // if (!objExists(p.TimeUnix)) {
+        //     //     cd("noexit", p);
+        //     // }
+        //     return p.UnixTime > ago3days;
+        // }
+    },
     follow: null
 };
 ct.settingsFilter = function(props, zoom, layer) {
@@ -193,7 +202,7 @@ model.logAndMockInstead = function(err) {
     model.doneLastKnownCats(mockLastknown);
 };
 
-ct.dataLoop = function() {
+ct.dataLoop = function(n) {
     ct.settings.follow = localOrDefault("fc", "");
 
     model.getMetadata()
@@ -216,7 +225,7 @@ ct.dataLoop = function() {
 
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
     view.mapState.setPBFOpt("");
-    setTimeout(ct.dataLoop, 30*1000);
+    setTimeout(ct.dataLoop, (n || 30)*1000);
 };
 
 ct.init = (function() {
