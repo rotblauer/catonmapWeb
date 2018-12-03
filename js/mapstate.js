@@ -34,7 +34,7 @@ var mapStateFn = function() {
             delete _overlayLayers[name];
             return;
         }
-        if (objExists( _overlayLayers[name] )) {
+        if (objExists(_overlayLayers[name])) {
             cd("removing layer", name, layer);
             _map.removeLayer(_overlayLayers[name]);
         }
@@ -68,9 +68,9 @@ var mapStateFn = function() {
             n = "activity";
         }
         return {
-            "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n))
-            , "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n))
-            , "master": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts(n))
+            "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n)),
+            "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n)),
+            "master": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts(n))
 
             // "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n))
             // , "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n))
@@ -134,6 +134,7 @@ var mapStateFn = function() {
         model.setLocalStore("x", b.lng);
         model.setLocalStore("z", _map.getZoom());
         setLinkValue();
+        view.$map.focus();
 
         // TODO get moar visits and append them
     };
@@ -145,17 +146,22 @@ var mapStateFn = function() {
         model.setLocalStore("t", ev.name);
         ev.layer.bringToBack();
         setLinkValue();
+        view.$map.focus();
     };
     var _mapOnLoad = function() {
         model.setLocalStore("y", b.lat);
         model.setLocalStore("x", b.lng);
         model.setLocalStore("z", _map.getZoom());
         setLinkValue();
+        view.$map.focus();
     };
     var _mapOnClick = function() {};
 
     var initMap = function() {
         _map = L.map('map', {
+                keyboard: true,
+                keyboardPanDelta: 120,
+                minZoom: 3,
                 maxZoom: 18,
                 center: [+localOrDefault("y", "32"), +localOrDefault("x", "-90")], // [32, -80],
                 zoom: +localOrDefault("z", "5"),
@@ -173,6 +179,7 @@ var mapStateFn = function() {
 
         _currentPBFLayerOpt = localOrDefault("l", "activity");
         setPBFOpt(_currentPBFLayerOpt);
+        view.$map.focus();
     };
 
     var getMap = function() {
@@ -181,7 +188,7 @@ var mapStateFn = function() {
 
     var goUpdateEdge = function() {
         setPBFOpt("");
-        setTimeout(goUpdateEdge, 60*1000);
+        setTimeout(goUpdateEdge, 60 * 1000);
     };
 
     return {

@@ -170,7 +170,7 @@ model.setVisits = function(data) {
             var c = model.lastKnownData.get(lookup);
             if (objExists(c)) {
                 if (c.lastVisit.exists()) {
-                    if (c.lastVisit.reportedTime.isBefore(v.reportedTime)) {
+                    if (c.lastVisit.reportedTime.isSameOrBefore(v.reportedTime)) {
                         c.lastVisit = v;
                         isLastVisit = true;
                     }
@@ -374,6 +374,7 @@ ct.setViewStyle = function(lightOrDark) {
     // Listen for the jQuery ready event on the document
     $(function() {
         var b = $("body");
+        view.$map = $("#map");
         view.mapState = (mapStateFn)();
         view.init();
         if (isSmallScreen()) {
