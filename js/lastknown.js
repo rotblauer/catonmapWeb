@@ -198,7 +198,6 @@ var dataLastKnownEntry = {
             return $("<a>")
                 .css("cursor", "pointer")
                 .css("font-size", "0.8em")
-                .css("color", "blue")
                 .css("text-decoration", "underline")
                 .addClass("mr-3")
                 .text(name)

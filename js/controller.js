@@ -378,12 +378,12 @@ ct.setViewStyle = function(lightOrDark) {
         view.init();
         if (isSmallScreen()) {
             // $(".box").css("max-height", "60%");
-            $("#main1").toggleClass("col-sm-8 col-12"); // .css("height", "60%");
+            $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); // .css("height", "60%");
             $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%");
         } else if (b.width() < b.height()) {
             // or portrait mode
             // $(".box").css("max-height", "60%");
-            $("#main1").toggleClass("col-sm-8 col-12"); //.css("height", "60%");
+            $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); //.css("height", "60%");
             $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%").toggleClass("col col-md-6 offset-md-6");
             view.$lastKnown.closest(".col-sm-4").removeClass("col-sm-4").addClass("col-12");
             $("#main-display").children(".col-sm-8").first().removeClass("col-sm-8").addClass("col-12");
