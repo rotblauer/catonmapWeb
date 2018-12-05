@@ -32,7 +32,6 @@ var catColors = (function() {
         "Chishiki": "rgb(27,142,29)",
 
         "jlc": "rgb(255, 128, 51)", //orangish
-        "kek": "rgb( 0, 222, 20)", //brightgreen ish
         "rja": "rgb( 141, 0, 222 )",
         "coley": "rgb( 0, 176, 35 )", //dark green ish
         "pancho": "rgb(51, 153, 255)",
@@ -44,7 +43,8 @@ var catColors = (function() {
         "F5CE1D85-45FD-424E-AC36-55E23CB91ED4": "rgb(0,0,0)",
 
         "KK's Work Phone": "rgb(255, 109, 238)", // pink,
-        "4F1954C3-6040-4B39-B7F7-8627E227E2B4": "rgb(255, 109, 238)"
+        "4F1954C3-6040-4B39-B7F7-8627E227E2B4": "rgb(255, 109, 238)",
+        "kek": "rgb(255, 109, 238)"
     };
 });
 
