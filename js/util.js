@@ -30,35 +30,27 @@ function sleep(delay) {
 }
 
 var queryURL = function queryURL(host, path, paramsObj) {
-    var q = "";
-    var n = 0;
+    var u = URI(host+path);
+
+    // var q = "";
+    // var n = 0;
     for (var key in paramsObj) {
         if (!paramsObj.hasOwnProperty(key) || typeof paramsObj[key] === "function") {
             continue;
         }
         var v = paramsObj[key];
-        if (n > 0) {
-            q = q + "&";
-        }
-        if ( typeof v === "object" ) {
-            for (var j = 0; j < v.length; j++) {
-                // q = q + key + "=" + encodeURIComponent(v[j]);
-                q = q + key + "=" + (v[j]);
-                q = q + "&";
-                n++;
-            }
-            q = q.substring(0, q.length-1); // remove last &
-        } else {
-            // q = q + key + "=" + encodeURIComponent(v);
-            q = q + key + "=" + (v);
-            n++;
-        }
+        // for php... suckas
+        // if (Object.prototype.toString.call( someVar ) === '[object Array]') {
+        //     key = key+"[]";
+        // }
+        u.addSearch(key, v);
     }
-    q = encodeURIComponent(q);
-    if ((host+path).slice(-1) !== "?") {
-        q = "?" + q;
-    }
-    return host + path + q;
+    return u.href();
+    // q = encodeURIComponent(q);
+    // if ((host+path).slice(-1) !== "?") {
+    //     q = "?" + q;
+    // }
+    // return host + path + q;
 };
 
 var qJSON = function qJSON(url) {

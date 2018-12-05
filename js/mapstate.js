@@ -98,7 +98,8 @@ var mapStateFn = function() {
         }
 
         _currentPBFLayerOpt = name;
-        model.setLocalStore("l", name);
+        model.setState("tileLayer", name);
+        // model.setLocalStore("l", name);
 
         var ls = _pbfLayers(_currentPBFLayerOpt);
         var keys = Object.keys(ls); // master, devop, edge
@@ -109,66 +110,51 @@ var mapStateFn = function() {
             _map.addLayer(l);
             lays.push(l);
         };
-        setLinkValue();
-    };
-
-    var getStateURIObj = function() {
-        var b = _map.getCenter();
-        return {
-            z: _map.getZoom(),
-            y: b.lat,
-            x: b.lng,
-            l: localOrDefault("l", ""),
-            t: localOrDefault("t", ""),
-            von: localOrDefault("von", "")
-        };
-    };
-
-    var setLinkValue = function() {
-        var o = getStateURIObj();
-        var u = queryURL(window.location.origin, "", o);
-        $("#url-location").attr("href", u);
+        // setLinkValue();
     };
 
     var _mapOnMoveEnd = function() {
         var b = _map.getCenter();
-        model.setLocalStore("y", b.lat);
-        model.setLocalStore("x", b.lng);
-        model.setLocalStore("z", _map.getZoom());
-        setLinkValue();
-        view.$map.focus();
+        model.setState("lat", b.lat).setState("lng", b.lng);
+        // model.setLocalStore("y", b.lat);
+        // model.setLocalStore("x", b.lng);
+        // model.setLocalStore("z", _map.getZoom());
 
+        // setLinkValue();
         // TODO get moar visits and append them
     };
     var _mapOnZoomEnd = function() {
-        model.setLocalStore("z", _map.getZoom());
-        setLinkValue();
+        // model.setLocalStore("z", _map.getZoom());
+        cd("zoom", _map.getZoom());
+        model.setState("zoom", _map.getZoom());
+        // setLinkValue();
     };
     var _mapOnBaselayerChange = function(ev) {
-        model.setLocalStore("t", ev.name);
+        // model.setLocalStore("t", ev.name);
         ev.layer.bringToBack();
-        setLinkValue();
-        view.$map.focus();
+        model.setState("baseLayer", ev.name);
+        // setLinkValue();
     };
     var _mapOnLoad = function() {
-        model.setLocalStore("y", b.lat);
-        model.setLocalStore("x", b.lng);
-        model.setLocalStore("z", _map.getZoom());
-        setLinkValue();
+        // model.setLocalStore("y", b.lat);
+        // model.setLocalStore("x", b.lng);
+        // model.setLocalStore("z", _map.getZoom());
+        // setLinkValue();
         view.$map.focus();
     };
     var _mapOnClick = function() {};
 
     var initMap = function() {
+        var s = model.getState();
         _map = L.map('map', {
                 keyboard: true,
                 keyboardPanDelta: 140,
                 minZoom: 3,
-                maxZoom: 18,
-                center: [+localOrDefault("y", "32"), +localOrDefault("x", "-90")], // [32, -80],
-                zoom: +localOrDefault("z", "5"),
+                maxZoom: 20,
+                center: [+s.lat, +s.lng], // [32, -80],
+                zoom: +s.zoom,
                 noWrap: true,
-                layers: [_mapboxLayers[localOrDefault("t", "outdoors")]]
+                layers: [_mapboxLayers[s.baseLayer]]
                 // preferCanvas: true
             })
             .on("moveend", _mapOnMoveEnd)
@@ -179,7 +165,7 @@ var mapStateFn = function() {
 
         L.control.layers(_mapboxLayers).addTo(_map);
 
-        _currentPBFLayerOpt = localOrDefault("l", "activity");
+        _currentPBFLayerOpt = s.tileLayer;
         setPBFOpt(_currentPBFLayerOpt);
         view.$map.focus();
     };

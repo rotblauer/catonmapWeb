@@ -24,7 +24,7 @@ model.visitsParams = {
         return this;
     },
     get: function() {
-        if (model.visitsOn !== "yes") {
+        if (!model.visitsOn) {
             cd("visits off");
             return $.ajax();
         } // return empty ajax to keep promise returnable
@@ -32,6 +32,31 @@ model.visitsParams = {
         cd("GET", url);
         return $.ajax(qJSON(url));
     }
+};
+
+URI.fragmentPrefix = "@";
+
+model.state = {};
+model.setState = function(k, v) {
+    // window.history.replaceState({}, "catmapN", URI(window.url).setSearch());
+    window.history.replaceState({}, "catmapN", URI(window.location.href).setFragment(k, v));
+    return model;
+};
+
+model.getState = function() {
+    // var u = URI(window.url);
+    var ur = URI(window.location.href).fragment(true);
+    return {
+        zoom: ur["zoom"] || 12,
+        lat: ur["lat"] ||  38.613651383524335, // 32,
+        lng: ur["lng"] ||  -90.25388717651369,
+        baseLayer: ur["baseLayer"] ||  "terrain",
+        tileLayer: ur["tileLayer"] ||  "activity",
+        visits: ( ur["visits"] === "false" ) ? false : true,
+        follow: ur["follow"] ||  "",
+        windowStyle: ur["window"] || "light"
+    };
+
 };
 
 model.getMetadata = function() {
@@ -223,7 +248,7 @@ model.logAndMockInstead = function(err) {
 };
 
 ct.dataLoop = function(n) {
-    ct.settings.follow = localOrDefault("fc", "");
+    ct.settings.follow = model.getState().follow; // localOrDefault("fc", "");
 
     model.getMetadata()
         .done(model.doneMetadata)
@@ -252,8 +277,13 @@ ct.dataLoop = function(n) {
 ct.init = (function() {
     setWindowTitle();
     ct.browserSupportsLocal = browserSupportsLocalStorage;
-    model.visitsOn = localOrDefault("von", "yes");
-    (model.visitsOn === "yes") ? view.$visitsCheckbox.val("yes").attr("checked", true): view.$visitsCheckbox.val("no").attr("checked", false);
+    model.visitsOn = model.getState().visits;
+    // var von = model.getState().visits;
+    // model.visitsOn = (von === true || von === "true") ? true : false; // localOrDefault("von", "yes");
+    // (model.visitsOn) ? view.$visitsCheckbox.val("yes").attr("checked", true): view.$visitsCheckbox.val("no").attr("checked", false);
+
+
+    view.$visitsCheckbox.attr("checked", model.visitsOn);
 
     view.mapState.init();
 
@@ -284,6 +314,10 @@ ct.onLastKnown = function(data) {
         entry.elInit(view.$lastKnown);
     }
 
+    view.$lastKnown.children(".lastKnown").sort(function(a, b) {
+        return $(a).data('unix') < $(b).data('unix');
+    }).appendTo(view.$lastKnown);
+
     var lg = model.lastKnownData.where(function(k, cat) {
         return objExists(cat) &&
             cat.hasOwnProperty("time") &&
@@ -295,7 +329,7 @@ ct.onLastKnown = function(data) {
 };
 
 ct.onVisits = function(visits, overwrite) {
-    if (model.visitsOn !== "yes") {
+    if (!model.visitsOn) {
         cd("removing visits layer");
         view.mapState.setLayer("visits", null);
         return;
@@ -335,16 +369,21 @@ view.init = function() {
         ct.setViewStyle(ld);
     });
 
-    view.$selectDrawOpts.val(localOrDefault("l", "activity"));
+    // view.$selectDrawOpts.val(localOrDefault("l", "activity"));
+    var ms = model.getState();
+
+    view.$selectDrawOpts.val(ms.tileLayer);
+
     view.$selectDrawOpts.on("change", function(e) { // FIXME on._ change, select, whatever
         view.mapState.setPBFOpt($(e.target).val());
     });
     view.$visitsCheckbox = $("#visits-checkbox")
-        .attr("checked", localOrDefault("von", "yes") === "yes" ? true : false)
+        .attr("checked", ms.visits)
         .on("change", function(e) {
-            model.visitsOn = $(this).is(":checked") ? "yes" : "no";
-            model.setLocalStore("von", model.visitsOn);
-            if (model.visitsOn === "no") {
+            model.visitsOn = $(this).is(":checked");
+            // model.setLocalStore("von", model.visitsOn);
+            model.setState("visits", model.visitsOn);
+            if (!model.visitsOn) {
                 $(".lastVisit").remove();
             }
             model.visitsParams.get()
@@ -357,7 +396,8 @@ view.init = function() {
 
 ct.setViewStyle = function(lightOrDark) {
     cd("setting view  style", lightOrDark);
-    model.setLocalStore("vm", lightOrDark);
+    // model.setLocalStore("vm", lightOrDark);
+    model.setState("window", lightOrDark);
     var link = $("#bootstrap-css-link");
     link.attr("href", bootstrapCSSLinks[lightOrDark]);
     if (lightOrDark === "dark") {
@@ -411,7 +451,7 @@ ct.setViewStyle = function(lightOrDark) {
         view.$viewSettingsToggleContainer.append(view.$viewSettingsToggle);
         $(".leaflet-top.leaflet-right").append(view.$viewSettingsToggleContainer);
 
-        var ld = localOrDefault("vm", "light");
+        var ld = model.getState().windowStyle; // localOrDefault("vm", "light");
         view.$settingsStyleView.val(ld);
         ct.setViewStyle(ld);
 

@@ -175,6 +175,7 @@ var dataLastKnownEntry = {
                 .attr("data-iid", this.iid())
                 .attr("data-name", this.name)
                 .attr("data-lat", this.lat)
+                .attr("data-unix", this.time.unix())
                 .attr("data-lng", this.long);
 
             if (this.version !== latestiOSVersion && this.uuid.indexOf("XXX") < 0) {

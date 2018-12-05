@@ -35,10 +35,8 @@
     <link href="/css/app.css" rel="stylesheet" />
 </head>
 
-<body class="container-fluid p-0">
+<body class="container-fluid p-0" style="height: 100%;">
 
-    <p id="metadata-display" class="">
-    </p>
     <div id="main-display" class="row m-0 p-0" style="height:100%; overflow: hidden;">
         <div id="main1" class="col-sm-8 col-md-9 m-0 p-0" >
             <!-- height: 100% -->
@@ -47,14 +45,14 @@
                 </div>
             </div>
         </div>
+        <p id="metadata-display" class="">
+        </p>
         <!-- // side or overlayd -->
         <div id="main2" class="col m-0 p-0" >
             <!-- tiny meta links -->
             <div id="main2-links" class="row m-0 p-0 ">
                 <div id="main2-links-child" class="col lastknown-col">
                     <div class="d-flex w-100 justify-content-between px-1" style="font-size: 0.9em;">
-                        <a id="url-location" href="">link to this map</a>
-                        <span>&nbsp;|&nbsp;</span>
                         <a href="http://www.catstats.rotblauer.com/" style="" target="_">catstats<sup>-></sup></a>
                         <span>&nbsp;|&nbsp;</span>
                         <a id="install-ios-link" href="http://punktlich.rotblauer.com/install" target="_">iOS: <span id="latest-version-ios"></span><sup>-></sup></a>
@@ -64,7 +62,7 @@
 
             <!-- last known container -->
             <!-- <div class="row m-0 p-0" style="height: 100%; width: 100%; "> -->
-            <div class="row m-0 p-0"  >
+            <div class="row m-0 p-0" >
                 <div id="" class="col m-0 p-0 lastknown-col" style="height: 100%; overflow-y: scroll !important;">
                     <!-- style="height: 100%; overflow-y: scroll !important;" -->
                     <div id="lastknown" class="list-group"  >
@@ -165,6 +163,10 @@
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> -->
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script> -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+    <script type="text/javascript" src="/vendor/URI.js"></script>
+    <script type="text/javascript" src="/vendor/URI.fragmentURI.js"></script>
+    <script type="text/javascript" src="/vendor/URI.fragmentQuery.js"></script>
 
     <!-- CUSTOM -->
     <!-- SCRIPT -->

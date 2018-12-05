@@ -150,7 +150,9 @@ var visitMarker = function(e, props, map) {
             if (blacklisted) continue;
 
             try {
-                if (firstphoto === "") {
+                if (!r.photos) {
+                    cd("no photos", r);
+                } else if (firstphoto === "") {
                     firstphoto = "<img src='" + trackHost + "/googleNearbyPhotos?photoreference=" + encodeURIComponent(r.photos[0]["photo_reference"]) + "' style='width: 300px;' />";
                 } else {
                     // limit detail photos, and don't show dupes
