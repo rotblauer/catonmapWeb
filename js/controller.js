@@ -39,13 +39,19 @@ URI.fragmentPrefix = "@";
 model.state = {};
 model.setState = function(k, v) {
     // window.history.replaceState({}, "catmapN", URI(window.url).setSearch());
-    window.history.replaceState({}, "catmapN", URI(window.location.href).setFragment(k, v));
+    var o = window.history.state || {};
+    o[k] = v;
+    window.history.replaceState(o, "catmapN", URI(window.location.href).setFragment(k, v));
     return model;
 };
 
 model.getState = function() {
     // var u = URI(window.url);
     var ur = URI(window.location.href).fragment(true);
+    if (Object.keys(ur).length === 0) {
+        ur = window.history;
+    }
+
     return {
         zoom: ur["zoom"] || 12,
         lat: ur["lat"] ||  38.613651383524335, // 32,
