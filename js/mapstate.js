@@ -46,7 +46,9 @@ var mapStateFn = function() {
     var _currentPBFLayer = null;
     var _currentPBFLayerOpt = null; // activity, recency
     var _pbfURL = function(id) {
+        // tileHost = "/home/ia/tdata/ttiles";
         return tileHost + "/" + id + "/{z}/{x}/{y}";
+        // return tileHost +  "/{z}/{x}/{y}" + ".geojson";
     };
     var _pbfLayerOpts = {
         "activity": ct.baseTilesLayerOptsF("activity"),
@@ -160,7 +162,7 @@ var mapStateFn = function() {
     var initMap = function() {
         _map = L.map('map', {
                 keyboard: true,
-                keyboardPanDelta: 120,
+                keyboardPanDelta: 140,
                 minZoom: 3,
                 maxZoom: 18,
                 center: [+localOrDefault("y", "32"), +localOrDefault("x", "-90")], // [32, -80],

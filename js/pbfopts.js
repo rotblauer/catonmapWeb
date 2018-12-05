@@ -10,11 +10,16 @@ var activityColorLegend = {
 };
 
 var nnn = 0;
+var ps = null;
 ct.activityFn = function(props, z, layer) {
     if (nnn === 0) {
-        // cd("props", props);
-        // nnn++;
+        cd("props", props);
+        nnn++;
+        ps = props;
     }
+    // if (!props.Accuracy || props.Accuracy !== 5) {
+    //     return {};
+    // }
     if (!ct.settingsFilter(props, z, layer)) {
         return {};
     }
@@ -221,12 +226,12 @@ var
 
     noClus = 0;
 
-var minPC = 2,
-    maxPC = 9,
+var minPC = 1000,
+    maxPC = 5000, // 10000 // 59534, // 172, //351, // 172, //9,
     rangePC = maxPC - minPC;
 
 var minTFD = 0,
-    maxTFD = 62,
+    maxTFD = 0, // 62,
     rangeTFD = maxTFD - minTFD;
 
 ct.densityFn = function(properties, zoom, layer) {
@@ -260,30 +265,30 @@ ct.densityFn = function(properties, zoom, layer) {
         tfdMin = Math.min.apply(Math, tfds);
         tfdMin = Math.min.apply(Math, tfds);
 
-        // cd("1/1000", nnn, "n=", n, properties);
+        cd("1/1000", nnn, "n=", n, properties);
 
-        // cd(
-        //     "n.len=", ns.length,
-        //     "n.avg=", nAvg,
-        //     "n.min=", nMin,
-        //     "n.max=", nMax,
-        // );
+        cd(
+            "n.len=", ns.length,
+            "n.avg=", nAvg,
+            "n.min=", nMin,
+            "n.max=", nMax,
+        );
 
-        // cd(
-        //     "tfd.len=", tfds.length,
-        //     "tfd.avg=", tfdAvg,
-        //     "tfd.min=", tfdMin,
-        //     "tfd.max=", tfdMax,
-        // );
+        cd(
+            "tfd.len=", tfds.length,
+            "tfd.avg=", tfdAvg,
+            "tfd.min=", tfdMin,
+            "tfd.max=", tfdMax,
+        );
 
-        // cd(
-        //     "noclus(==nopc).ln=", noClus,
-        //     "pc.len=", pcs.length,
-        //     "pc.avg=", pcAvg,
-        //     "pc.min=", pcMin,
-        //     "pc.max=", pcMax,
-        // );
-
+        cd(
+            "noclus(==nopc).ln=", noClus,
+            "pc.len=", pcs.length,
+            "pc.avg=", pcAvg,
+            "pc.min=", pcMin,
+            "pc.max=", pcMax,
+        );
+        cd("z", view.mapState.getMap().getZoom());
 
     }
 
@@ -304,6 +309,7 @@ ct.densityFn = function(properties, zoom, layer) {
         return o > 0.2 ? o : 0.2;
     };
     var radius = function(p) {
+        p = (p > 1 ? 1 : p);
         var r = (maxRadius * p);
         return r > 1 ? r : 1;
     };

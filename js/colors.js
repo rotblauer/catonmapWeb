@@ -41,7 +41,10 @@ var catColors = (function() {
         "D798FF32-67A1-4C6D-9DD9-8F117C47D837": "rgb(255,170,0)",
 
         "Rathbone": "rgb(0,0,0)",
-        "F5CE1D85-45FD-424E-AC36-55E23CB91ED4": "rgb(0,0,0)"
+        "F5CE1D85-45FD-424E-AC36-55E23CB91ED4": "rgb(0,0,0)",
+
+        "KK's Work Phone": "rgb(255, 109, 238)", // pink,
+        "4F1954C3-6040-4B39-B7F7-8627E227E2B4": "rgb(255, 109, 238)"
     };
 });
 
