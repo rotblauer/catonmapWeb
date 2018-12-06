@@ -24,7 +24,7 @@ var mapStateFn = function() {
             return;
         }
 
-        cd("_overlayLayers", _overlayLayers);
+        // cd("_overlayLayers", _overlayLayers);
         if (layer === null) {
             if (_overlayLayers[name]) {
                 var l = _overlayLayers[name];
@@ -38,7 +38,7 @@ var mapStateFn = function() {
             cd("removing layer", name, layer);
             _map.removeLayer(_overlayLayers[name]);
         }
-        cd("adding layer", name, layer);
+        // cd("adding layer", name, layer);
         _overlayLayers[name] = layer;
         _map.addLayer(layer);
     };
@@ -50,15 +50,16 @@ var mapStateFn = function() {
         return tileHost + "/" + id + "/{z}/{x}/{y}";
         // return tileHost +  "/{z}/{x}/{y}" + ".geojson";
     };
-    var _pbfLayerOpts = {
-        "activity": ct.baseTilesLayerOptsF("activity"),
-        "recent": ct.baseTilesLayerOptsF("recent"),
-        "speed": ct.baseTilesLayerOptsF("speed"),
-        "density": ct.baseTilesLayerOptsF("density")
+    var _pbfLayerOpts = function(name) {
+        return ct.baseTilesLayerOptsF(name);
+        // "activity": ct.baseTilesLayerOptsF("activity"),
+        // "recent": ct.baseTilesLayerOptsF("recent"),
+        // "speed": ct.baseTilesLayerOptsF("speed"),
+        // "density": ct.baseTilesLayerOptsF("density")
     };
     var _pbfOpts = function(optName) {
-        if (_pbfLayerOpts.hasOwnProperty(optName)) {
-            return _pbfLayerOpts[optName];
+        if (vectorTileLayerStyles.hasOwnProperty(optName)) {
+            return _pbfLayerOpts(optName);
         }
         return {};
     };
