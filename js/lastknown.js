@@ -132,28 +132,23 @@ var dataLastKnownEntry = {
         };
         var filter = function(e) {
             cl("dobuleclick");
-            var t = $(e.target).closest(".lastKnown");
-            t.toggleClass("filtering");
+            var t = $(e.target).closest(".lastKnown").toggleClass("filtering");
 
-            // FIXME: this should be peristable (ajax reqs every 30secs break the UI here)
             var filterers = [];
             $(".lastKnown.filtering").each(function(i, el) {
-                var n = $(el).attr("data-iid");
-                var as = model.lastKnownData.get(n).aliases;
-                cd("aliases", as);
-                filterers = filterers.concat(as.slice());
+                var n = $(el).data("uuid");
+                filterers.push(n);
             });
-            var fn = function(props, zoom, layer) {
-                return $.inArray(props.Name, filterers) > -1;
-            };
-            if (filterers.length === 0) {
-                fn = null;
-            }
-            ct.setSettingsFilter("viewables", fn);
-            view.mapState.setPBFOpt(localOrDefault("l", "activity"));
+            ct.settings.setFiltering(filterers);
 
+            // trigger tile reload
+            view.mapState.setPBFOpt(model.getState().tileLayer);
+
+            // rm visits layer
             view.mapState.setLayer("visits", null);
-            model.visitsParams.set("names", filterers)
+
+            // regrab visits
+            model.visitsParams.set("uuids", filterers)
                 .get()
                 .done(model.setVisits)
                 .catch(model.errVisits);
@@ -172,6 +167,7 @@ var dataLastKnownEntry = {
     </div>
 </div>`)
                 .attr("data-uid", this.uid())
+                .attr("data-uuid", this.uuid)
                 .attr("data-iid", this.iid())
                 .attr("data-name", this.name)
                 .attr("data-lat", this.lat)
@@ -180,6 +176,13 @@ var dataLastKnownEntry = {
 
             if (this.version !== latestiOSVersion && this.uuid.indexOf("XXX") < 0) {
                 this.e.find(".catname").append($("<a>").attr("href", "http://punktlich.rotblauer.com/install").attr("target", "_").text("Outdated Version " + this.version).addClass("badge badge-warning ml-2"));
+            }
+
+            if (ct.settings.filtering.indexOf(this.uuid) >= 0 ) {
+                cd("filteringon uuuiii", this.uuid);
+                this.e.closest(".lastKnown").addClass("filtering");
+            } else {
+                // cd("filtering no on", ct.settings);
             }
 
             // FIXME
@@ -235,7 +238,7 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
             } else if (vv.isDeparture()) {
                 con = "Departed " + con + " " + vv.arrivalDate.fromNow();
             } else {
-                // con = "Spent " + vv.departureDateLocal.to(vv.arrivalDateLocal, true) + " + " at " + con " 
+                // con = "Spent " + vv.departureDateLocal.to(vv.arrivalDateLocal, true) + " + " at " + con "
                 con = `Spent ${vv.departureDateLocal.to(vv.arrivalDateLocal, true)} at ${vv.PlaceParsed.Identity}, left ${vv.departureDate.fromNow()}`;
             }
             var vis = $( `<small>${con}</small>`).css("cursor", "pointer").on("click", function() {

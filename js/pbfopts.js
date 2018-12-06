@@ -1,3 +1,47 @@
+// https://stackoverflow.com/questions/340209/generate-colors-between-red-and-green-for-a-power-meter/340214#340214
+function percentToRGB(percent) {
+    if (percent >= 100) {
+        percent = 99
+    }
+    var r, g, b;
+    if (percent < 50) {
+        // green to yellow
+        r = Math.floor(255 * (percent / 50));
+        g = 255;
+
+    } else {
+        // yellow to red
+        r = 255;
+        g = Math.floor(255 * ((50 - percent % 50) / 50));
+    }
+    // b = 0;
+
+    b = g;
+    g = 0;
+
+    return "rgb(" + r + "," + g + "," + b + ")";
+}
+
+
+var elevMin = -100,
+    elevMax = 3500;
+    // elevMax = 10300;
+
+var elevChromaLow = chroma.scale(["navy", "green", "yellow"]).domain([elevMin, 180 , elevMax]).gamma(0.5).correctLightness();
+var elevChromaHigh = chroma.scale([ "pink", "red"]).domain([elevMax, 10300]).gamma(10).correctLightness();
+ct.elevationFn = function(props, z, layer) {
+    props.Elevation = props.Elevation || 0;
+    var el = props.Elevation.toFixed(0);
+    return {
+        stroke: false,
+        fill: true,
+        fillColor: ( el < elevMax ? elevChromaLow(el) : elevChromaHigh(el) ),
+        fillOpacity: 1,
+        radius: 2,
+        type: "Point"
+    };
+};
+
 var activityColorLegend = {
     "": "lightgray",
     "Unknown": "lightgray",
@@ -158,30 +202,6 @@ ct.speedFn = function(properties, zoom, layer) {
 // tippecanoe_feature_density: 8
 //
 
-// https://stackoverflow.com/questions/340209/generate-colors-between-red-and-green-for-a-power-meter/340214#340214
-function percentToRGB(percent) {
-    if (percent >= 100) {
-        percent = 99
-    }
-    var r, g, b;
-    if (percent < 50) {
-        // green to yellow
-        r = Math.floor(255 * (percent / 50));
-        g = 255;
-
-    } else {
-        // yellow to red
-        r = 255;
-        g = Math.floor(255 * ((50 - percent % 50) / 50));
-    }
-    // b = 0;
-
-    b = g;
-    g = 0;
-
-    return "rgb(" + r + "," + g + "," + b + ")";
-}
-
 // -ag or --calculate-feature-density: Add a new attribute, tippecanoe_feature_density, to each feature, to record how densely features are spaced in that area of the tile. You can use this attribute in the style to produce a glowing effect where points are densely packed. It can range from 0 in the sparsest areas to 255 in the densest.
 var maxDensity = 62; //255;
 var maxRadius = 8;
@@ -189,21 +209,6 @@ var maxRadius = 8;
 var zRangeMin = 3;
 var zRangeMax = 19;
 var zRangeDiff = zRangeMax - zRangeMin;
-
-// At lower (farther out) zooms, we should "desensitize" scaling since most points will be "clustered" in higher numbers,
-// whereas at higher (closer) zooms, we should adjust tolerance to be more centered around lower feature_density values.
-function getRelDensity(zoom, n) {
-    var stepSize = maxDensity / zRangeDiff; // 255 / 17 = 15
-    var stepN = zoom - 1;
-    var lower = maxDensity - (stepN * stepSize);
-    if (n < lower) {
-        n = lower;
-    }
-    var mldiff = maxDensity - lower;
-    var rel = n - lower;
-    var relDensity = rel / mldiff;
-    return relDensity;
-}
 
 var
     tfds = [],
@@ -226,8 +231,8 @@ var
 
     noClus = 0;
 
-var minPC = 1000,
-    maxPC = 5000, // 10000 // 59534, // 172, //351, // 172, //9,
+var minPC = 2,
+    maxPC = 10000, // 10000 // 59534, // 172, //351, // 172, //9,
     rangePC = maxPC - minPC;
 
 var minTFD = 0,
@@ -239,77 +244,81 @@ ct.densityFn = function(properties, zoom, layer) {
     properties.point_count = properties.point_count || minPC;
     var n = properties.point_count > properties.tippecanoe_feature_density ? ((properties.point_count - minPC) / rangePC) : ((properties.tippecanoe_feature_density - minTFD) / rangeTFD);
 
-    if (nnn % 1000 === 0) {
-        if (properties.clustered) {
-            pcs.push(properties.point_count);
-            pcSum += properties.point_count;
-            pcAvg = pcSum / pcs.length;
-            pcMax = Math.max.apply(Math, pcs);
-            pcMin = Math.min.apply(Math, pcs);
-            pcMin = Math.min.apply(Math, pcs);
-        } else {
-            noClus++;
-        }
+    // if (nnn % 100 === 0) {
+    //     if (properties.clustered) {
+    //         pcs.push(properties.point_count);
+    //         pcSum += properties.point_count;
+    //         pcAvg = pcSum / pcs.length;
+    //         pcMax = Math.max.apply(Math, pcs);
+    //         pcMin = Math.min.apply(Math, pcs);
+    //         pcMin = Math.min.apply(Math, pcs);
+    //     } else {
+    //         noClus++;
+    //     }
 
-        ns.push(n);
-        nSum += n;
-        nAvg = nSum / ns.length;
-        nMax = Math.max.apply(Math, ns);
-        nMin = Math.min.apply(Math, ns);
-        nMin = Math.min.apply(Math, ns);
+    //     ns.push(n);
+    //     nSum += n;
+    //     nAvg = nSum / ns.length;
+    //     nMax = Math.max.apply(Math, ns);
+    //     nMin = Math.min.apply(Math, ns);
+    //     nMin = Math.min.apply(Math, ns);
 
-        tfds.push(properties.tippecanoe_feature_density);
-        tfdSum += properties.tippecanoe_feature_density;
-        tfdAvg = tfdSum / tfds.length;
-        tfdMax = Math.max.apply(Math, tfds);
-        tfdMin = Math.min.apply(Math, tfds);
-        tfdMin = Math.min.apply(Math, tfds);
+    //     tfds.push(properties.tippecanoe_feature_density);
+    //     tfdSum += properties.tippecanoe_feature_density;
+    //     tfdAvg = tfdSum / tfds.length;
+    //     tfdMax = Math.max.apply(Math, tfds);
+    //     tfdMin = Math.min.apply(Math, tfds);
+    //     tfdMin = Math.min.apply(Math, tfds);
 
-        cd("1/1000", nnn, "n=", n, properties);
+    //     if (nnn % 1000 === 0) {
+    //         cd(//"1/1000", nnn,
+    //            "n=", n,
+    //            properties);
 
-        cd(
-            "n.len=", ns.length,
-            "n.avg=", nAvg,
-            "n.min=", nMin,
-            "n.max=", nMax,
-        );
+    //         cd(
+    //             "n.len=", ns.length,
+    //             "n.avg=", nAvg,
+    //             "n.min=", nMin,
+    //             "n.max=", nMax,
+    //         );
 
-        cd(
-            "tfd.len=", tfds.length,
-            "tfd.avg=", tfdAvg,
-            "tfd.min=", tfdMin,
-            "tfd.max=", tfdMax,
-        );
+    //         cd(
+    //             "tfd.len=", tfds.length,
+    //             "tfd.avg=", tfdAvg,
+    //             "tfd.min=", tfdMin,
+    //             "tfd.max=", tfdMax,
+    //         );
 
-        cd(
-            "noclus(==nopc).ln=", noClus,
-            "pc.len=", pcs.length,
-            "pc.avg=", pcAvg,
-            "pc.min=", pcMin,
-            "pc.max=", pcMax,
-        );
-        cd("z", view.mapState.getMap().getZoom());
+    //         cd(
+    //             "noclus(==nopc).ln=", noClus,
+    //             "pc.len=", pcs.length,
+    //             "pc.avg=", pcAvg,
+    //             "pc.min=", pcMin,
+    //             "pc.max=", pcMax,
+    //         );
+    //         cd("z", view.mapState.getMap().getZoom());
+    //     }
+    // }
 
-    }
-
-    if (properties.Visit && properties.Visit !== "") {
-        cd("visit", properties.Visit);
-    }
-    nnn++;
+    // if (properties.Visit && properties.Visit !== "") {
+    //     cd("visit", properties.Visit);
+    // }
+    // nnn++;
 
     if (!ct.settingsFilter(properties, zoom, layer)) {
         return {};
     }
 
     var fillColor = function(p) {
-        return percentToRGB((p) * 100);
+        return percentToRGB((p) * 1000);
     };
     var fillOpacity = function(p) {
-        var o = 1- (1/p.toFixed(2));
+        var o = 1 - (1 / p.toFixed(2));
         return o > 0.2 ? o : 0.2;
     };
     var radius = function(p) {
         p = (p > 1 ? 1 : p);
+        var pp = 1/(1 - (p));
         var r = (maxRadius * p);
         return r > 1 ? r : 1;
     };
@@ -399,7 +408,12 @@ var vectorTileLayerStyles = {
     "density": {
         'catTrack': ct.densityFn,
         'catTrackEdge': ct.densityFn
-    }
+    },
+    "elevation": {
+        'catTrack': ct.elevationFn,
+        'catTrackEdge': ct.elevationFn
+    },
+
 };
 
 ct.baseTilesLayerOptsF = function(name) {

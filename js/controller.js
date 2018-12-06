@@ -1,3 +1,35 @@
+// Accuracy: 10
+// ​
+// Activity: "Unknown"
+// ​
+// Elevation: 142.9706268310547
+// ​
+// Heading: 218.3203125
+// ​
+// Name: "Big Papa"
+// ​
+// Notes: ""
+// ​
+// Pressure: 100.49606148077184
+// ​
+// Speed: 0.20999999344348907
+// ​
+// Time: "2018-12-05T20:16:51.998Z"
+// ​
+// UUID: "E96EEFB7-3A69-434D-9453-8BBFE0C22542"
+// ​
+// UnixTime: 1544041011
+// ​
+// Version: "V.VersionV2"
+// ​
+// clustered: true
+// ​
+// point_count: 10
+// ​
+// sqrt_point_count: 3.16
+// ​
+// tippecanoe_feature_density: 0
+
 var ct = ct || {};
 var view = view || {};
 var model = model || {};
@@ -6,21 +38,24 @@ model.lastKnownData = null;
 model.visitsData = {};
 model.visitsParams = {
     // defacto defaults
-    "googleNearby": "true",
-    "endI": "200",
-    "stats": "true",
+    data: {
+        "googleNearby": true,
+        "endI": 200,
+        "stats": true,
+        "names": ["Big Papa"]
+    },
     set: function(key, val) {
         // use 'null' val to unset key (acts as delete)
         if (val === null) {
-            delete this[key];
-            return this;
+            delete this.data[key];
+            return this.data;
         }
         // allow assigning entire object
         if ((typeof key).toLowerCase() === "object") {
-            Object.assign(this, key);
+            Object.assign(this.data, key);
             return this;
         }
-        this[key] = val;
+        this.data[key] = val;
         return this;
     },
     get: function() {
@@ -28,7 +63,13 @@ model.visitsParams = {
             cd("visits off");
             return $.ajax();
         } // return empty ajax to keep promise returnable
-        var url = queryURL(trackHost, "/visits2?", this);
+        cd("GET visits this.data=", this.data);
+        // hacky workaround cuz bouncer wants to fuck with the query params for ?url=...
+        var url = queryURL("", "", this.data);
+        url = trackHost + "/visits2" + url;
+        // var e = URI.encode( "catonmap.info:3001" + queryURL("", "", this.data) );
+        // var e = URI( "catonmap.info:3001" + queryURL("", "", this.data) ).href;
+        // var url = URI("https://bigger.space").addSearch("reset", true).addSearch("url", e).href();
         cd("GET", url);
         return $.ajax(qJSON(url));
     }
@@ -52,15 +93,20 @@ model.getState = function() {
         ur = window.history;
     }
 
+    if (typeof ur["drawUuids"] === "string") {
+        ur["drawUuids"] = [ur["drawUuids"]];
+    }
+
     return {
         zoom: ur["zoom"] || 12,
-        lat: ur["lat"] ||  38.613651383524335, // 32,
-        lng: ur["lng"] ||  -90.25388717651369,
-        baseLayer: ur["baseLayer"] ||  "terrain",
-        tileLayer: ur["tileLayer"] ||  "activity",
-        visits: ( ur["visits"] === "false" ) ? false : true,
-        follow: ur["follow"] ||  "",
-        windowStyle: ur["window"] || "light"
+        lat: ur["lat"] || 38.613651383524335, // 32,
+        lng: ur["lng"] || -90.25388717651369,
+        baseLayer: ur["baseLayer"] || "terrain",
+        tileLayer: ur["tileLayer"] || "activity",
+        visits: (ur["visits"] === "false") ? false : true,
+        follow: ur["follow"] || "",
+        windowStyle: ur["window"] || "light",
+        drawUuids: ur["drawUuids"] || []
     };
 
 };
@@ -85,53 +131,228 @@ model.errorMetadata = function(err) {
 };
 
 var ago3days = moment().add(-3, "days").unix();
+ct.filter = {
+    comparator: "", // any, all, none
+    rules: []
+
+};
+
+var doExistential = function(feat, comparator, key) {
+    if (comparator === "has") {
+        return feat.hasOwnProperty(key);
+    } else if (comparator === "!has") {
+        return !feat.hasOwnProperty(key) || typeof feat[key] === "undefined" || feat[key] === "null";
+    }
+    return null;
+};
+
+var doMembership = function(feat, comparator, key, set) {
+    if (comparator === "in") {
+        return set.indexOf(feat[key]) > -1;
+    } else if (comparator === "!in") {
+        return set.indexOf(feat[key]) === 0;
+    }
+    return null;
+};
+
+var doComparison = function(feat, comparator, key, val) {
+    cd("doComparison", feat, comparator, key, val);
+    return (comparator === "==" && feat[key] === val) ||
+        (comparator === "==" && +feat[key] === val) ||
+        (comparator === "!=" && feat[key] !== val) ||
+        (comparator === "<=" && (+feat[key] <= val)) ||
+        (comparator === ">=" && (+feat[key] >= val)) ||
+        (comparator === ">" && (+feat[key] > val)) ||
+        (comparator === "<" && (+feat[key] < val));
+};
+
+var handleDoComp = function(feat, comp) {
+    if ((comp[0].indexOf("=") >= 0) || (comp[0].indexOf("<") >= 0) || (comp[0].indexOf(">") >= 0)) {
+        return doComparison(feat, comp[0], comp[1], comp[2]);
+    } else if (comp[0].indexOf("has") >= 0) {
+        return doExistential(feat, comp[0], comp[1]);
+    } else if (comp[0].indexOf("in") >= 0) {
+        return doMembership(feat, comp[0], comp[1], comp[2]);
+    }
+    return null;
+};
+
+var Nn = 0;
+var runCondoperator = function(feat, condop, conditions) {
+    if (Nn === 0) {
+        cd("cond", condop, "condi", conditions);
+    }
+    if (condop === "any") {
+        for (var i = 0; i < conditions.length; i++) {
+            var c = conditions[i];
+            // [comparator, key, target]
+            if (handleDoComp(feat, c)) {
+                return true;
+            }
+        }
+        return false;
+    } else if (condop === "all") {
+        for (var j = 0; j < conditions.length; j++) {
+            var c = conditions[j];
+            // [comparator, key, target]
+            if (!handleDoComp(feat, c)) {
+                return false;
+            }
+        }
+        return true;
+    } else if (condop === "none") {
+        for (var k = 0; k < conditions.length; k++) {
+            var c = conditions[k];
+            // [comparator, key, target]
+            if (handleDoComp(feat, c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return null;
+};
+
 ct.settings = {
-    on: false,
-    // on: true,
-    filter: {
-        // "t": function(p, z, l) {
-        //     // if (!objExists(p.TimeUnix)) {
-        //     //     cd("noexit", p);
-        //     // }
-        //     return p.UnixTime > ago3days;
-        // }
+    // for persisting
+    filtering : [],
+    period : null, //  {} w/ begin, theend ((unix))
+
+    // for logicing
+    // comps: [{
+    //     "all": ["<=", "Elevation", 200]
+    // }, {"any": ...}],
+     comps : [],
+     initComps : function() {
+        var comps = []; // reset comps
+
+        if (this.period !== null) {
+            cd("initing periods comps");
+            comps.push({
+                all: [
+                    [">=", "UnixTime", this.period.start],
+                    ["<=", "Unixtime", this.period.end]
+                ]
+            });
+        }
+
+        var ff = model.getState().drawUuids;
+        cd("ff", ff);
+        if (ff.length > 0) {
+            cd("initing ff length");
+            var f = {
+                any: []
+            };
+            for (var j = 0; j < ff.length; j++) {
+                f.any.push(["==", "UUID", ff[j]]);
+            }
+            comps.push(f);
+        }
+        cd("comps inited", comps);
+        return;
     },
-    follow: null
+    setFiltering : function(filteringA) {
+        this.filtering = [];
+        for ( var z = 0; z < filteringA.length; z++) {
+            this.filtering[z] = filteringA[z];
+        }
+
+        model.setState("drawUuids", this.filtering);
+        cd('filtering', filteringA, this.filtering);
+        this.initComps();
+        return ;
+    },
+     setPeriod : function(start, end) {
+        this.period = this.period || {};
+        if (start + end === 0) {
+            this.period = null;
+            this.initComps();
+            return;
+        }
+        var st = (start > 0 ? start : moment().add(-500, "years").unix());
+        var en = (end > 0 ? end : moment().add(500, "years").unix());
+        this.period.start = st;
+        this.period.end = en;
+        this.initComps();
+        return;
+    },
+    check : function(feat) {
+        if (Nn === 0) {
+            // cd("settingsFilter feat", props, zoom, layer);
+            cd("thiscomps", this.comps);
+            Nn++;
+        }
+        for (var c = 0; c < this.comps.length; c++) {
+            var comp = this.comps[i];
+            var op = Object.keys(comp)[0];
+            var result = runCondoperator(feat, op, comp[op]);
+            if (result === false) {
+                return false;
+            } else if (result === null) {
+                cd("BAD OP", op, comp);
+            }
+        }
+        Nn++;
+        return true;
+    },
 };
+
 ct.settingsFilter = function(props, zoom, layer) {
-    if (!ct.settings.hasOwnProperty("on") ||
-        !ct.settings["on"] ||
-        !ct.settings.hasOwnProperty("filter")) return true; // no filter settings applied, or disabled (on=false)
-
-    for (var k in ct.settings.filter) {
-        if (!ct.settings.filter.hasOwnProperty(k)) {
-            continue;
-        }
-        var fn = ct.settings.filter[k];
-        if (!fn(props, zoom, layer)) {
-            return false;
-        }
+    if (Nn === 0) {
+        cd("settingsFilter feat", props, zoom, layer);
     }
-    return true;
+    var o = ct.settings.check(props);
+    cd("o", o);
+    return o;
 };
 
-ct.setSettingsFilter = function(key, fn) {
-    if (objExists(fn)) {
-        ct.settings["on"] = true;
-        ct.settings["filter"] = ct.settings["filter"] || {};
-        ct.settings["filter"][key] = fn;
-    } else {
-        if (ct.settings.hasOwnProperty("filter")) {
-            if (ct.settings.filter.hasOwnProperty(key)) {
-                delete ct.settings.filter[key];
-            }
-            if (Object.keys(ct.settings.filter).length === 0) {
-                ct.settings.on = false;
-            }
-        }
-    }
-    cd("ct.settings", ct.settings);
-};
+// ct.settings = {
+//     on: false,
+//     // on: true,
+//     filter: {
+//         // "t": function(p, z, l) {
+//         //     // if (!objExists(p.TimeUnix)) {
+//         //     //     cd("noexit", p);
+//         //     // }
+//         //     return p.UnixTime > ago3days;
+//         // }
+//     },
+//     follow: null
+// };
+// ct.settingsFilter = function(props, zoom, layer) {
+//     if (!ct.settings.hasOwnProperty("on") ||
+//         !ct.settings["on"] ||
+//         !ct.settings.hasOwnProperty("filter")) return true; // no filter settings applied, or disabled (on=false)
+
+//     for (var k in ct.settings.filter) {
+//         if (!ct.settings.filter.hasOwnProperty(k)) {
+//             continue;
+//         }
+//         var fn = ct.settings.filter[k];
+//         if (!fn(props, zoom, layer)) {
+//             return false;
+//         }
+//     }
+//     return true;
+// };
+
+// ct.setSettingsFilter = function(key, fn) {
+//     if (objExists(fn)) {
+//         ct.settings["on"] = true;
+//         ct.settings["filter"] = ct.settings["filter"] || {};
+//         ct.settings["filter"][key] = fn;
+//     } else {
+//         if (ct.settings.hasOwnProperty("filter")) {
+//             if (ct.settings.filter.hasOwnProperty(key)) {
+//                 delete ct.settings.filter[key];
+//             }
+//             if (Object.keys(ct.settings.filter).length === 0) {
+//                 ct.settings.on = false;
+//             }
+//         }
+//     }
+//     cd("ct.settings", ct.settings);
+// };
 
 model.getLocalStore = function(key) {
     if (objExists(ct.browserSupportsLocal) && !ct.browserSupportsLocal) {
@@ -277,7 +498,7 @@ ct.dataLoop = function(n) {
 
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
     view.mapState.setPBFOpt("");
-    setTimeout(ct.dataLoop, (n || 30) * 1000);
+    setTimeout(ct.dataLoop, (n || 300) * 1000);
 };
 
 ct.init = (function() {
@@ -358,7 +579,7 @@ ct.onVisits = function(visits, overwrite) {
         ct.markerClusterGroup.addLayer(v.marker(view.mapState.getMap()));
         // cd("new visit marker", v);
     }
-    cd("marker cluster group", ct.markerClusterGroup);
+    // cd("marker cluster group", ct.markerClusterGroup);
 
     view.mapState.setLayer("visits", ct.markerClusterGroup);
 };
@@ -484,16 +705,17 @@ ct.setViewStyle = function(lightOrDark) {
 
         $("#datetimepicker1").daterangepicker({
             timePicker: true,
-            startDate: moment().startOf("year"),
-            endDate: moment().startOf("hour").add(32, "hour"),
+            startDate: moment().startOf("month"),
+            endDate: moment().startOf("hour").add(1, "hour"),
             ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Today': [moment().startOf("day"), moment()],
+                'Yesterday': [moment().subtract(1, 'days').startOf("day"), moment().subtract(1, 'days').endOf("day")],
                 'Last 7 Days': [moment().subtract(6, 'days'), moment()],
                 'Last 30 Days': [moment().subtract(29, 'days'), moment()],
                 "Last 6 Months": [moment().subtract(6, "months"), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
-                'This Year': [moment().startOf('year'), moment()]
+                'This Month': [moment().startOf('month'), moment()],
+                'This Year': [moment().startOf('year'), moment()],
+                "Anytime": [moment(10000), moment(10000)]
                 // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
             locale: {
@@ -501,7 +723,17 @@ ct.setViewStyle = function(lightOrDark) {
             }
 
         }, function(start, end, label) {
-            cd(start, end, label);
+            cd("start", start.unix(), "end", end.unix());
+            var un = moment(10000);
+            var s = start.unix();
+            var e = end.unix();
+            if (start.isSame(un)) {
+                s = 0;
+            }
+            if (end.isSame(un)) {
+                e = 0;
+            }
+            ct.settings.setPeriod(s, e);
         });
 
     });

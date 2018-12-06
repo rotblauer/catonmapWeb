@@ -122,3 +122,25 @@
     border: 1px solid;
     /* background-color: lightblue; */
 }
+
+.daterangepicker {
+    background-color: inherit !important;
+}
+
+.daterangepicker * {
+    background-color: inherit !important;
+}
+
+.daterangepicker td.in-range {
+    background-color: yellow !important;
+    color: black !important;
+}
+
+.daterangepicker td.start-date {
+    background-color: yellow !important;
+    color: black !important;
+}
+
+.applyBtn {
+    background-color: green !important;
+}

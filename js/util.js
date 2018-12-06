@@ -31,26 +31,14 @@ function sleep(delay) {
 
 var queryURL = function queryURL(host, path, paramsObj) {
     var u = URI(host+path);
-
-    // var q = "";
-    // var n = 0;
     for (var key in paramsObj) {
         if (!paramsObj.hasOwnProperty(key) || typeof paramsObj[key] === "function") {
             continue;
         }
         var v = paramsObj[key];
-        // for php... suckas
-        // if (Object.prototype.toString.call( someVar ) === '[object Array]') {
-        //     key = key+"[]";
-        // }
         u.addSearch(key, v);
     }
     return u.href();
-    // q = encodeURIComponent(q);
-    // if ((host+path).slice(-1) !== "?") {
-    //     q = "?" + q;
-    // }
-    // return host + path + q;
 };
 
 var qJSON = function qJSON(url) {
@@ -113,23 +101,6 @@ var localOrDefault = function(key, def) {
     }
     return ls;
 };
-
-function assembleStateURL() {
-    var latlng = map.getCenter();
-    var lat = latlng.lat;
-    var lng = latlng.lng;
-    var z = map.getZoom();
-    var wl = window.location.origin;
-    var vv = $("#visits-checkbox").is(":checked") ? "yes" : "no";
-    var text = wl + "?z=" + z +
-        "&y=" + lng +
-        "&x=" + lat +
-        "&l=" + drawnLayer +
-        "&t=" + getCurrentTileLayerName() +
-        "&s=" + globalSinceFloor +
-        "&v=" + vv;
-    return text;
-}
 
 // http://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
 function shadeRGBColor(color, percent) {
