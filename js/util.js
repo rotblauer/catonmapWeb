@@ -32,20 +32,21 @@ function sleep(delay) {
 var queryURL = function queryURL(host, path, paramsObj) {
     var u = URI(host+path);
 
-    // var q = "";
-    // var n = 0;
     for (var key in paramsObj) {
         if (!paramsObj.hasOwnProperty(key) || typeof paramsObj[key] === "function") {
             continue;
         }
-        var v = paramsObj[key];
-        // for php... suckas
-        // if (Object.prototype.toString.call( someVar ) === '[object Array]') {
-        //     key = key+"[]";
-        // }
-        u.addSearch(key, v);
+        u.addSearch(key, paramsObj[key]);
     }
-    return u.href();
+
+    return URI({
+        protocol: "https",
+        hostname: "icanhazbounce.com",
+        query: "f=" + URI.encode(u.href())
+    }).href();
+
+    // return URI("https://icanhazbounce.com").addPath(u.href()).href();
+    // return  + u.href();
     // q = encodeURIComponent(q);
     // if ((host+path).slice(-1) !== "?") {
     //     q = "?" + q;
@@ -57,8 +58,16 @@ var qJSON = function qJSON(url) {
     return {
         type: "GET",
         url: url,
+        // data: ,
         dataType: "json",
-        timeout: 5000 // sets timeout to 3 seconds
+        timeout: 10000, // sets timeout to 3 seconds
+        beforeSend: function(request) {
+            // request.setRequestHeader("Access-Control-Allow-Origin", "*");
+            // request.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+        },
+        error: function(err) {
+            ce("ajax error", url, JSON.stringify(err, null, 2));
+        }
     };
 };
 

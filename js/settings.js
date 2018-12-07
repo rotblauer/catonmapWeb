@@ -1,7 +1,15 @@
 const latestiOSVersion = "V.VersionV2";
-var trackHost = "https://bigger.space?reset=true&url=catonmap.info:3001";
+
+// var trackHost = "https://bigger.space?reset=true&url=catonmap.info:3001";
 // var trackHost = "https://bigger.space?reset=true&url=track.areteh.co:3001";
-var tileHost =  "https://bigger.space?reset=true&url=catonmap.info:8080";
+var trackHost = "http://catonmap.info:3001";
+
+// var tileHost =  "https://bigger.space?reset=true&url=catonmap.info:8080";
+// var tileHost =  "https://icanhazbounce.com/http://catonmap.info:8080";
+// var tileHost =  "https://icanhazbounce.com/" + encodeURIComponent("http://catonmap.info:8080");
+// var tileHost =  "https://icanhazbounce.com/" + encodeURI("catonmap.info:8080");
+var tileHost = "https://icanhazbounce.com?f=" + encodeURIComponent("http://catonmap.info:8080");
+// var tileHost =  "http://catonmap.info:8080";
 // var tileHost =  "http://localhost:8081";
 // var tileHost =  "http://localhost:8082"; // /tdata/ttiles
 

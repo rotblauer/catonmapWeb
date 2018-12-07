@@ -2,25 +2,29 @@ var ct = ct || {};
 var view = view || {};
 var model = model || {};
 
+view.sps = 0;
+
 model.lastKnownData = null;
 model.visitsData = {};
 model.visitsParams = {
     // defacto defaults
-    "googleNearby": "true",
-    "endI": "200",
-    "stats": "true",
+    data: {
+        googleNearby: true,
+        endI: 50,
+        stats: true
+    },
     set: function(key, val) {
         // use 'null' val to unset key (acts as delete)
         if (val === null) {
-            delete this[key];
+            delete this.data[key];
             return this;
         }
         // allow assigning entire object
         if ((typeof key).toLowerCase() === "object") {
-            Object.assign(this, key);
+            Object.assign(this.data, key);
             return this;
         }
-        this[key] = val;
+        this.data[key] = val;
         return this;
     },
     get: function() {
@@ -28,7 +32,11 @@ model.visitsParams = {
             cd("visits off");
             return $.ajax();
         } // return empty ajax to keep promise returnable
-        var url = queryURL(trackHost, "/visits2?", this);
+        // var url = queryURL(trackHost, "/visits2?", this.data);
+        // var url = queryURL(trackHost, "/visits2?", this.data);
+        // hacky workaround cuz bouncer wants to fuck with the query params for ?url=...
+        var url = queryURL(trackHost, "/visits2", this.data);
+
         cd("GET", url);
         return $.ajax(qJSON(url));
     }
@@ -38,30 +46,60 @@ URI.fragmentPrefix = "@";
 
 model.state = {};
 model.setState = function(k, v) {
+    if (typeof k === "Object") {
+        window.history.replaceState(k, "catmapN", URI(window.location.href).setFragment(k));
+        window.localStorage.setItem("data", JSON.stringify(k));
+        return model;
+    }
+
     // window.history.replaceState({}, "catmapN", URI(window.url).setSearch());
     var o = window.history.state || {};
     o[k] = v;
     window.history.replaceState(o, "catmapN", URI(window.location.href).setFragment(k, v));
+    window.localStorage.setItem("data", JSON.stringify(o));
     return model;
 };
 
 model.getState = function() {
-    // var u = URI(window.url);
-    var ur = URI(window.location.href).fragment(true);
-    if (Object.keys(ur).length === 0) {
-        ur = window.history;
-    }
+
+    var uri = URI(window.location.href).fragment(true);
+
+    var his = window.history;
+
+    var ls = {};
+    try {
+        var d = window.localStorage.getItem("data");
+        if (d !== "" && objExists(d)) {
+            ls = JSON.parse(d);
+        }
+    } catch (err) {}
+
+    var s = {};
+    Object.assign(s, ls);
+    Object.assign(s, his);
+    Object.assign(s, uri);
 
     return {
-        zoom: ur["zoom"] || 12,
-        lat: ur["lat"] ||  38.613651383524335, // 32,
-        lng: ur["lng"] ||  -90.25388717651369,
-        baseLayer: ur["baseLayer"] ||  "terrain",
-        tileLayer: ur["tileLayer"] ||  "activity",
-        visits: ( ur["visits"] === "false" ) ? false : true,
-        follow: ur["follow"] ||  "",
-        windowStyle: ur["window"] || "light"
+        zoom: s["zoom"] || 12,
+        lat: s["lat"] || 38.613651383524335, // 32,
+        lng: s["lng"] || -90.25388717651369,
+        baseLayer: s["baseLayer"] || "terrain",
+        tileLayer: s["tileLayer"] || "activity",
+        visits: (( uri["visits"] || his["visits"] || ls["visits"] || "false" ) === "false") ? false : true,
+        follow: s["follow"] || "",
+        windowStyle: s["window"] || "light"
     };
+
+    // return {
+    //     zoom: uri["zoom"] || his["zoom"] || ls["zoom"] || 12,
+    //     lat: uri["lat"] || his["lat"] || ls["lat"] || 38.613651383524335, // 32,
+    //     lng: uri["lng"] || his["lng"] || ls["lng"] || -90.25388717651369,
+    //     baseLayer: uri["baseLayer"] || his["baseLayer"] || ls["baseLayer"] || "terrain",
+    //     tileLayer: uri["tileLayer"] || his["tileLayer"] || ls["tileLayer"] || "activity",
+    //     visits: (vs === "false") ? false : true,
+    //     follow: uri["follow"] || his["follow"] || ls["follow"] || "",
+    //     windowStyle: uri["window"] || uri["window"] || uri["window"] || "light"
+    // };
 
 };
 
@@ -74,10 +112,13 @@ model.getMetadata = function() {
 model.doneMetadata = function(data) {
     cd("got metadata", data);
     var m = moment();
-    var content = `<small>+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.<br>Status refreshed ${moment().format(" HH:mm:ss")}.</small>`;
+    var content = `<small class="metadataservercontent">+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.<br>Status refreshed ${moment().format(" HH:mm:ss")}.</small>`;
     // cd("content", content);
     var zin = $(".leaflet-top").first();
-    view.$metadataDisplay.html(content);
+    view.$metadataDisplay.children(".metadataservercontent").first().remove();
+    view.$metadataDisplay.append($(content));
+    view.$metadataDisplay.show();
+    // view.$metadataDisplay.html(content);
 };
 
 model.errorMetadata = function(err) {
@@ -249,7 +290,7 @@ model.doneLastKnownCats = function(data) {
 
 model.logAndMockInstead = function(err) {
     ce(err);
-    cw("WARNING: mocking data instead");
+    ce("WARNING: mocking data instead");
     model.doneLastKnownCats(mockLastknown);
 };
 
@@ -277,7 +318,7 @@ ct.dataLoop = function(n) {
 
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
     view.mapState.setPBFOpt("");
-    setTimeout(ct.dataLoop, (n || 30) * 1000);
+    setTimeout(ct.dataLoop, (n || 90) * 1000);
 };
 
 ct.init = (function() {
@@ -365,8 +406,7 @@ ct.onVisits = function(visits, overwrite) {
 
 
 view.init = function() {
-    view.$rawjson = $("#rawjson");
-    view.$processedata = $("#processedata");
+    view.$shownPointsShower = $(".shownPointsShower");
     view.$lastKnown = $("#lastknown");
     view.$metadataDisplay = $("#metadata-display");
     view.$selectDrawOpts = $("#settings-select-drawopts");
@@ -377,6 +417,7 @@ view.init = function() {
 
     // view.$selectDrawOpts.val(localOrDefault("l", "activity"));
     var ms = model.getState();
+    model.setState(ms);
 
     view.$selectDrawOpts.val(ms.tileLayer);
 

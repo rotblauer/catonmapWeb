@@ -84,6 +84,7 @@ var mapStateFn = function() {
     };
 
     var setPBFOpt = function(name) {
+        view.sps = 0;
         if (name === "") {
             lays[0].redraw(); // redraw edge layer... will it work?
             return;
@@ -105,7 +106,9 @@ var mapStateFn = function() {
         var keys = Object.keys(ls); // master, devop, edge
 
         for (var j = 0; j < keys.length; j++) {
-            var l = ls[keys[j]].bringToFront().setZIndex(10);
+            var l = ls[keys[j]].bringToFront().setZIndex(10).on("viewreset", function(e) {view.sps=0;}).on("load", function(e) {
+                view.$shownPointsShower.text(""+numberWithCommas( view.sps ));
+            });
             l.pane = "overlayPane";
             _map.addLayer(l);
             lays.push(l);

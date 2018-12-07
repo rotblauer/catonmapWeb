@@ -23,6 +23,7 @@ ct.activityFn = function(props, z, layer) {
     if (!ct.settingsFilter(props, z, layer)) {
         return {};
     }
+    view.sps++;
     var c = activityColorLegend[props["Activity"]];
     if (props.Speed > 80 || props.Elevation > 4000) {
         c = activityColorLegend["Fly"];
@@ -34,7 +35,7 @@ ct.activityFn = function(props, z, layer) {
             fill: true,
             fillColor: "black",
             // radius: pp > 1 ? pp : 1,
-            radius: 2,
+            radius: 1.5,
             type: "Point"
         };
         //     return {};
@@ -44,7 +45,7 @@ ct.activityFn = function(props, z, layer) {
         fill: true,
         fillColor: c || "lightgray",
         fillOpacity: c !== "lightgray" ? 0.9 : 0.1,
-        radius: 2,
+        radius: 1.5,
         // radius: pp > 1 ? pp : 1,
         type: "Point"
     };
@@ -117,6 +118,7 @@ ct.recencyFn = function(properties, zoom, layer) {
     if (!ct.settingsFilter(properties, zoom, layer)) {
         return {};
     }
+    view.sps++;
     var color2 = catColors()[properties.Name] || "rgb(241,66,244)";
     var time = new Date(properties.Time).getTime();
 
@@ -135,6 +137,7 @@ ct.speedFn = function(properties, zoom, layer) {
     if (!ct.settingsFilter(properties, zoom, layer)) {
         return {};
     }
+    view.sps++;
     var color2 = catColors()[properties.Name] || "rgb(241,66,244)";
 
     var maxNormalPossibleSpeed = 15; // m/s, no rockets allowed
@@ -313,6 +316,8 @@ ct.densityFn = function(properties, zoom, layer) {
         var r = (maxRadius * p);
         return r > 1 ? r : 1;
     };
+
+    view.sps++;
 
     // oldskool
     var out = {
