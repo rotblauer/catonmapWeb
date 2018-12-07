@@ -153,11 +153,11 @@ var visitMarker = function(e, props, map) {
                 if (!r.photos) {
                     cd("no photos", r);
                 } else if (firstphoto === "") {
-                    firstphoto = "<img src='" + trackHost + "/googleNearbyPhotos?photoreference=" + encodeURIComponent(r.photos[0]["photo_reference"]) + "' style='width: 300px;' />";
+                    firstphoto = "<img src='" + "https://icanhazbounce.com?f=" + trackHost + "/googleNearbyPhotos?photoreference=" + encodeURIComponent(r.photos[0]["photo_reference"]) + "' style='width: 300px;' />";
                 } else {
                     // limit detail photos, and don't show dupes
                     if (photoshtmllim <= 3 && photoshtml.indexOf(r.photos[0]["photo_reference"]) < 0) {
-                        photoshtml = photoshtml + "<img src='" + trackHost + "/googleNearbyPhotos?photoreference=" + encodeURIComponent(r.photos[0]["photo_reference"]) + "' style='max-width: 75px;' />";
+                        photoshtml = photoshtml + "<img src='" + "https://icanhazbounce.com?f=" +trackHost + "/googleNearbyPhotos?photoreference=" + encodeURIComponent(r.photos[0]["photo_reference"]) + "' style='max-width: 75px;' />";
                         photoshtmllim++;
                     }
                 }
