@@ -318,7 +318,7 @@ ct.dataLoop = function(n) {
 
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
     view.mapState.setPBFOpt("");
-    setTimeout(ct.dataLoop, (n || 90) * 1000);
+    setTimeout(ct.dataLoop, (n || 55) * 1000);
 };
 
 ct.init = (function() {
