@@ -466,6 +466,7 @@ ct.setViewStyle = function(lightOrDark) {
     $(function() {
         var b = $("body");
         view.$map = $("#map");
+        $(".box").css({height: "100%"});
         view.mapState = (mapStateFn)();
         view.init();
         if (isSmallScreen()) {
@@ -487,7 +488,7 @@ ct.setViewStyle = function(lightOrDark) {
             $(".nav-link").removeClass("active");
             $(e.target).addClass("active");
             $("html, body").animate({ scrollTop: $(".box").height()-$("#navvy").height()-15 }, "slow");
-            $("body").css({overflow: "scroll"});
+            // $("body").css({overflow: "scroll"});
             return false;
         }).css({cursor: "pointer"});
 
@@ -495,7 +496,7 @@ ct.setViewStyle = function(lightOrDark) {
             $(".nav-link").removeClass("active");
             $(e.target).addClass("active");
             $("html, body").animate({ scrollTop: 0 }, "slow");
-            $("body").css({overflow: "hidden"});
+            // $("body").css({overflow: "hidden"});
         }).css({cursor: "pointer"});
 
         ct.init();
