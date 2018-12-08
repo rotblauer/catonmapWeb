@@ -179,7 +179,7 @@ function isSmallScreen() {
 
 var uniqueFilter = function(val, i, self) {
     return self.indexOf(val) === i;
-}
+};
 
 // Extend jquery with flashing for elements
 $.fn.flash = function(duration, iterations) {
@@ -189,4 +189,4 @@ $.fn.flash = function(duration, iterations) {
         this.fadeOut(duration).fadeIn(duration);
     }
     return this;
-}
+};

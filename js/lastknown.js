@@ -253,8 +253,20 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
                 var hhr = $( `<img class='heart-icon' src="/heart2.svg" style="height: 1em; display: none; margin-right: 0.3em;"/>` );
                 lastupNotes.prepend(hhr);
 
-                var cms = hr / 60 * 1000 / 2;
-                hhr.flash(cms, 1000);
+                if (this.time.isAfter(moment().subtract(5, "minutes"))) {
+                    var cms = hr / 60 * 1000 / 2;
+                    hhr.flash(cms, 1000);
+                    var bpm = $("<sub>").text(hr).css({
+                        color: "red",
+                        "font-weight": "lighter",
+                        "font-size": "0.7em",
+                        "margin-left": "-0.3em",
+                        "margin-right": "0.3em"
+                    });
+                    hhr.after(bpm);
+                } else {
+                    hhr.attr("src", "/heart-gray.png");
+                }
             }
         }
 
