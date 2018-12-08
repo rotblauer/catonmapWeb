@@ -52,6 +52,8 @@ var dataLastKnownEntry = {
     lastVisit: Object.create(visitP),
     visits: Object.create(visitsData),
     ln: null,
+    // heartIcon: 0,
+    // heartTime: null,
     // identifier per cat device or accomplices
     uid: function() {
         return "|COLOR|" + this.getColor() + "|NAME|" + this.name + "|UUID|" + this.uuid;
@@ -61,7 +63,7 @@ var dataLastKnownEntry = {
         return this.getColor(); // TODO
     },
     elid: function() {
-        return this.getColor().replace(",","").replace(",","").replace("(", "").replace(")","");
+        return this.getColor().replace(",", "").replace(",", "").replace("(", "").replace(")", "");
     },
     getColor: function() {
         if (objExists(catColors()[this.uuid])) {
@@ -88,6 +90,25 @@ var dataLastKnownEntry = {
             return moment();
         }
     },
+    // heartBeat: function(hr) {
+    //     if (!objExists(hr) && !objExists(this.heartIcon)) {
+    //         return;
+    //     }
+    //     if (!objExists(this.heartIcon)) {
+    //         this.heartIcon = $( this.el().find(".heart-icon").first().show() );
+    //         this.heartTime = hr;
+    //     }
+    //     hr = hr || this.heartTime;
+    //     // https://stackoverflow.com/a/23030299 
+    //     // .fadeTo(100, 0.3, function() { $(this).fadeTo(500, 1.0); });
+    //     // hr == count/min
+    //     // hr / 60 == count/sec
+    //     // hr / 60 /1000 = count/millisec
+    //     var cms = hr/60*1000/2;
+    //     // /2 cause pomp pomp
+    //     $( this.heartIcon ).fadeOut(cms).fadeIn(cms);
+    //     setInterval(this.heartBeat, hr*2);
+    // },
     init: function() {
         this.color = this.getColor();
         this.key = this.color; // randHex(8);
@@ -118,7 +139,7 @@ var dataLastKnownEntry = {
             var lat = t.attr("data-lat");
             var lng = t.attr("data-lng");
 
-            view.mapState.getMap().flyTo([ lat, lng ]);
+            view.mapState.getMap().flyTo([lat, lng]);
         };
         var find = function(e) {
             var et = $(e.target).closest(".lastKnown");
@@ -226,7 +247,17 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
                 // .addClass("text-muted");
                 .addClass("text-muted");
             this.el().find(".links").first().append(lastupNotes);
+
+            var hr = this.heartRate();
+            if (hr) {
+                var hhr = $( `<img class='heart-icon' src="/heart2.svg" style="height: 1em; display: none; margin-right: 0.3em;"/>` );
+                lastupNotes.prepend(hhr);
+
+                var cms = hr / 60 * 1000 / 2;
+                hhr.flash(cms, 1000);
+            }
         }
+
         if (this.lastVisit && this.lastVisit.exists()) {
             var vv = this.lastVisit;
             var con = vv.PlaceParsed.Identity;
@@ -238,11 +269,11 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
                 // con = "Spent " + vv.departureDateLocal.to(vv.arrivalDateLocal, true) + " + " at " + con " 
                 con = `Spent ${vv.departureDateLocal.to(vv.arrivalDateLocal, true)} at ${vv.PlaceParsed.Identity}, left ${vv.departureDate.fromNow()}`;
             }
-            var vis = $( `<small>${con}</small>`).css("cursor", "pointer").on("click", function() {
-                view.mapState.getMap().setView([ vv.PlaceParsed.Lat, vv.PlaceParsed.Lng ]);
+            var vis = $(`<small>${con}</small>`).css("cursor", "pointer").on("click", function() {
+                view.mapState.getMap().setView([vv.PlaceParsed.Lat, vv.PlaceParsed.Lng]);
             })
-                // .css("color", "blue")
-                // .css("text-decoration", "underline")
+            // .css("color", "blue")
+            // .css("text-decoration", "underline")
             ;
             this.el().find(".lastVisit").last().html("");
             this.el().find(".lastVisit").last().append(vis);
@@ -255,9 +286,9 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
         // init follow if following
         if (ct.settings.follow !== "") {
             if (objExists(model.lastKnownData)) {
-                var c =  model.lastKnownData.get(ct.settings.follow);
+                var c = model.lastKnownData.get(ct.settings.follow);
                 if (objExists(c)) {
-                    view.mapState.getMap().flyTo([ c.lat, c.long ]);
+                    view.mapState.getMap().flyTo([c.lat, c.long]);
                 }
             }
         }
@@ -267,6 +298,13 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
     hasNoteObject: function() {
         return typeof this.notes === "object" && this.notes.hasOwnProperty("activity");
     },
+    heartRate: function() {
+        if (!objExists(this.notes.heartRateS)) {
+            return false;
+        }
+        var beat = +this.notes.heartRateS.split(" ")[0];
+        return beat;
+    }
 };
 
 var iconCat = L.icon({
@@ -312,7 +350,7 @@ var dataLastKnownData = {
 var dataLastKnown = {
     data: Object.create(dataLastKnownData),
     add: function(cat) {
-        if (objExists( this.get(cat.iid()) )) {
+        if (objExists(this.get(cat.iid()))) {
             var existCat = this.get(cat.iid());
 
             if (cat.time.isAfter(existCat.time)) {

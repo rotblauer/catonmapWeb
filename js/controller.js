@@ -198,7 +198,7 @@ model.setLastKnown = function(data) {
         model.lastKnownData.add(cats[k]);
     }
 
-    cd("lastknown cats", model.lastKnownData);
+    // cd("lastknown cats", model.lastKnownData);
 
     return model.lastKnownData;
 };
@@ -481,9 +481,14 @@ ct.setViewStyle = function(lightOrDark) {
         var zin = $(".leaflet-top").first();
         view.$metadataDisplay
             .css("position", "fixed")
+
             .css("left", zin.position().left + zin.width() + 10)
             .css("top", zin.position().top)
             .css("margin-top", "10px")
+
+            // .css({bottom: 10, left: 10})
+            // .css("margin-bottom", "10px")
+
             .css("z-index", 1000);
 
         view.$viewSettingsToggleContainer = $("<div>").addClass("leaflet-control");
