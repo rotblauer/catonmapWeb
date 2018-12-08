@@ -254,7 +254,8 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
                 lastupNotes.prepend(hhr);
 
                 if (this.time.isAfter(moment().subtract(5, "minutes"))) {
-                    var cms = hr / 60 * 1000 / 2;
+                    // var cms = hr / (60) * 1000 / 2;
+                    var cms = ( (60*1000)/hr )/2;
                     hhr.flash(cms, 1000);
                     var bpm = $("<sub>").text(hr).css({
                         color: "red",
