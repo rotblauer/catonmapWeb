@@ -112,12 +112,16 @@ model.getMetadata = function() {
 model.doneMetadata = function(data) {
     cd("got metadata", data);
     var m = moment();
-    var content = `<small class="metadataservercontent">+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.<br>Status refreshed ${moment().format(" HH:mm:ss")}.</small>`;
+    var content = `<small class="metadataservercontent">+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}. TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}. Status refreshed ${moment().format(" HH:mm:ss")}.<br/></small>`;
     // cd("content", content);
     var zin = $(".leaflet-top").first();
     view.$metadataDisplay.children(".metadataservercontent").first().remove();
-    view.$metadataDisplay.append($(content));
-    view.$metadataDisplay.show();
+    view.$metadataDisplay.prepend($(content));
+    if (!isSmallScreen()) {
+        view.$metadataDisplay.show();
+    } else {
+        view.$metadataDisplay.hide();
+    }
     // view.$metadataDisplay.html(content);
 };
 
@@ -466,25 +470,46 @@ ct.setViewStyle = function(lightOrDark) {
         view.init();
         if (isSmallScreen()) {
             // $(".box").css("max-height", "60%");
-            $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); // .css("height", "60%");
-            $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%");
+            // $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); // .css("height", "60%");
+            // $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%");
         } else if (b.width() < b.height()) {
-            // or portrait mode
-            // $(".box").css("max-height", "60%");
-            $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); //.css("height", "60%");
-            $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%").toggleClass("col col-md-6 offset-md-6");
-            view.$lastKnown.closest(".col-sm-4").removeClass("col-sm-4").addClass("col-12");
-            $("#main-display").children(".col-sm-8").first().removeClass("col-sm-8").addClass("col-12");
+            // // or portrait mode
+            // // $(".box").css("max-height", "60%");
+            // $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); //.css("height", "60%");
+            // $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%").toggleClass("col col-md-6 offset-md-6");
+            // view.$lastKnown.closest(".col-sm-4").removeClass("col-sm-4").addClass("col-12");
+            // $("#main-display").children(".col-sm-8").first().removeClass("col-sm-8").addClass("col-12");
         }
+
+        // $("#navvy").css({bottom: })
+
+        view.$catsOnDemand = $("#cats-view-link").on("click", function(e) {
+            $(".nav-link").removeClass("active");
+            $(e.target).addClass("active");
+            $("html, body").animate({ scrollTop: $(".box").height()-$("#navvy").height()-15 }, "slow");
+            $("body").css({overflow: "scroll"});
+            return false;
+        }).css({cursor: "pointer"});
+
+        view.$mapOnDemand = $("#map-view-link").on("click", function(e) {
+            $(".nav-link").removeClass("active");
+            $(e.target).addClass("active");
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            $("body").css({overflow: "hidden"});
+        }).css({cursor: "pointer"});
 
         ct.init();
         var zin = $(".leaflet-top").first();
         view.$metadataDisplay
-            .css("position", "fixed")
+            .css({
+                position: "fixed",
+                left: zin.position().left + zin.width() + 10,
+                top:  zin.position().top,
+                "margin-top": "10px"
+            })
+            // .css({position: "fixed", bottom: 0, margin: 0, right: 0})
+            // .addClass("px-1")
 
-            .css("left", zin.position().left + zin.width() + 10)
-            .css("top", zin.position().top)
-            .css("margin-top", "10px")
 
             // .css({bottom: 10, left: 10})
             // .css("margin-bottom", "10px")
