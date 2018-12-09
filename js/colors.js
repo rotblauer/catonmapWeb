@@ -32,6 +32,8 @@ var catColors = (function() {
         "Chishiki": "rgb(27,142,29)",
 
         "jlc": "rgb(255, 128, 51)", //orangish
+        "A3B7FE86-0964-4421-9507-99007E6852DF": "rgb(255, 128, 51)",
+
         "rja": "rgb( 141, 0, 222 )",
         "coley": "rgb( 0, 176, 35 )", //dark green ish
         "pancho": "rgb(51, 153, 255)",
