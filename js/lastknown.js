@@ -51,6 +51,7 @@ var dataLastKnownEntry = {
     alternateCats: {}, // for other devices, keyed on color
     lastVisit: Object.create(visitP),
     visits: Object.create(visitsData),
+    COVerified: false,
     ln: null,
     // heartIcon: 0,
     // heartTime: null,
@@ -184,7 +185,7 @@ var dataLastKnownEntry = {
             this.e = $(`
 <div href="#" id="${this.elid()}" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
     <div class="d-flex w-100 justify-content-between">
-        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name}</h6>
+        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' >${this.COVerified ? "(Verified)" : "(Unverified)"}</small></h6>
         <small class="text-muted" >${this.time.fromNow()}</small>
     </div>
     <div class="d-flex w-100 justify-content-between links">
