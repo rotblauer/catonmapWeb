@@ -1,4 +1,4 @@
-const latestiOSVersion = "V.VersionV2";
+const latestiOSVersion = "V.verify";
 
 // var trackHost = "https://bigger.space?reset=true&url=catonmap.info:3001";
 // var trackHost = "https://bigger.space?reset=true&url=track.areteh.co:3001";
