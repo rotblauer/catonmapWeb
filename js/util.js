@@ -42,7 +42,7 @@ var queryURL = function queryURL(host, path, paramsObj) {
     return URI({
         protocol: "https",
         hostname: "icanhazbounce.com",
-        query: "url=" + URI.encode(u.href())
+        query: "init=1&url=" + URI.encode(u.href())
     }).href();
 
     // return URI("https://icanhazbounce.com").addPath(u.href()).href();

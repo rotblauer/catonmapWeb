@@ -1,4 +1,4 @@
 var LtileLayerDefaults = {
-    maxZoom: 19
+    maxZoom: 20
     // position: "bottomleft"
 };
