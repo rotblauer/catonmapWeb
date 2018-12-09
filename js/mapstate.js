@@ -166,7 +166,7 @@ var mapStateFn = function() {
             .on("load", _mapOnLoad)
             .on("click", _mapOnClick);
 
-        L.control.layers(_mapboxLayers).addTo(_map);
+        L.control.layers(null, _mapboxLayers, {position: "topleft"}).addTo(_map);
 
         _currentPBFLayerOpt = s.tileLayer;
         setPBFOpt(_currentPBFLayerOpt);

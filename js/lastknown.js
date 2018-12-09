@@ -257,14 +257,14 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
                     // var cms = hr / (60) * 1000 / 2;
                     var cms = ( (60*1000)/hr )/2;
                     hhr.flash(cms, 1000);
-                    var bpm = $("<sub>").text(hr).css({
-                        color: "red",
-                        "font-weight": "lighter",
-                        "font-size": "0.7em",
-                        "margin-left": "-0.3em",
-                        "margin-right": "0.3em"
-                    });
-                    hhr.after(bpm);
+                    // var bpm = $("<sub>").text(hr).css({
+                    //     color: "red",
+                    //     "font-weight": "lighter",
+                    //     "font-size": "0.7em",
+                    //     "margin-left": "-0.3em",
+                    //     "margin-right": "0.3em"
+                    // });
+                    // hhr.after(bpm);
                 } else {
                     hhr.attr("src", "/heart-gray.png");
                 }

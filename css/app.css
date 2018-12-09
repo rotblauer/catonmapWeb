@@ -21,21 +21,21 @@
 
 .transparent50 {
     /* color: "lightgray"; */
-	  /* Theoretically for IE 8 & 9 (more valid) */	
+	  /* Theoretically for IE 8 & 9 (more valid) */
 	  /* ...but not required as filter works too */
 	  /* should come BEFORE filter */
 	  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-	  
+
 	  /* This works in IE 8 & 9 too */
 	  /* ... but also 5, 6, 7 */
 	  filter: alpha(opacity=50);
-	  
+
 	  /* Older than Firefox 0.9 */
 	  -moz-opacity:0.5;
-	  
+
 	  /* Safari 1.x (pre WebKit!) */
 	  -khtml-opacity: 0.5;
-    
+
 	  /* Modern!
 	  /* Firefox 0.9+, Safari 2?, Chrome any?
 	  /* Opera 9+, IE 9+ */
@@ -121,4 +121,26 @@
     padding-right: 0.3em;
     border: 1px solid;
     /* background-color: lightblue; */
+}
+
+
+.shad {
+    -webkit-box-shadow: -3px 6px 9px 0px rgba(0,0,0,0.38);
+    -moz-box-shadow: -3px 6px 9px 0px rgba(0,0,0,0.38);
+    box-shadow: -3px 6px 9px 0px rgba(0,0,0,0.38);
+}
+
+.shad {
+    -webkit-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);
+    -moz-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);
+    box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);
+}
+
+.vshad {
+    /* -webkit-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38); */
+    /* -moz-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38); */
+    /* box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38); */
+    -webkit-box-shadow: -2px 2px 30px 7px rgba(0,0,0,0.38);
+    -moz-box-shadow: -2px 2px 30px 7px rgba(0,0,0,0.38);
+    box-shadow: -2px 2px 30px 7px rgba(0,0,0,0.38);
 }

@@ -38,33 +38,42 @@
 <body class="container-fluid p-0" style="height: 100%;">
 
     <div id="main-display" class="row m-0 p-0" style="height:100%; overflow: hidden;">
-        <div id="main1" class="col-sm-8 col-md-9 m-0 p-0" >
+        <div id="main1" class="col-12 m-0 p-0" >
+
             <!-- height: 100% -->
             <div class="box">
                 <div id="map">
                 </div>
             </div>
+
+            <p id="metadata-display" style="display: none;">
+                <small>Rendered <span class="shownPointsShower">0</span> points.<br/></small>
+            </p>
+
         </div>
-        <p id="metadata-display" style="display: none;">
-            <small>Rendered <span class="shownPointsShower">0</span> points.<br/></small>
-        </p>
+
+        <style>
+        </style>
+
         <!-- // side or overlayd -->
-        <div id="main2" class="col m-0 p-0" >
+        <div id="main2" class=" offset-sm-8 offset-md-9 col-sm-4 col-md-3 m-0 p-0" style="height: 100%; position: absolute; top: 0; right: 0; background: transparent; z-index: 999; ">
+
             <!-- tiny meta links -->
-            <div id="main2-links" class="row m-0 p-0 ">
-                <div id="main2-links-child" class="col lastknown-col">
-                    <div class="d-flex w-100 justify-content-between px-1" style="font-size: 0.9em;">
-                        <a href="http://www.catstats.rotblauer.com/" style="" target="_">catstats<sup>-></sup></a>
-                        <span>&nbsp;|&nbsp;</span>
-                        <a id="install-ios-link" href="http://punktlich.rotblauer.com/install" target="_">iOS: <span id="latest-version-ios"></span><sup>-></sup></a>
-                    </div>
-                </div>
-            </div>
+
+            <!-- <div id="main2-links" class="row m-0 p-0 "> -->
+            <!-- <div id="main2-links-child" class="col lastknown-col"> -->
+            <!-- <div class="d-flex w-100 justify-content-between px-1" style="font-size: 0.9em;"> -->
+            <!-- <a href="http://www.catstats.rotblauer.com/" style="" target="_">catstats<sup>-></sup></a> -->
+            <!-- <span>&nbsp;|&nbsp;</span> -->
+            <!-- <a id="install-ios-link" href="http://punktlich.rotblauer.com/install" target="_">iOS: <span id="latest-version-ios"></span><sup>-></sup></a> -->
+            <!-- </div> -->
+            <!-- </div> -->
+            <!-- </div> -->
 
             <!-- last known container -->
             <!-- <div class="row m-0 p-0" style="height: 100%; width: 100%; "> -->
             <div class="row m-0 p-0" >
-                <div id="" class="col m-0 p-0 lastknown-col" style="height: 100%; overflow-y: scroll !important;">
+                <div id="" class="col shad m-0 p-0 lastknown-col" style="height: 100%; overflow-y: scroll !important;">
                     <!-- style="height: 100%; overflow-y: scroll !important;" -->
                     <div id="lastknown" class="list-group"  >
                     </div>
@@ -72,6 +81,8 @@
             </div>
         </div>
     </div>
+
+    <button class="btn btn-lg btn-primary m-3 vshad" style=" z-index: 1111; position: fixed; bottom: 0; right: 0;">Cats</button>
 
     <div id="viewsettings-div" class="modal fade settings-modal" tabindex="-1" role="dialog" aria-labelledby="settingsModal" aria-hidden=" true">
         <div class="modal-dialog modal-sm ">
