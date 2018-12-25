@@ -47,7 +47,8 @@ var mapStateFn = function() {
     var _currentPBFLayerOpt = null; // activity, recency
     var _pbfURL = function(id) {
         // tileHost = "/home/ia/tdata/ttiles";
-        return tileHost + "/" + id + "/{z}/{x}/{y}";
+        return tileHost + "/services/db/tiles/{z}/{x}/{y}.pbf" ;// .pbf";
+        // return tileHost + "/" + id + "/{z}/{x}/{y}";
         // return tileHost +  "/{z}/{x}/{y}" + ".geojson";
     };
     var _pbfLayerOpts = {

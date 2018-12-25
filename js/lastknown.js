@@ -72,6 +72,26 @@ var dataLastKnownEntry = {
         }
         return catColors()[this.name] || "lightgray";
     },
+    batteryLevel: function() {
+        var n = this.parseNotes();
+        if (n) {
+            if (n["battery"]) {
+                var b = JSON.parse(n["battery"]);
+                return +b.level;
+            }
+        }
+        return -1;
+    },
+    batteryStatus: function() {
+        var n = this.parseNotes();
+        if (n) {
+            if (n["battery"]) {
+                var b = JSON.parse(n["battery"]);
+                return b.status;
+            }
+        }
+        return "n/a/";
+    },
     parseNotes: function() {
         // parse notes
         if (this.notes !== "") {
@@ -185,7 +205,7 @@ var dataLastKnownEntry = {
             this.e = $(`
 <div href="#" id="${this.elid()}" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
     <div class="d-flex w-100 justify-content-between">
-        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' >${this.COVerified ? "(Verified)" : "(Unverified)"}</small></h6>
+        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' ><sup>${this.COVerified ? "Auth OK" : ""}</sup></small></h6>
         <small class="text-muted" >${this.time.fromNow()}</small>
     </div>
     <div class="d-flex w-100 justify-content-between links">
@@ -242,21 +262,23 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
             // var subtitle = "" + no.activity + ", elevation: " + this.elevation.toFixed(0) + "m<br>" + no.numberOfSteps + " steps, distance: " + (no.distance / 1).toFixed(0) + "m since " + moment(no.currentTripStart).from(moment());
 
             var existing = this.el().find(".lastup-notes").remove();
+            this.el().find(".battery-status").remove();
             var lastupNotes = $("<small>")
                 .addClass("mb-0 lastup-notes")
                 .html(subtitle)
                 // .addClass("text-muted");
                 .addClass("text-muted");
+            var batSpan = $("<small>").addClass("text-muted");
             this.el().find(".links").first().append(lastupNotes);
 
             var hr = this.heartRate();
             if (hr) {
-                var hhr = $( `<img class='heart-icon' src="/heart2.svg" style="height: 1em; display: none; margin-right: 0.3em;"/>` );
+                var hhr = $(`<img class='heart-icon' src="/heart2.svg" style="height: 1em; display: none; margin-right: 0.3em;"/>`);
                 lastupNotes.prepend(hhr);
 
                 if (this.time.isAfter(moment().subtract(5, "minutes"))) {
                     // var cms = hr / (60) * 1000 / 2;
-                    var cms = ( (60*1000)/hr )/2;
+                    var cms = ((60 * 1000) / hr) / 2;
                     hhr.flash(cms, 1000);
                     // var bpm = $("<sub>").text(hr).css({
                     //     color: "red",
@@ -270,6 +292,26 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
                     hhr.attr("src", "/heart-gray.png");
                 }
             }
+
+            if (this.batteryLevel() > 0) {
+                var plusOrMin = "";
+                switch ( this.batteryStatus() ) {
+                case "full":
+                    plusOrMin = "+";
+                    break;
+                case "charging":
+                    plusOrMin = "+";
+                    break;
+                case "unplugged":
+                    plusOrMin = "-";
+                    break;
+                case "unknown":
+                    plusOrMin = "?";
+                }
+                cd(this.batteryStatus());
+                lastupNotes.after($("<small>").addClass("battery-status").css({"font-size": "0.7em", "font-weight": "light"}).html( "<img src='/battery-icon.png' style='height: 0.8em;'/>" + ( this.batteryLevel()*100 ).toFixed(0)+"%"+plusOrMin));
+            }
+
         }
 
         if (this.lastVisit && this.lastVisit.exists()) {
