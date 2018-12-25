@@ -316,6 +316,8 @@ ct.dataLoop = function(n) {
                 .catch(model.errVisits);
         });
 
+    model.loadSnaps();
+
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
     view.mapState.setPBFOpt("");
     setTimeout(ct.dataLoop, (n || 55) * 1000);
@@ -373,6 +375,50 @@ ct.onLastKnown = function(data) {
     }).asLayerGroup();
 
     view.mapState.setLayer("lastKnown", lg);
+};
+
+model.loadSnaps = function(snaps) {
+        var url = queryURL(trackHost, "/catsnaps");
+        cd("GET", url);
+        $.ajax(qJSON(url))
+            .done(function(data) {
+                var snaps = data;
+                cd("GOT SNAPS", snaps);
+                view.mapState.setLayer("snaps", null);
+                ct.snapsClusterGroup = L.markerClusterGroup();
+                snaps.forEach(function(snap) {
+                    // if (!snaps.hasOwnProperty(i)) {
+                    //     return;
+                    // }
+                    var n = JSON.parse(snap.notes);
+                    cd("snap notes", n);
+                    if (!objExists(n["imgS3"]) || !n.hasOwnProperty("imgS3") || n["imgS3"] === "") {
+                        return;
+                    }
+                    var s3url = "https://s3.us-east-2.amazonaws.com/" + n["imgS3"];
+                    var marker = L.marker([snap.lat, snap.long], {
+                        icon: iconSnap
+                    }).on("click", function(e) {
+                        cd(e);
+                        var url = s3url; // close
+                        // return function() {
+                        var content = "<img src='" + url + "' style='width:300px;' />";
+                        L.popup()
+                            .setContent(content)
+                            .setLatLng([e.latlng.lat, e.latlng.lng])
+                            .openOn(view.mapState.getMap());
+                        L.DomEvent.stop(e);
+                        // }();
+                    })
+                    ct.snapsClusterGroup.addLayer(marker);
+                });
+
+                view.mapState.setLayer("snaps", ct.snapsClusterGroup);
+
+            })
+            .catch(function(err) {
+                ce(err);
+            });
 };
 
 ct.onVisits = function(visits, overwrite) {
@@ -487,27 +533,6 @@ function toggleCatsView() {
         if (catsViewOn) {
             $("#catsRenderedSwitcher").hide();
         }
-        // if isSmallScreen() {
-        //     catsViewOn = false;
-        //     $("main2")
-        // } else {
-        //     catsViewOn = true;
-        // }
-
-        // if (isSmallScreen()) {
-        //     // $(".box").css("max-height", "60%");
-        //     $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); // .css("height", "60%");
-        //     $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%");
-        // } else if (b.width() < b.height()) {
-        //     // or portrait mode
-        //     // $(".box").css("max-height", "60%");
-        //     $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); //.css("height", "60%");
-        //     $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%").toggleClass("col col-md-6 offset-md-6");
-        //     view.$lastKnown.closest(".col-sm-4").removeClass("col-sm-4").addClass("col-12");
-        //     $("#main-display").children(".col-sm-8").first().removeClass("col-sm-8").addClass("col-12");
-        // }
-
-
 
         ct.init();
         var zin = $(".leaflet-top").first();
@@ -517,9 +542,6 @@ function toggleCatsView() {
             .css("left", zin.position().left + zin.width() + 10)
             .css("top", zin.position().top)
             .css("margin-top", "10px")
-
-            // .css({bottom: 10, left: 10})
-            // .css("margin-bottom", "10px")
 
             .css("z-index", 1000);
 
@@ -549,27 +571,6 @@ function toggleCatsView() {
                     $(this).text("Cats");
                 }
         });
-
-        // $.datetimepicker.setDateFormatter({
-        //     parseDate: function (date, format) {
-        //         // var d = moment(date, format);
-        //         // return d.isValid() ? d.toDate() : false;
-        //         var d = moment(date);
-        //         return d.isValid() ? d.toDate() : false;
-        //     },
-        //     formatDate: function (date, format) {
-        //         return moment(date); // .format(format);
-        //     },
-        // });
-
-        // $("#datetimepicker1").datetimepicker({
-        //     // startDate:'+1971/05/01', //or 1986/12/08,
-        //     format: "unixtime",
-        //     onChangeDateTime: function(dp, $input) {
-        //         // alert($input.val());
-        //         cd("changedatetime", $input.val());
-        //     }
-        // });
 
         $("#datetimepicker1").daterangepicker({
             timePicker: true,

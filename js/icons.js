@@ -37,3 +37,9 @@ var iconPinGreen = L.icon({
     popupAnchor: [16, 16]
 });
 
+var iconSnap = L.icon({
+    iconUrl: "/camera-icon.png",
+    iconSize: [32,32],
+    iconAnchor: [16,16],
+    popupAnchor: [0,16]
+});
