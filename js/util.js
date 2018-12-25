@@ -176,6 +176,11 @@ function isSmallScreen() {
     return false;
 }
 
+function portraitLayout() {
+        var b = $("body");
+        return b.width() < b.height();
+}
+
 var uniqueFilter = function(val, i, self) {
     return self.indexOf(val) === i;
 };

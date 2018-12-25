@@ -454,6 +454,23 @@ ct.setViewStyle = function(lightOrDark) {
     }
 };
 
+var catsViewOn = false;
+function renderCatsView() {
+    if (catsViewOn) {
+        $("#main2").show();
+        $(".leaflet-control-container").hide();
+        $("#metadata-display").hide();
+    } else {
+        $("#main2").hide();
+        $(".leaflet-control-container").show();
+        $("#metadata-display").show();
+    }
+}
+function toggleCatsView() {
+    catsViewOn = !catsViewOn;
+    renderCatsView();
+}
+
 // http://gregfranko.com/jquery-best-practices/#/8
 // IIFE - Immediately Invoked Function Expression
 (function($, window, document) {
@@ -464,6 +481,19 @@ ct.setViewStyle = function(lightOrDark) {
         view.$map = $("#map");
         view.mapState = (mapStateFn)();
         view.init();
+
+        catsViewOn = !isSmallScreen();
+        renderCatsView();
+        if (catsViewOn) {
+            $("#catsRenderedSwitcher").hide();
+        }
+        // if isSmallScreen() {
+        //     catsViewOn = false;
+        //     $("main2")
+        // } else {
+        //     catsViewOn = true;
+        // }
+
         // if (isSmallScreen()) {
         //     // $(".box").css("max-height", "60%");
         //     $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); // .css("height", "60%");
@@ -476,6 +506,8 @@ ct.setViewStyle = function(lightOrDark) {
         //     view.$lastKnown.closest(".col-sm-4").removeClass("col-sm-4").addClass("col-12");
         //     $("#main-display").children(".col-sm-8").first().removeClass("col-sm-8").addClass("col-12");
         // }
+
+
 
         ct.init();
         var zin = $(".leaflet-top").first();
@@ -506,6 +538,17 @@ ct.setViewStyle = function(lightOrDark) {
         var ld = model.getState().windowStyle; // localOrDefault("vm", "light");
         view.$settingsStyleView.val(ld);
         ct.setViewStyle(ld);
+
+        $("#catsRenderedSwitcher").on("click", function() {
+                toggleCatsView();
+                renderCatsView();
+                $(this).toggleClass("btn-primary btn-success");
+                if (catsViewOn) {
+                    $(this).text("Maps");
+                } else {
+                    $(this).text("Cats");
+                }
+        });
 
         // $.datetimepicker.setDateFormatter({
         //     parseDate: function (date, format) {

@@ -120,7 +120,7 @@ var dataLastKnownEntry = {
     //         this.heartTime = hr;
     //     }
     //     hr = hr || this.heartTime;
-    //     // https://stackoverflow.com/a/23030299 
+    //     // https://stackoverflow.com/a/23030299
     //     // .fadeTo(100, 0.3, function() { $(this).fadeTo(500, 1.0); });
     //     // hr == count/min
     //     // hr / 60 == count/sec
@@ -205,8 +205,8 @@ var dataLastKnownEntry = {
             this.e = $(`
 <div href="#" id="${this.elid()}" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
     <div class="d-flex w-100 justify-content-between">
-        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' ><sup>${this.COVerified ? "Auth OK" : ""}</sup></small></h6>
-        <small class="text-muted" >${this.time.fromNow()}</small>
+        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' ><sup>${this.COVerified ? "Verified" : ""}</sup></small></h6>
+        <small class="text-muted" >${this.time.fromNow(true).replace("a few seconds", "0m").replace("a ", "1").replace("hours", "h").replace("hour", "h").replace("minutes", "m").replace("minute", "m").replace(" ","").replace("days","d").replace("day", "").replace("months", "M").replace("month", "M")}</small>
     </div>
     <div class="d-flex w-100 justify-content-between links">
     </div>
@@ -220,9 +220,9 @@ var dataLastKnownEntry = {
                 .attr("data-unix", this.time.unix())
                 .attr("data-lng", this.long);
 
-            if (this.version !== latestiOSVersion && this.uuid.indexOf("XXX") < 0) {
-                this.e.find(".catname").append($("<a>").attr("href", "http://punktlich.rotblauer.com/install").attr("target", "_").text("Outdated Version " + this.version).addClass("badge badge-warning ml-2"));
-            }
+            // if (this.version !== latestiOSVersion && this.uuid.indexOf("XXX") < 0) {
+            //     this.e.find(".catname").append($("<a>").attr("href", "http://punktlich.rotblauer.com/install").attr("target", "_").text("Outdated Version " + this.version).addClass("badge badge-warning ml-2"));
+            // }
 
             // FIXME
             this.ln.append(this.e);
@@ -322,7 +322,7 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
             } else if (vv.isDeparture()) {
                 con = "Departed " + con + " " + vv.arrivalDate.fromNow();
             } else {
-                // con = "Spent " + vv.departureDateLocal.to(vv.arrivalDateLocal, true) + " + " at " + con " 
+                // con = "Spent " + vv.departureDateLocal.to(vv.arrivalDateLocal, true) + " + " at " + con "
                 con = `Spent ${vv.departureDateLocal.to(vv.arrivalDateLocal, true)} at ${vv.PlaceParsed.Identity}, left ${vv.departureDate.fromNow()}`;
             }
             var vis = $(`<small>${con}</small>`).css("cursor", "pointer").on("click", function() {
