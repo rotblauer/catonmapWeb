@@ -12,10 +12,10 @@ var trackHost = "http://catonmap.info:3001";
 // var tileHost =  "https://icanhazbounce.com/" + encodeURI("catonmap.info:8080");
 
 // LIVE:
-// var tileHost = "https://icanhazbounce.com?init=1&url=" + encodeURIComponent("http://catonmap.info:8080");
+var tileHost = "https://icanhazbounce.com?init=1&url=" + encodeURIComponent("http://catonmap.info:8080");
 
 // var tileHost =  "http://catonmap.info:8080";
-var tileHost =  "http://localhost:8081";
+// var tileHost =  "http://localhost:8081";
 // var tileHost =  "http://localhost:8082"; // /tdata/ttiles
 
 // var oef = function(feature, layer) {
@@ -66,5 +66,3 @@ var bootstrapCSSLinks = {
     "light": "/vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css",
     "dark": "/css/bootstrap.min.css",
 };
-
-
