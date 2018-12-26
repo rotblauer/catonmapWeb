@@ -385,35 +385,55 @@ model.loadSnaps = function(snaps) {
                 var snaps = data;
                 cd("GOT SNAPS", snaps);
                 view.mapState.setLayer("snaps", null);
+                $("#snaps-display").html("");
                 ct.snapsClusterGroup = L.markerClusterGroup();
+                var num = 0;
                 snaps.forEach(function(snap) {
-                    // if (!snaps.hasOwnProperty(i)) {
-                    //     return;
-                    // }
+                    num++;
+                    if (n > 15) {
+                        return;
+                    }
                     var n = JSON.parse(snap.notes);
                     cd("snap notes", n);
                     if (!objExists(n["imgS3"]) || !n.hasOwnProperty("imgS3") || n["imgS3"] === "") {
                         return;
                     }
-                    var s3url = "https://s3.us-east-2.amazonaws.com/" + n["imgS3"];
-                    var marker = L.marker([snap.lat, snap.long], {
-                        icon: iconSnap
-                    }).on("click", function(e) {
+
+                    var snapPop = function(e) {
                         cd(e);
                         var url = s3url; // close
-                        // return function() {
-                        var content = "<img src='" + url + "' style='width:300px;' />";
+                        var content = `<img src='${url}' style='width:300px;' />
+                        <div class="d-flex w-100 justify-content-between m-t-1">
+                            <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
+                            <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))}</span>
+                        </div>
+                        `;
                         L.popup()
                             .setContent(content)
-                            .setLatLng([e.latlng.lat, e.latlng.lng])
+                            .setLatLng([snap.lat, snap.long])
                             .openOn(view.mapState.getMap());
                         L.DomEvent.stop(e);
-                        // }();
-                    })
+                    };
+
+                    var s3url = "https://s3.us-east-2.amazonaws.com/" + n["imgS3"];
+                    var el = $("<img>").attr("src", s3url).css({
+                        "max-width": "100%"
+                    }).on("click", function(e) {
+                        view.mapState.getMap().setView([snap.lat, snap.long]);
+                        snapPop(e);
+                    });
+                    $("#snaps-display").prepend(el);
+
+                    // add markers
+                    var marker = L.marker([snap.lat, snap.long], {
+                        icon: iconSnap
+                    }).on("click", snapPop);
                     ct.snapsClusterGroup.addLayer(marker);
+                    // ct.markerClusterGroup.addLayer(marker);
                 });
 
                 view.mapState.setLayer("snaps", ct.snapsClusterGroup);
+                // view.mapState.setLayer("snaps", ct.markerClusterGroup);
 
             })
             .catch(function(err) {
@@ -504,12 +524,18 @@ var catsViewOn = false;
 function renderCatsView() {
     if (catsViewOn) {
         $("#main2").show();
-        $(".leaflet-control-container").hide();
-        $("#metadata-display").hide();
+        if (isSmallScreen()) {
+            $(".leaflet-control-container").hide();
+            $("#metadata-display").hide();
+            $("#snapsRenderedSwitcher").hide();
+        }
     } else {
         $("#main2").hide();
-        $(".leaflet-control-container").show();
-        $("#metadata-display").show();
+        if (isSmallScreen()) {
+            $(".leaflet-control-container").show();
+            $("#metadata-display").show();
+            $("#snapsRenderedSwitcher").show();
+        }
     }
 }
 function toggleCatsView() {
@@ -528,22 +554,22 @@ function toggleCatsView() {
         view.mapState = (mapStateFn)();
         view.init();
 
-        catsViewOn = !isSmallScreen();
+        catsViewOn = false; // !isSmallScreen();
         renderCatsView();
         if (catsViewOn) {
-            $("#catsRenderedSwitcher").hide();
+            // $("#catsRenderedSwitcher").hide();
         }
 
         ct.init();
-        var zin = $(".leaflet-top").first();
-        view.$metadataDisplay
-            .css("position", "fixed")
-
-            .css("left", zin.position().left + zin.width() + 10)
-            .css("top", zin.position().top)
-            .css("margin-top", "10px")
-
-            .css("z-index", 1000);
+        // var zin = $(".leaflet-top").first();
+        // view.$metadataDisplay
+        //     .css("position", "fixed")
+        //
+        //     .css("left", zin.position().left + zin.width() + 10)
+        //     .css("top", zin.position().top)
+        //     .css("margin-top", "10px")
+        //
+        //     .css("z-index", 1000);
 
         view.$viewSettingsToggleContainer = $("<div>").addClass("leaflet-control");
         view.$viewSettingsToggle = $(`
@@ -570,6 +596,9 @@ function toggleCatsView() {
                 } else {
                     $(this).text("Cats");
                 }
+        });
+        $("#snapsRenderedSwitcher").on("click", function(e) {
+            $("#main1").toggleClass("col-12 col-9");
         });
 
         $("#datetimepicker1").daterangepicker({

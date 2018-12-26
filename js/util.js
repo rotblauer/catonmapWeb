@@ -194,3 +194,8 @@ $.fn.flash = function(duration, iterations) {
     }
     return this;
 };
+
+// accepts _moment()_ time
+var minimalTimeDisplay = function(time) {
+    return time.fromNow(true).replace("a few seconds", "0m").replace("a ", "1").replace("an", "1").replace("hours", "h").replace("hour", "h").replace("minutes", "m").replace("minute", "m").replace(" ","").replace("days","d").replace("day", "d").replace("months", "M").replace("month", "M");
+}

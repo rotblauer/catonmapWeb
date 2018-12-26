@@ -206,7 +206,7 @@ var dataLastKnownEntry = {
 <div href="#" id="${this.elid()}" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
     <div class="d-flex w-100 justify-content-between">
         <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' ><sup>${this.COVerified ? "Verified" : ""}</sup></small></h6>
-        <small class="text-muted" >${this.time.fromNow(true).replace("a few seconds", "0m").replace("a ", "1").replace("an", "1").replace("hours", "h").replace("hour", "h").replace("minutes", "m").replace("minute", "m").replace(" ","").replace("days","d").replace("day", "").replace("months", "M").replace("month", "M")}</small>
+        <small class="text-muted" >${minimalTimeDisplay(this.time)}</small>
     </div>
     <div class="d-flex w-100 justify-content-between links">
     </div>

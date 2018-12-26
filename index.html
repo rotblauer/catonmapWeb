@@ -38,45 +38,36 @@
 
 <body class="container-fluid p-0" style="height: 100%;">
 
-    <div id="main-display" class="row m-0 p-0" style="height:100%; overflow: hidden;">
+
+    <div id="main-display" class="row d-flex m-0 p-0" style="height:100%; overflow: hidden;">
+        <div id="snaps-display" class="col-3 m-0 p-0 collapse hide width" style="max-height: 100%; overflow-y: scroll;">
+
+        </div>
         <div id="main1" class="col-12 m-0 p-0" >
 
             <!-- height: 100% -->
             <div class="box">
-                <div id="map">
-                </div>
+                <p id="metadata-display" style="position: absolute; left: 60; top: 0; margin-top: 10px; z-index: 1000; ">
+                    <small>Rendered <span class="shownPointsShower">0</span> points.<br/></small>
+                </p>
+                <div id="map"></div>
             </div>
 
-            <p id="metadata-display" style="display: none;">
-                <small>Rendered <span class="shownPointsShower">0</span> points.<br/></small>
-            </p>
+                <div style=" z-index: 1111; position: absolute; bottom: 0; left: 0; background: transparent; width: 100px;">
+                    <button id="snapsRenderedSwitcher" class="btn btn-lg btn-warning m-3 vshad" data-target="#snaps-display" data-toggle="collapse" >Snaps</button>
+                </div>
 
         </div>
 
-        <style>
-        </style>
-
         <!-- // side or overlayd -->
-        <div id="main2" class=" offset-sm-8 offset-md-9 col-sm-4 col-md-3 m-0 p-0" style="height: 100%; position: absolute; top: 0; right: 0; background: transparent; z-index: 999; ">
-
-            <!-- tiny meta links -->
-
-            <!-- <div id="main2-links" class="row m-0 p-0 "> -->
-            <!-- <div id="main2-links-child" class="col lastknown-col"> -->
-            <!-- <div class="d-flex w-100 justify-content-between px-1" style="font-size: 0.9em;"> -->
-            <!-- <a href="http://www.catstats.rotblauer.com/" style="" target="_">catstats<sup>-></sup></a> -->
-            <!-- <span>&nbsp;|&nbsp;</span> -->
-            <!-- <a id="install-ios-link" href="http://punktlich.rotblauer.com/install" target="_">iOS: <span id="latest-version-ios"></span><sup>-></sup></a> -->
-            <!-- </div> -->
-            <!-- </div> -->
-            <!-- </div> -->
+        <div id="main2" class=" offset-sm-8 offset-md-9 col-sm-4 col-md-3 m-0 p-0" style="display: none; height: 100%; position: absolute; top: 0; right: 0; background: transparent; z-index: 999; ">
 
             <!-- last known container -->
             <!-- <div class="row m-0 p-0" style="height: 100%; width: 100%; "> -->
             <div class="row m-0 p-0" >
                 <div id="" class="col shad m-0 p-0 lastknown-col" style="height: 100%; overflow-y: scroll !important;">
                     <!-- style="height: 100%; overflow-y: scroll !important;" -->
-                    <div id="lastknown" class="list-group"  >
+                    <div id="lastknown" class="list-group"  style="height: 100%; overflow-y:scroll; ">
                     </div>
                 </div>
             </div>
@@ -115,13 +106,6 @@
                                 <label for="datetimepicker1">Period</label>
                                 <input id="datetimepicker1" name="" type="text" class="form-control" />
                             </div>
-
-                            <!-- <div class="input-group"> -->
-                            <!-- <div class="input-group-prepend"> -->
-                            <!-- <span class="input-group-text">@</span> -->
-                            <!-- </div> -->
-                            <!-- <input id="datetimepicker1" name="" type="text" class="form-control" /> -->
-                            <!-- </div> -->
 
                             <hr />
 
