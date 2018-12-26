@@ -208,7 +208,7 @@ var dataLastKnownEntry = {
         <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' ><sup>${this.COVerified ? "Verified" : ""}</sup></small></h6>
         <small class="text-muted" >${minimalTimeDisplay(this.time)}</small>
     </div>
-    <div class="d-flex w-100 justify-content-between links">
+    <div class="d-flex w-100 justify-content-between links" style="">
     </div>
     <div class="d-flex w-100 justify-content-between lastVisit">
     </div>

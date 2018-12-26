@@ -117,7 +117,9 @@ model.doneMetadata = function(data) {
     var zin = $(".leaflet-top").first();
     view.$metadataDisplay.children(".metadataservercontent").first().remove();
     view.$metadataDisplay.append($(content));
-    view.$metadataDisplay.show();
+    if (!renderCatsView) {
+        view.$metadataDisplay.show();
+    }
     // view.$metadataDisplay.html(content);
 };
 
@@ -320,7 +322,7 @@ ct.dataLoop = function(n) {
 
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
     view.mapState.setPBFOpt("");
-    setTimeout(ct.dataLoop, (n || 55) * 1000);
+    // setTimeout(ct.dataLoop, (n || 55) * 1000);
 };
 
 ct.init = (function() {
@@ -402,7 +404,7 @@ model.loadSnaps = function(snaps) {
                     var snapPop = function(e) {
                         cd(e);
                         var url = s3url; // close
-                        var content = `<img src='${url}' style='width:300px;' />
+                        var content = `<img src='${url}' style='width:${isSmallScreen()?150:300}px;' />
                         <div class="d-flex w-100 justify-content-between m-t-1">
                             <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
                             <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))}</span>
