@@ -47,6 +47,7 @@ var mapStateFn = function() {
     var _currentPBFLayerOpt = null; // activity, recency
     var _pbfURL = function(id) {
         // tileHost = "/home/ia/tdata/ttiles";
+        // return tileHost + "/services/db/tiles/{z}/{x}/{y}.pbf" ;// .pbf";
         return tileHost + "/" + id + "/{z}/{x}/{y}";
         // return tileHost +  "/{z}/{x}/{y}" + ".geojson";
     };
@@ -166,7 +167,8 @@ var mapStateFn = function() {
             .on("load", _mapOnLoad)
             .on("click", _mapOnClick);
 
-        L.control.layers(_mapboxLayers).addTo(_map);
+        // base, over, opts
+        L.control.layers(_mapboxLayers, null, {position: "topleft"}).addTo(_map);
 
         _currentPBFLayerOpt = s.tileLayer;
         setPBFOpt(_currentPBFLayerOpt);

@@ -74,7 +74,7 @@ var recencyScale = function(props, color) {
     // radius
     // day, 3 days, week, fortnight, month, sixmonth, year
     // 2    3       4      5         6      7         9
-    var opacity = 0.05;
+    var opacity = 0.15;
     const radius = 2;
     var shade = 0.8;
 
@@ -88,13 +88,13 @@ var recencyScale = function(props, color) {
         opacity = 0.6;
         shade = -0.1;
     } else if (diff <= oneDay * 14) {
-        opacity = 0.3;
+        opacity = 0.45;
         shade = 0.2;
     } else if (diff <= oneDay * 30) {
-        opacity = 0.15;
+        opacity = 0.33;
         shade = 0.5;
     } else if (diff <= oneDay * 150) {
-        opacity = 0.09;
+        opacity = 0.25;
         shade = 0.7;
     }
 

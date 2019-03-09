@@ -72,6 +72,26 @@ var dataLastKnownEntry = {
         }
         return catColors()[this.name] || "lightgray";
     },
+    batteryLevel: function() {
+        var n = this.parseNotes();
+        if (n) {
+            if (n["batteryStatus"]) {
+                var b = JSON.parse(n["batteryStatus"]);
+                return +b.level;
+            }
+        }
+        return -1;
+    },
+    batteryStatus: function() {
+        var n = this.parseNotes();
+        if (n) {
+            if (n["batteryStatus"]) {
+                var b = JSON.parse(n["batteryStatus"]);
+                return b.status;
+            }
+        }
+        return "n/a/";
+    },
     parseNotes: function() {
         // parse notes
         if (this.notes !== "") {
@@ -100,7 +120,7 @@ var dataLastKnownEntry = {
     //         this.heartTime = hr;
     //     }
     //     hr = hr || this.heartTime;
-    //     // https://stackoverflow.com/a/23030299 
+    //     // https://stackoverflow.com/a/23030299
     //     // .fadeTo(100, 0.3, function() { $(this).fadeTo(500, 1.0); });
     //     // hr == count/min
     //     // hr / 60 == count/sec
@@ -185,10 +205,10 @@ var dataLastKnownEntry = {
             this.e = $(`
 <div href="#" id="${this.elid()}" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
     <div class="d-flex w-100 justify-content-between">
-        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' >${this.COVerified ? "(Verified)" : "(Unverified)"}</small></h6>
-        <small class="text-muted" >${this.time.fromNow()}</small>
+        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' ><sup>${this.COVerified ? "Verified" : ""}</sup></small></h6>
+        <small class="text-muted" >${minimalTimeDisplay(this.time)}</small>
     </div>
-    <div class="d-flex w-100 justify-content-between links">
+    <div class="d-flex w-100 justify-content-between links" style="">
     </div>
     <div class="d-flex w-100 justify-content-between lastVisit">
     </div>
@@ -200,9 +220,9 @@ var dataLastKnownEntry = {
                 .attr("data-unix", this.time.unix())
                 .attr("data-lng", this.long);
 
-            if (this.version !== latestiOSVersion && this.uuid.indexOf("XXX") < 0) {
-                this.e.find(".catname").append($("<a>").attr("href", "http://punktlich.rotblauer.com/install").attr("target", "_").text("Outdated Version " + this.version).addClass("badge badge-warning ml-2"));
-            }
+            // if (this.version !== latestiOSVersion && this.uuid.indexOf("XXX") < 0) {
+            //     this.e.find(".catname").append($("<a>").attr("href", "http://punktlich.rotblauer.com/install").attr("target", "_").text("Outdated Version " + this.version).addClass("badge badge-warning ml-2"));
+            // }
 
             // FIXME
             this.ln.append(this.e);
@@ -242,34 +262,56 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
             // var subtitle = "" + no.activity + ", elevation: " + this.elevation.toFixed(0) + "m<br>" + no.numberOfSteps + " steps, distance: " + (no.distance / 1).toFixed(0) + "m since " + moment(no.currentTripStart).from(moment());
 
             var existing = this.el().find(".lastup-notes").remove();
+            this.el().find(".battery-status").remove();
             var lastupNotes = $("<small>")
                 .addClass("mb-0 lastup-notes")
                 .html(subtitle)
                 // .addClass("text-muted");
                 .addClass("text-muted");
+            var batSpan = $("<small>").addClass("text-muted");
             this.el().find(".links").first().append(lastupNotes);
 
             var hr = this.heartRate();
             if (hr) {
-                var hhr = $( `<img class='heart-icon' src="/heart2.svg" style="height: 1em; display: none; margin-right: 0.3em;"/>` );
+                var hhr = $(`<img class='heart-icon' src="/heart2.svg" style="height: 1em; display: none; margin-right: 0.3em;"/>`);
                 lastupNotes.prepend(hhr);
 
                 if (this.time.isAfter(moment().subtract(5, "minutes"))) {
                     // var cms = hr / (60) * 1000 / 2;
-                    var cms = ( (60*1000)/hr )/2;
+                    var cms = ((60 * 1000) / hr) / 2;
                     hhr.flash(cms, 1000);
-                    var bpm = $("<sub>").text(hr).css({
-                        color: "red",
-                        "font-weight": "lighter",
-                        "font-size": "0.7em",
-                        "margin-left": "-0.3em",
-                        "margin-right": "0.3em"
-                    });
-                    hhr.after(bpm);
+                    // var bpm = $("<sub>").text(hr).css({
+                    //     color: "red",
+                    //     "font-weight": "lighter",
+                    //     "font-size": "0.7em",
+                    //     "margin-left": "-0.3em",
+                    //     "margin-right": "0.3em"
+                    // });
+                    // hhr.after(bpm);
                 } else {
                     hhr.attr("src", "/heart-gray.png");
                 }
             }
+
+            if (this.batteryLevel() > 0) {
+                var plusOrMin = "";
+                switch ( this.batteryStatus() ) {
+                case "full":
+                    plusOrMin = "+";
+                    break;
+                case "charging":
+                    plusOrMin = "+";
+                    break;
+                case "unplugged":
+                    plusOrMin = "-";
+                    break;
+                case "unknown":
+                    plusOrMin = "?";
+                }
+                cd(this.batteryStatus());
+                lastupNotes.after($("<small>").addClass("battery-status").css({"font-size": "0.7em", "font-weight": "light"}).html( "<img src='/battery-icon.png' style='height: 0.8em;'/>" + ( this.batteryLevel()*100 ).toFixed(0)+"%"+plusOrMin));
+            }
+
         }
 
         if (this.lastVisit && this.lastVisit.exists()) {
@@ -280,7 +322,7 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
             } else if (vv.isDeparture()) {
                 con = "Departed " + con + " " + vv.arrivalDate.fromNow();
             } else {
-                // con = "Spent " + vv.departureDateLocal.to(vv.arrivalDateLocal, true) + " + " at " + con " 
+                // con = "Spent " + vv.departureDateLocal.to(vv.arrivalDateLocal, true) + " + " at " + con "
                 con = `Spent ${vv.departureDateLocal.to(vv.arrivalDateLocal, true)} at ${vv.PlaceParsed.Identity}, left ${vv.departureDate.fromNow()}`;
             }
             var vis = $(`<small>${con}</small>`).css("cursor", "pointer").on("click", function() {

@@ -1,14 +1,19 @@
-const latestiOSVersion = "V.verify";
+const latestiOSVersion = "V.customizableCatTrackHat";
 
 // var trackHost = "https://bigger.space?reset=true&url=catonmap.info:3001";
 // var trackHost = "https://bigger.space?reset=true&url=track.areteh.co:3001";
+
+// LIVE:
 var trackHost = "http://catonmap.info:3001";
 
 // var tileHost =  "https://bigger.space?reset=true&url=catonmap.info:8080";
 // var tileHost =  "https://icanhazbounce.com/http://catonmap.info:8080";
 // var tileHost =  "https://icanhazbounce.com/" + encodeURIComponent("http://catonmap.info:8080");
 // var tileHost =  "https://icanhazbounce.com/" + encodeURI("catonmap.info:8080");
-var tileHost = "https://icanhazbounce.com?url=" + encodeURIComponent("http://catonmap.info:8080");
+
+// LIVE:
+var tileHost = "https://icanhazbounce.com?init=1&url=" + encodeURIComponent("http://catonmap.info:8080");
+
 // var tileHost =  "http://catonmap.info:8080";
 // var tileHost =  "http://localhost:8081";
 // var tileHost =  "http://localhost:8082"; // /tdata/ttiles
@@ -58,8 +63,7 @@ var baseTileLayerOpts = {
 var bootstrapCSSLinks = {
     // "light": "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css",
     // /vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css
-    "light": "/vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css",
+    // "light": "/vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css",
+    "light": "/vendor/bootstrap/4.2.1/css/bootstrap.min.css",
     "dark": "/css/bootstrap.min.css",
 };
-
-

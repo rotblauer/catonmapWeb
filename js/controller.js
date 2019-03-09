@@ -112,15 +112,13 @@ model.getMetadata = function() {
 model.doneMetadata = function(data) {
     cd("got metadata", data);
     var m = moment();
-    var content = `<small class="metadataservercontent">+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}. TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}. Status refreshed ${moment().format(" HH:mm:ss")}.<br/></small>`;
+    var content = `<small class="metadataservercontent">+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.<br><a href="http://punktlich.rotblauer.com/install/" target="_">Update your CatTracks iOS app!</a></small>`;
     // cd("content", content);
     var zin = $(".leaflet-top").first();
     view.$metadataDisplay.children(".metadataservercontent").first().remove();
-    view.$metadataDisplay.prepend($(content));
-    if (!isSmallScreen()) {
+    view.$metadataDisplay.append($(content).css({"line-height": "1.3em"}));
+    if (!renderCatsView) {
         view.$metadataDisplay.show();
-    } else {
-        view.$metadataDisplay.hide();
     }
     // view.$metadataDisplay.html(content);
 };
@@ -320,9 +318,11 @@ ct.dataLoop = function(n) {
                 .catch(model.errVisits);
         });
 
+    model.loadSnaps();
+
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
     view.mapState.setPBFOpt("");
-    setTimeout(ct.dataLoop, (n || 90) * 1000);
+    // setTimeout(ct.dataLoop, (n || 55) * 1000);
 };
 
 ct.init = (function() {
@@ -377,6 +377,70 @@ ct.onLastKnown = function(data) {
     }).asLayerGroup();
 
     view.mapState.setLayer("lastKnown", lg);
+};
+
+model.loadSnaps = function(snaps) {
+        var url = queryURL(trackHost, "/catsnaps");
+        cd("GET", url);
+        $.ajax(qJSON(url))
+            .done(function(data) {
+                var snaps = data;
+                cd("GOT SNAPS", snaps);
+                view.mapState.setLayer("snaps", null);
+                $("#snaps-display").html("");
+                ct.snapsClusterGroup = L.markerClusterGroup();
+                var num = 0;
+                snaps.forEach(function(snap) {
+                    num++;
+                    if (n > 15) {
+                        return;
+                    }
+                    var n = JSON.parse(snap.notes);
+                    cd("snap notes", n);
+                    if (!objExists(n["imgS3"]) || !n.hasOwnProperty("imgS3") || n["imgS3"] === "") {
+                        return;
+                    }
+
+                    var snapPop = function(e) {
+                        cd(e);
+                        var url = s3url; // close
+                        var content = `<img src='${url}' style='width:${isSmallScreen()?150:300}px;' />
+                        <div class="d-flex w-100 justify-content-between m-t-1">
+                            <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
+                            <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))}</span>
+                        </div>
+                        `;
+                        L.popup()
+                            .setContent(content)
+                            .setLatLng([snap.lat, snap.long])
+                            .openOn(view.mapState.getMap());
+                        L.DomEvent.stop(e);
+                    };
+
+                    var s3url = "https://s3.us-east-2.amazonaws.com/" + n["imgS3"];
+                    var el = $("<img>").attr("src", s3url).css({
+                        "max-width": "100%"
+                    }).on("click", function(e) {
+                        view.mapState.getMap().setView([snap.lat, snap.long]);
+                        snapPop(e);
+                    });
+                    $("#snaps-display").prepend(el);
+
+                    // add markers
+                    var marker = L.marker([snap.lat, snap.long], {
+                        icon: iconSnap
+                    }).on("click", snapPop);
+                    ct.snapsClusterGroup.addLayer(marker);
+                    // ct.markerClusterGroup.addLayer(marker);
+                });
+
+                view.mapState.setLayer("snaps", ct.snapsClusterGroup);
+                // view.mapState.setLayer("snaps", ct.markerClusterGroup);
+
+            })
+            .catch(function(err) {
+                ce(err);
+            });
 };
 
 ct.onVisits = function(visits, overwrite) {
@@ -458,6 +522,29 @@ ct.setViewStyle = function(lightOrDark) {
     }
 };
 
+var catsViewOn = false;
+function renderCatsView() {
+    if (catsViewOn) {
+        $("#main2").show();
+        if (isSmallScreen()) {
+            $(".leaflet-control-container").hide();
+            $("#metadata-display").hide();
+            $("#snapsRenderedSwitcher").hide();
+        }
+    } else {
+        $("#main2").hide();
+        if (isSmallScreen()) {
+            $(".leaflet-control-container").show();
+            $("#metadata-display").show();
+            $("#snapsRenderedSwitcher").show();
+        }
+    }
+}
+function toggleCatsView() {
+    catsViewOn = !catsViewOn;
+    renderCatsView();
+}
+
 // http://gregfranko.com/jquery-best-practices/#/8
 // IIFE - Immediately Invoked Function Expression
 (function($, window, document) {
@@ -466,56 +553,25 @@ ct.setViewStyle = function(lightOrDark) {
     $(function() {
         var b = $("body");
         view.$map = $("#map");
-        $(".box").css({height: "100%"});
         view.mapState = (mapStateFn)();
         view.init();
-        if (isSmallScreen()) {
-            // $(".box").css("max-height", "60%");
-            // $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); // .css("height", "60%");
-            // $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%");
-        } else if (b.width() < b.height()) {
-            // // or portrait mode
-            // // $(".box").css("max-height", "60%");
-            // $("#main1").toggleClass("col-sm-8 col-md-9 col-12"); //.css("height", "60%");
-            // $("#main2").css("z-index", "1001").css("position", "fixed").css("top", "60%").css("height", "40%").toggleClass("col col-md-6 offset-md-6");
-            // view.$lastKnown.closest(".col-sm-4").removeClass("col-sm-4").addClass("col-12");
-            // $("#main-display").children(".col-sm-8").first().removeClass("col-sm-8").addClass("col-12");
+
+        catsViewOn = false; // !isSmallScreen();
+        renderCatsView();
+        if (catsViewOn) {
+            // $("#catsRenderedSwitcher").hide();
         }
 
-        // $("#navvy").css({bottom: })
-
-        view.$catsOnDemand = $("#cats-view-link").on("click", function(e) {
-            $(".nav-link").removeClass("active");
-            $(e.target).addClass("active");
-            $("html, body").animate({ scrollTop: $(".box").height()-$("#navvy").height()-15 }, "slow");
-            // $("body").css({overflow: "scroll"});
-            return false;
-        }).css({cursor: "pointer"});
-
-        view.$mapOnDemand = $("#map-view-link").on("click", function(e) {
-            $(".nav-link").removeClass("active");
-            $(e.target).addClass("active");
-            $("html, body").animate({ scrollTop: 0 }, "slow");
-            // $("body").css({overflow: "hidden"});
-        }).css({cursor: "pointer"});
-
         ct.init();
-        var zin = $(".leaflet-top").first();
-        view.$metadataDisplay
-            .css({
-                position: "fixed",
-                left: zin.position().left + zin.width() + 10,
-                top:  zin.position().top,
-                "margin-top": "10px"
-            })
-            // .css({position: "fixed", bottom: 0, margin: 0, right: 0})
-            // .addClass("px-1")
-
-
-            // .css({bottom: 10, left: 10})
-            // .css("margin-bottom", "10px")
-
-            .css("z-index", 1000);
+        // var zin = $(".leaflet-top").first();
+        // view.$metadataDisplay
+        //     .css("position", "fixed")
+        //
+        //     .css("left", zin.position().left + zin.width() + 10)
+        //     .css("top", zin.position().top)
+        //     .css("margin-top", "10px")
+        //
+        //     .css("z-index", 1000);
 
         view.$viewSettingsToggleContainer = $("<div>").addClass("leaflet-control");
         view.$viewSettingsToggle = $(`
@@ -527,32 +583,25 @@ ct.setViewStyle = function(lightOrDark) {
             .attr("data-target", ".settings-modal");
 
         view.$viewSettingsToggleContainer.append(view.$viewSettingsToggle);
-        $(".leaflet-top.leaflet-right").append(view.$viewSettingsToggleContainer);
+        $(".leaflet-top.leaflet-left").append(view.$viewSettingsToggleContainer);
 
         var ld = model.getState().windowStyle; // localOrDefault("vm", "light");
         view.$settingsStyleView.val(ld);
         ct.setViewStyle(ld);
 
-        // $.datetimepicker.setDateFormatter({
-        //     parseDate: function (date, format) {
-        //         // var d = moment(date, format);
-        //         // return d.isValid() ? d.toDate() : false;
-        //         var d = moment(date);
-        //         return d.isValid() ? d.toDate() : false;
-        //     },
-        //     formatDate: function (date, format) {
-        //         return moment(date); // .format(format);
-        //     },
-        // });
-
-        // $("#datetimepicker1").datetimepicker({
-        //     // startDate:'+1971/05/01', //or 1986/12/08,
-        //     format: "unixtime",
-        //     onChangeDateTime: function(dp, $input) {
-        //         // alert($input.val());
-        //         cd("changedatetime", $input.val());
-        //     }
-        // });
+        $("#catsRenderedSwitcher").on("click", function() {
+                toggleCatsView();
+                renderCatsView();
+                $(this).toggleClass("btn-primary btn-success");
+                if (catsViewOn) {
+                    $(this).text("Maps");
+                } else {
+                    $(this).text("Cats");
+                }
+        });
+        $("#snapsRenderedSwitcher").on("click", function(e) {
+            $("#main1").toggleClass("col-12 col-9");
+        });
 
         $("#datetimepicker1").daterangepicker({
             timePicker: true,

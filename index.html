@@ -1,13 +1,15 @@
 <html>
 
 <head>
+    <meta charset="utf-8" />
     <!-- // bootstrap responsive helper -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- CDN -->
     <!-- STYLE -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
-    <link id="bootstrap-css-link" rel="stylesheet" href="/vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css" />
+    <!-- <link id="bootstrap-css-link" rel="stylesheet" href="/vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css" /> -->
+    <link id="bootstrap-css-link" rel="stylesheet" href="/vendor/bootstrap/4.2.1/css/bootstrap.min.css" />
 
     <!-- LOCAL -->
     <!-- STYLE -->
@@ -35,74 +37,45 @@
     <link href="/css/app.css" rel="stylesheet" />
 </head>
 
-<body class="container-fluid p-0" style="">
-    <!-- <div id="main1" class="p-0 m-0 "> -->
-        <div class="box">
-            <div id="map">
+<body class="container-fluid p-0" style="height: 100%;">
+
+
+    <div id="main-display" class="row d-flex m-0 p-0" style="height:100%; overflow: hidden;">
+        <div id="snaps-display" class="col-3 m-0 p-0 collapse hide width" style="max-height: 100%; overflow-y: scroll;">
+
+        </div>
+        <div id="main1" class="col-12 m-0 p-0" >
+
+            <!-- height: 100% -->
+            <div class="box">
+                <p id="metadata-display" style="position: absolute; left: 60; top: 0; margin-top: 10px; z-index: 1000; ">
+                    <small>Rendered <span class="shownPointsShower">0</span> points. <a href="http://www.catstats.rotblauer.com/" target="_">CatStats!</a><br/></small>
+                </p>
+                <div id="map"></div>
             </div>
 
-            <div id="navvy" class="row py-2 px-3 m-0" style="z-index: 1000; position: relative; bottom: 55px; margin-bottom: -55px !important;">
-                <ul class="nav nav-pills">
-                    <li class="nav-item">
-                        <a id="map-view-link" class="nav-link active" >Map</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="cats-view-link">Cats</a>
-                    </li>
-                    <!-- <li class="nav-item"> -->
-                    <!-- <a class="nav-link" href="#">Link</a> -->
-                    <!-- </li> -->
-                    <!-- <li class="nav-item"> -->
-                    <!-- <a class="nav-link disabled" href="#">Disabled</a> -->
-                    <!-- </li> -->
-                </ul>
-            </div>
+                <div style=" z-index: 1111; position: absolute; bottom: 0; left: 0; background: transparent; width: 100px;">
+                    <button id="snapsRenderedSwitcher" class="btn btn-lg btn-warning m-3 vshad" data-target="#snaps-display" data-toggle="collapse" >Snaps</button>
+                </div>
+
         </div>
 
+        <!-- // side or overlayd -->
+        <div id="main2" class="offset-sm-8 offset-md-9 col-sm-4 col-md-3 offset-xl-10 col-xl-2 m-0 p-0" style="display: none; height: 100%; position: absolute; top: 0; right: 0; background: transparent; z-index: 999; ">
 
-        <!-- </div> -->
-
-    <p id="metadata-display" class="hidden-xs" style="display: none;">
-        <small>Rendered <span class="shownPointsShower">0</span> points.<br /></small>
-    </p>
-
-    <!-- <nav class="navbar fixed-bottom navbar-light bg-faded"> -->
-    <!-- <a class="navbar-brand" href="#">Fixed bottom</a> -->
-    <!-- <li class="nav-item"> -->
-    <!-- <a class="nav-link" href="#">Link</a> -->
-    <!-- </li> -->
-    <!-- </nav> -->
-
-
-
-    <!-- // side or overlayd -->
-    <div id="main2" class="col m-0 p-0" style="">
-
-
-        <!-- last known container -->
-        <!-- <div class="row m-0 p-0" style="height: 100%; width: 100%; "> -->
-        <div class="row m-0 p-0">
-            <div id="" class="col m-0 p-0 lastknown-col" style="">
-                <!-- style="height: 100%; overflow-y: scroll !important;" -->
-                <div id="lastknown" class="list-group">
+            <!-- last known container -->
+            <!-- <div class="row m-0 p-0" style="height: 100%; width: 100%; "> -->
+            <div class="row m-0 p-0" >
+                <div id="" class="col shad m-0 p-0 lastknown-col" style="height: 100%; overflow-y: scroll !important;">
+                    <!-- style="height: 100%; overflow-y: scroll !important;" -->
+                    <div id="lastknown" class="list-group"  style="height: 100%; overflow-y:scroll; ">
+                    </div>
                 </div>
             </div>
         </div>
-
-
-        <!-- tiny meta links -->
-
-        <div id="main2-links" class="row m-0 p-0 ">
-            <div id="main2-links-child" class="col lastknown-col">
-                <div class="d-flex w-100 justify-content-between px-1" style="">
-                    <a href="http://www.catstats.rotblauer.com/" style="" target="_">catstats<sup>-></sup></a>
-                    <span>&nbsp;|&nbsp;</span>
-                    <a id="install-ios-link" href="http://punktlich.rotblauer.com/install" target="_">iOS: <span id="latest-version-ios"></span><sup>-></sup></a>
-                </div>
-            </div>
-        </div>
-
     </div>
+
+    <button id="catsRenderedSwitcher" class="btn btn-lg btn-primary m-3 vshad" style=" z-index: 1111; position: fixed; bottom: 0; right: 0;">Cats</button>
 
     <div id="viewsettings-div" class="modal fade settings-modal" tabindex="-1" role="dialog" aria-labelledby="settingsModal" aria-hidden=" true">
         <div class="modal-dialog modal-sm ">
@@ -134,13 +107,6 @@
                                 <label for="datetimepicker1">Period</label>
                                 <input id="datetimepicker1" name="" type="text" class="form-control" />
                             </div>
-
-                            <!-- <div class="input-group"> -->
-                            <!-- <div class="input-group-prepend"> -->
-                            <!-- <span class="input-group-text">@</span> -->
-                            <!-- </div> -->
-                            <!-- <input id="datetimepicker1" name="" type="text" class="form-control" /> -->
-                            <!-- </div> -->
 
                             <hr />
 

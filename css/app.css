@@ -2,10 +2,6 @@
     flex: 1 1 auto;
 }
 
-/* body { */
-/*     overflow: hidden; */
-/* } */
-
 .log.log-debug {
     font-size: 0.6em;
     overflow-wrap: break-word;
@@ -14,7 +10,7 @@
 .box {
     display: flex;
     flex-flow: column;
-    /* height: 100%; // 95%; // 100% */
+    height: 100%;
 }
 .lastKnown {
     /* background: transparent; */
@@ -25,21 +21,21 @@
 
 .transparent50 {
     /* color: "lightgray"; */
-	  /* Theoretically for IE 8 & 9 (more valid) */	
+	  /* Theoretically for IE 8 & 9 (more valid) */
 	  /* ...but not required as filter works too */
 	  /* should come BEFORE filter */
 	  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
-	  
+
 	  /* This works in IE 8 & 9 too */
 	  /* ... but also 5, 6, 7 */
 	  filter: alpha(opacity=50);
-	  
+
 	  /* Older than Firefox 0.9 */
 	  -moz-opacity:0.5;
-	  
+
 	  /* Safari 1.x (pre WebKit!) */
 	  -khtml-opacity: 0.5;
-    
+
 	  /* Modern!
 	  /* Firefox 0.9+, Safari 2?, Chrome any?
 	  /* Opera 9+, IE 9+ */
@@ -47,7 +43,7 @@
 }
 
 .lastknown-col {
-    background: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.45);
     /* filter:blur(4px); */
     /* -o-filter:blur(4px); */
     /* -ms-filter:blur(4px); */
@@ -55,12 +51,12 @@
     /* -webkit-filter:blur(4px); */
 }
 .lastknown-col.dark {
-    background: rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.35);
 }
 
 #lastknown {
     background: inherit;
-    /* overflow: hidden; */
+    overflow: hidden;
 }
 
 #lastknown:before{
@@ -127,8 +123,24 @@
     /* background-color: lightblue; */
 }
 
-/* .leaflet-top.leaflet-left { */
-/*     top: 55px; */
-/* } */
 
+.shad {
+    -webkit-box-shadow: -3px 6px 9px 0px rgba(0,0,0,0.38);
+    -moz-box-shadow: -3px 6px 9px 0px rgba(0,0,0,0.38);
+    box-shadow: -3px 6px 9px 0px rgba(0,0,0,0.38);
+}
 
+.shad {
+    -webkit-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);
+    -moz-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);
+    box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);
+}
+
+.vshad {
+    /* -webkit-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38); */
+    /* -moz-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38); */
+    /* box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38); */
+    -webkit-box-shadow: -2px 2px 30px 7px rgba(0,0,0,0.38);
+    -moz-box-shadow: -2px 2px 30px 7px rgba(0,0,0,0.38);
+    box-shadow: -2px 2px 30px 7px rgba(0,0,0,0.38);
+}

@@ -42,7 +42,7 @@ var queryURL = function queryURL(host, path, paramsObj) {
     return URI({
         protocol: "https",
         hostname: "icanhazbounce.com",
-        query: "url=" + URI.encode(u.href())
+        query: "init=1&url=" + URI.encode(u.href())
     }).href();
 
     // return URI("https://icanhazbounce.com").addPath(u.href()).href();
@@ -173,7 +173,11 @@ function isSmallScreen() {
     if (/Android|webOS|iPhone|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
         return true;
     }
-      var b = $("body");
+    return false;
+}
+
+function portraitLayout() {
+        var b = $("body");
         return b.width() < b.height();
 }
 
@@ -190,3 +194,8 @@ $.fn.flash = function(duration, iterations) {
     }
     return this;
 };
+
+// accepts _moment()_ time
+var minimalTimeDisplay = function(time) {
+    return time.fromNow(true).replace("a few seconds", "0m").replace("a ", "1").replace("an", "1").replace("hours", "h").replace("hour", "h").replace("minutes", "m").replace("minute", "m").replace(" ","").replace("days","d").replace("day", "d").replace("months", "M").replace("month", "M");
+}
