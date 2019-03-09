@@ -384,7 +384,7 @@ model.loadSnaps = function(snaps) {
         cd("GET", url);
         $.ajax(qJSON(url))
             .done(function(data) {
-                var snaps = data;
+                var snaps = data.reverse();
                 cd("GOT SNAPS", snaps);
                 view.mapState.setLayer("snaps", null);
                 $("#snaps-display").html("");
@@ -404,7 +404,7 @@ model.loadSnaps = function(snaps) {
                     var snapPop = function(e) {
                         cd(e);
                         var url = s3url; // close
-                        var content = `<img src='${url}' style='width:${isSmallScreen()?150:300}px;' />
+                        var content = `<a target="_" href="${url}"><img src='${url}' style='width:${isSmallScreen()?150:300}px;' /></a>
                         <div class="d-flex w-100 justify-content-between m-t-1">
                             <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
                             <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))}</span>
@@ -424,7 +424,7 @@ model.loadSnaps = function(snaps) {
                         view.mapState.getMap().setView([snap.lat, snap.long]);
                         snapPop(e);
                     });
-                    $("#snaps-display").prepend(el);
+                    $("#snaps-display").append(el);
 
                     // add markers
                     var marker = L.marker([snap.lat, snap.long], {
