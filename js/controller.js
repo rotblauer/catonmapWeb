@@ -112,7 +112,7 @@ model.getMetadata = function() {
 model.doneMetadata = function(data) {
     cd("got metadata", data);
     var m = moment();
-    var content = `<small class="metadataservercontent">+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.<br><a href="http://punktlich.rotblauer.com/install/" target="_">Update your CatTracks iOS app!</a></small>`;
+    var content = `<small class="metadataservercontent">+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.<br><a href="http://punktlich.rotblauer.com/install/" target="_">Update CatTracks iOS App!</a></small>`;
     // cd("content", content);
     var zin = $(".leaflet-top").first();
     view.$metadataDisplay.children(".metadataservercontent").first().remove();
