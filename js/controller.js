@@ -392,7 +392,7 @@ model.loadSnaps = function(snaps) {
                 var num = 0;
                 snaps.forEach(function(snap) {
                     num++;
-                    if (n > 15) {
+                    if (num > 50) {
                         return;
                     }
                     var n = JSON.parse(snap.notes);
