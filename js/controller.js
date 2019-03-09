@@ -392,9 +392,9 @@ model.loadSnaps = function(snaps) {
                 var num = 0;
                 snaps.forEach(function(snap) {
                     num++;
-                    if (num > 50) {
-                        return;
-                    }
+                    // if (num > 50) {
+                        // return;
+                    // }
                     var n = JSON.parse(snap.notes);
                     cd("snap notes", n);
                     if (!objExists(n["imgS3"]) || !n.hasOwnProperty("imgS3") || n["imgS3"] === "") {
@@ -424,7 +424,9 @@ model.loadSnaps = function(snaps) {
                         view.mapState.getMap().setView([snap.lat, snap.long]);
                         snapPop(e);
                     });
-                    $("#snaps-display").append(el);
+                    if (num < 50) {
+                        $("#snaps-display").append(el);
+                    }
 
                     // add markers
                     var marker = L.marker([snap.lat, snap.long], {
