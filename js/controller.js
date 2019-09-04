@@ -86,6 +86,7 @@ model.getState = function() {
         baseLayer: s["baseLayer"] || "terrain",
         tileLayer: s["tileLayer"] || "activity",
         visits: (( uri["visits"] || his["visits"] || ls["visits"] || "false" ) === "false") ? false : true,
+        snaps: (( uri["snaps"] || his["snaps"] || ls["snaps"] || "true" ) === "false") ? false : true,
         follow: s["follow"] || "",
         windowStyle: s["window"] || "light",
         tfstart: s["tfstart"],
@@ -320,7 +321,9 @@ ct.dataLoop = function(n) {
                 .catch(model.errVisits);
         });
 
-    model.loadSnaps();
+    if (model.getState().snaps) {
+        model.loadSnaps();
+    }
 
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
     view.mapState.setPBFOpt("");
@@ -331,12 +334,14 @@ ct.init = (function() {
     setWindowTitle();
     ct.browserSupportsLocal = browserSupportsLocalStorage;
     model.visitsOn = model.getState().visits;
+    model.snapsOn = model.getState().snaps;
     // var von = model.getState().visits;
     // model.visitsOn = (von === true || von === "true") ? true : false; // localOrDefault("von", "yes");
     // (model.visitsOn) ? view.$visitsCheckbox.val("yes").attr("checked", true): view.$visitsCheckbox.val("no").attr("checked", false);
 
 
     view.$visitsCheckbox.attr("checked", model.visitsOn);
+    view.$snapsCheckbox.attr("checked", model.snapsOn);
 
     var tfstart = model.getState().tfstart;
     var tfend = model.getState().tfend;
@@ -521,6 +526,20 @@ view.init = function() {
             model.visitsParams.get()
                 .done(model.setVisits)
                 .catch(model.errVisits);
+        });
+
+    view.$snapsCheckbox = $("#snaps-checkbox")
+        .attr("checked", ms.snaps)
+        .on("change", function(e) {
+            model.snapsOn = $(this).is(":checked");
+            // model.setLocalStore("von", model.visitsOn);
+            model.setState("snaps", model.snapsOn);
+            if (!model.snapsOn) {
+                view.mapState.setLayer("snaps", null);
+                $("#snaps-display").html("");
+            } else {
+                model.loadSnaps();
+            }
         });
 
     $("#latest-version-ios").text(latestiOSVersion);
