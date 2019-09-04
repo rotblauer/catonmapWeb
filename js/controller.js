@@ -87,7 +87,9 @@ model.getState = function() {
         tileLayer: s["tileLayer"] || "activity",
         visits: (( uri["visits"] || his["visits"] || ls["visits"] || "false" ) === "false") ? false : true,
         follow: s["follow"] || "",
-        windowStyle: s["window"] || "light"
+        windowStyle: s["window"] || "light",
+        tfstart: s["tfstart"],
+        tfend: s["tfend"] 
     };
 
     // return {
@@ -336,6 +338,17 @@ ct.init = (function() {
 
     view.$visitsCheckbox.attr("checked", model.visitsOn);
 
+    var tfstart = model.getState().tfstart;
+    var tfend = model.getState().tfend;
+    if (objExists(tfstart) || objExists(tfend)) {
+        ct.setSettingsFilter("time_filter", function(p, z, l) {
+            if (moment(tfstart).unix() < p.UnixTime && moment(tfend).unix() > p.UnixTime) {
+                return true;
+            }
+           return false;
+        });    
+    }
+
     view.mapState.init();
 
     ct.dataLoop();
@@ -396,7 +409,7 @@ model.loadSnaps = function(snaps) {
                         // return;
                     // }
                     var n = JSON.parse(snap.notes);
-                    cd("snap notes", n);
+                    // cd("snap notes", n);
                     if (!objExists(n["imgS3"]) || !n.hasOwnProperty("imgS3") || n["imgS3"] === "") {
                         return;
                     }
@@ -488,12 +501,14 @@ view.init = function() {
     // view.$selectDrawOpts.val(localOrDefault("l", "activity"));
     var ms = model.getState();
     model.setState(ms);
+    
 
     view.$selectDrawOpts.val(ms.tileLayer);
 
     view.$selectDrawOpts.on("change", function(e) { // FIXME on._ change, select, whatever
         view.mapState.setPBFOpt($(e.target).val());
     });
+    
     view.$visitsCheckbox = $("#visits-checkbox")
         .attr("checked", ms.visits)
         .on("change", function(e) {
@@ -607,8 +622,8 @@ function toggleCatsView() {
 
         $("#datetimepicker1").daterangepicker({
             timePicker: true,
-            startDate: moment().startOf("year"),
-            endDate: moment().startOf("hour").add(32, "hour"),
+            startDate: moment().startOf("week"),
+            endDate: moment().startOf("hour").add(2, "hour"),
             ranges: {
                 'Today': [moment(), moment()],
                 'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -624,7 +639,27 @@ function toggleCatsView() {
             }
 
         }, function(start, end, label) {
+            ct.setSettingsFilter("time_filter", function(p, z, l) {
+                if (start.unix() < p.UnixTime && end.unix() > p.UnixTime) {
+                    return true;
+                }
+               return false;
+            });
             cd(start, end, label);
+            
+            model.setState("tfstart", start.format());
+            model.setState("tfend", end.format());
+
+            view.mapState.setPBFOpt(view.$selectDrawOpts.val());
+        });
+
+        $("#btn-remove-date-filter").on("click", function(e) {
+            ct.setSettingsFilter("time_filter", null);
+            
+            model.setState("tfstart", null);
+            model.setState("tfend", null);
+
+            view.mapState.setPBFOpt(view.$selectDrawOpts.val());
         });
 
     });
