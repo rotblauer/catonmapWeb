@@ -135,6 +135,12 @@ ct.settings = {
     on: false,
     // on: true,
     filter: {
+        // "big papa only": function(p,z,l) {
+        //     if (p.Name == "Big Papa") {
+        //         return true;
+        //     }
+        //     return false;
+        // }
         // "t": function(p, z, l) {
         //     // if (!objExists(p.TimeUnix)) {
         //     //     cd("noexit", p);
@@ -386,10 +392,13 @@ ct.onLastKnown = function(data) {
         entry.elInit(view.$lastKnown);
     }
 
+    // cd("catsort", catsort);
+
     view.$lastKnown.children(".lastKnown").sort(function(a, b) {
         return $(a).data('unix') < $(b).data('unix');
     }).appendTo(view.$lastKnown);
 
+    // put cats on maps
     var lg = model.lastKnownData.where(function(k, cat) {
         return objExists(cat) &&
             cat.hasOwnProperty("time") &&
