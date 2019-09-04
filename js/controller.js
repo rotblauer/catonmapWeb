@@ -323,6 +323,9 @@ ct.dataLoop = function(n) {
 
     if (model.getState().snaps) {
         model.loadSnaps();
+        $("#snapsRenderedSwitcher").show();
+    } else {
+        $("#snapsRenderedSwitcher").hide();
     }
 
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
@@ -406,6 +409,7 @@ model.loadSnaps = function(snaps) {
                 cd("GOT SNAPS", snaps);
                 view.mapState.setLayer("snaps", null);
                 $("#snaps-display").html("");
+                $("#snapsRenderedSwitcher").show();
                 ct.snapsClusterGroup = L.markerClusterGroup();
                 var num = 0;
                 snaps.forEach(function(snap) {
@@ -507,6 +511,9 @@ view.init = function() {
     var ms = model.getState();
     model.setState(ms);
     
+    if (!ms.snaps) {
+        $("#snapsRenderedSwitcher").hide();
+    }
 
     view.$selectDrawOpts.val(ms.tileLayer);
 
@@ -537,11 +544,11 @@ view.init = function() {
             if (!model.snapsOn) {
                 view.mapState.setLayer("snaps", null);
                 $("#snaps-display").html("");
+                $("#snapsRenderedSwitcher").hide();
             } else {
                 model.loadSnaps();
             }
         });
-
     $("#latest-version-ios").text(latestiOSVersion);
 };
 
