@@ -336,7 +336,9 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
         }
 
         this.el().children(".maplinks").remove();
-        var d = $("<div>").addClass("m-0 p-0 maplinks").append(findlink).append(filterlink).append(followLink);
+        // NOTE: 'follow' link is commented b/c not sure actually working w/r/t ajax updates
+        // and/or filtering, state persisting
+        var d = $("<div>").addClass("m-0 p-0 maplinks").append(findlink).append(filterlink); // .append(followLink);
         this.el().append(d);
 
         // init follow if following
