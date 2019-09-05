@@ -660,12 +660,12 @@ function toggleCatsView() {
             startDate: moment().startOf("week"),
             endDate: moment().startOf("hour").add(2, "hour"),
             ranges: {
-                'Today': [moment(), moment()],
-                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                "Last 6 Months": [moment().subtract(6, "months"), moment()],
-                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Today': [moment().startOf('day'), moment()],
+                'Yesterday': [moment().subtract(1, 'day').startOf("day"), moment().subtract(1, "day").endOf("day")],
+                'Last 7 Days': [moment().subtract(7, 'days').startOf('day'), moment()],
+                'Last 30 Days': [moment().subtract(30, 'days').startOf('day'), moment()],
+                "Last 6 Months": [moment().subtract(6, "months").startOf('day'), moment()],
+                'This Month': [moment().startOf('month'), moment()],
                 'This Year': [moment().startOf('year'), moment()]
                 // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
