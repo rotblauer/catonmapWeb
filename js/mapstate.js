@@ -50,6 +50,10 @@ var mapStateFn = function() {
         // return tileHost + "/services/db/tiles/{z}/{x}/{y}.pbf" ;// .pbf";
         return tileHost + "/" + id + "/{z}/{x}/{y}";
         // return tileHost +  "/{z}/{x}/{y}" + ".geojson";
+
+        // id = "edge";
+        // id = "finalfinal";
+        // return tileHost + "/services/" + id + "/tiles/{z}/{x}/{y}.pbf";
     };
     var _pbfLayerOpts = {
         "activity": ct.baseTilesLayerOptsF("activity"),
@@ -74,6 +78,8 @@ var mapStateFn = function() {
             "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n)),
             "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n)),
             "master": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts(n))
+
+            // "master": L.vectorGrid.protobuf(_pbfURL("finalfinal"), _pbfOpts(n))
 
             // "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n))
             // , "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n))
@@ -107,8 +113,8 @@ var mapStateFn = function() {
         var keys = Object.keys(ls); // master, devop, edge
 
         for (var j = 0; j < keys.length; j++) {
-            var l = ls[keys[j]].bringToFront().setZIndex(10).on("viewreset", function(e) {view.sps=0;}).on("load", function(e) {
-                view.$shownPointsShower.text(""+numberWithCommas( view.sps ));
+            var l = ls[keys[j]].bringToFront().setZIndex(10).on("viewreset", function(e) { view.sps = 0; }).on("load", function(e) {
+                view.$shownPointsShower.text("" + numberWithCommas(view.sps));
             });
             l.pane = "overlayPane";
             _map.addLayer(l);
@@ -159,7 +165,7 @@ var mapStateFn = function() {
                 zoom: +s.zoom,
                 noWrap: true,
                 layers: [_mapboxLayers[s.baseLayer]]
-                // preferCanvas: true
+                    // preferCanvas: true
             })
             .on("moveend", _mapOnMoveEnd)
             .on("zoomend", _mapOnZoomEnd)
@@ -168,7 +174,7 @@ var mapStateFn = function() {
             .on("click", _mapOnClick);
 
         // base, over, opts
-        L.control.layers(_mapboxLayers, null, {position: "topleft"}).addTo(_map);
+        L.control.layers(_mapboxLayers, null, { position: "topleft" }).addTo(_map);
 
         _currentPBFLayerOpt = s.tileLayer;
         setPBFOpt(_currentPBFLayerOpt);

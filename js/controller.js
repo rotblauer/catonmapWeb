@@ -85,12 +85,12 @@ model.getState = function() {
         lng: s["lng"] || -90.25388717651369,
         baseLayer: s["baseLayer"] || "terrain",
         tileLayer: s["tileLayer"] || "activity",
-        visits: (( uri["visits"] || his["visits"] || ls["visits"] || "false" ) === "false") ? false : true,
-        snaps: (( uri["snaps"] || his["snaps"] || ls["snaps"] || "true" ) === "false") ? false : true,
+        visits: ((uri["visits"] || his["visits"] || ls["visits"] || "false") === "false") ? false : true,
+        snaps: ((uri["snaps"] || his["snaps"] || ls["snaps"] || "true") === "false") ? false : true,
         follow: s["follow"] || "",
         windowStyle: s["window"] || "light",
         tfstart: s["tfstart"],
-        tfend: s["tfend"] 
+        tfend: s["tfend"]
     };
 
     // return {
@@ -119,7 +119,7 @@ model.doneMetadata = function(data) {
     // cd("content", content);
     var zin = $(".leaflet-top").first();
     view.$metadataDisplay.children(".metadataservercontent").first().remove();
-    view.$metadataDisplay.append($(content).css({"line-height": "1.3em"}));
+    view.$metadataDisplay.append($(content).css({ "line-height": "1.3em" }));
     if (!renderCatsView) {
         view.$metadataDisplay.show();
     }
@@ -356,11 +356,20 @@ ct.init = (function() {
     var tfend = model.getState().tfend;
     if (objExists(tfstart) || objExists(tfend)) {
         ct.setSettingsFilter("time_filter", function(p, z, l) {
-            if (moment(tfstart).unix() < p.UnixTime && moment(tfend).unix() > p.UnixTime) {
-                return true;
+            if (objExists(p["UnixTime"])) {
+                if (moment(tfstart).unix() < p.UnixTime && moment(tfend).unix() > p.UnixTime) {
+                    return true;
+                }
+                return false;
+            } else {
+                var punix = p.id / 1e9;
+                if (moment(tfstart).unix() < punix && moment(tfend).unix() > punix) {
+                    return true;
+                }
+                cd("nogo snapo", moment(tfstart).unix(), tfend, punix);
+                return false;
             }
-           return false;
-        });    
+        });
     }
 
     view.mapState.init();
@@ -410,70 +419,74 @@ ct.onLastKnown = function(data) {
 };
 
 model.loadSnaps = function(snaps) {
-        var url = queryURL(trackHost, "/catsnaps");
-        cd("GET", url);
-        $.ajax(qJSON(url))
-            .done(function(data) {
-                var snaps = data.reverse();
-                cd("GOT SNAPS", snaps);
-                view.mapState.setLayer("snaps", null);
-                $("#snaps-display").html("");
-                $("#snapsRenderedSwitcher").show();
-                ct.snapsClusterGroup = L.markerClusterGroup();
-                var num = 0;
-                snaps.forEach(function(snap) {
-                    num++;
-                    // if (num > 50) {
-                        // return;
-                    // }
-                    var n = JSON.parse(snap.notes);
-                    // cd("snap notes", n);
-                    if (!objExists(n["imgS3"]) || !n.hasOwnProperty("imgS3") || n["imgS3"] === "") {
-                        return;
-                    }
+    var url = queryURL(trackHost, "/catsnaps");
+    cd("GET", url);
+    $.ajax(qJSON(url))
+        .done(function(data) {
+            var snaps = data.reverse();
+            cd("GOT SNAPS", snaps);
+            view.mapState.setLayer("snaps", null);
+            $("#snaps-display").html("");
+            $("#snapsRenderedSwitcher").show();
+            ct.snapsClusterGroup = L.markerClusterGroup();
+            var num = 0;
+            snaps.forEach(function(snap) {
+                if (!ct.settingsFilter(snap, 3, "snaps")) {
+                    cd("snap return", snap);
+                    return;
+                }
+                num++;
+                // if (num > 50) {
+                // return;
+                // }
+                var n = JSON.parse(snap.notes);
+                // cd("snap notes", n);
+                if (!objExists(n["imgS3"]) || !n.hasOwnProperty("imgS3") || n["imgS3"] === "") {
+                    return;
+                }
 
-                    var snapPop = function(e) {
-                        cd(e);
-                        var url = s3url; // close
-                        var content = `<a target="_" href="${url}"><img src='${url}' style='width:${isSmallScreen()?150:300}px;' /></a>
+                var snapPop = function(e) {
+                    cd(e);
+                    var url = s3url; // close
+                    var content = `<a target="_" href="${url}"><img src='${url}' style='width:${isSmallScreen()?150:300}px;' /></a>
                         <div class="d-flex w-100 justify-content-between m-t-1">
                             <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
                             <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))}</span>
                         </div>
                         `;
-                        L.popup()
-                            .setContent(content)
-                            .setLatLng([snap.lat, snap.long])
-                            .openOn(view.mapState.getMap());
-                        L.DomEvent.stop(e);
-                    };
+                    L.popup()
+                        .setContent(content)
+                        .setLatLng([snap.lat, snap.long])
+                        .openOn(view.mapState.getMap());
+                    L.DomEvent.stop(e);
+                };
 
-                    var s3url = "https://s3.us-east-2.amazonaws.com/" + n["imgS3"];
-                    var el = $("<img>").attr("src", s3url).css({
-                        "max-width": "100%"
-                    }).on("click", function(e) {
-                        view.mapState.getMap().setView([snap.lat, snap.long]);
-                        snapPop(e);
-                    });
-                    if (num < 50) {
-                        $("#snaps-display").append(el);
-                    }
-
-                    // add markers
-                    var marker = L.marker([snap.lat, snap.long], {
-                        icon: iconSnap
-                    }).on("click", snapPop);
-                    ct.snapsClusterGroup.addLayer(marker);
-                    // ct.markerClusterGroup.addLayer(marker);
+                var s3url = "https://s3.us-east-2.amazonaws.com/" + n["imgS3"];
+                var el = $("<img>").attr("src", s3url).css({
+                    "max-width": "100%"
+                }).on("click", function(e) {
+                    view.mapState.getMap().setView([snap.lat, snap.long]);
+                    snapPop(e);
                 });
+                if (num < 50) {
+                    $("#snaps-display").append(el);
+                }
 
-                view.mapState.setLayer("snaps", ct.snapsClusterGroup);
-                // view.mapState.setLayer("snaps", ct.markerClusterGroup);
-
-            })
-            .catch(function(err) {
-                ce(err);
+                // add markers
+                var marker = L.marker([snap.lat, snap.long], {
+                    icon: iconSnap
+                }).on("click", snapPop);
+                ct.snapsClusterGroup.addLayer(marker);
+                // ct.markerClusterGroup.addLayer(marker);
             });
+
+            view.mapState.setLayer("snaps", ct.snapsClusterGroup);
+            // view.mapState.setLayer("snaps", ct.markerClusterGroup);
+
+        })
+        .catch(function(err) {
+            ce(err);
+        });
 };
 
 ct.onVisits = function(visits, overwrite) {
@@ -519,7 +532,7 @@ view.init = function() {
     // view.$selectDrawOpts.val(localOrDefault("l", "activity"));
     var ms = model.getState();
     model.setState(ms);
-    
+
     if (!ms.snaps) {
         $("#snapsRenderedSwitcher").hide();
     }
@@ -529,7 +542,7 @@ view.init = function() {
     view.$selectDrawOpts.on("change", function(e) { // FIXME on._ change, select, whatever
         view.mapState.setPBFOpt($(e.target).val());
     });
-    
+
     view.$visitsCheckbox = $("#visits-checkbox")
         .attr("checked", ms.visits)
         .on("change", function(e) {
@@ -575,6 +588,7 @@ ct.setViewStyle = function(lightOrDark) {
 };
 
 var catsViewOn = false;
+
 function renderCatsView() {
     if (catsViewOn) {
         $("#main2").show();
@@ -592,6 +606,7 @@ function renderCatsView() {
         }
     }
 }
+
 function toggleCatsView() {
     catsViewOn = !catsViewOn;
     renderCatsView();
@@ -642,18 +657,19 @@ function toggleCatsView() {
         ct.setViewStyle(ld);
 
         $("#catsRenderedSwitcher").on("click", function() {
-                toggleCatsView();
-                renderCatsView();
-                $(this).toggleClass("btn-primary btn-success");
-                if (catsViewOn) {
-                    $(this).text("Maps");
-                } else {
-                    $(this).text("Cats");
-                }
+            toggleCatsView();
+            renderCatsView();
+            $(this).toggleClass("btn-primary btn-success");
+            if (catsViewOn) {
+                $(this).text("Maps");
+            } else {
+                $(this).text("Cats");
+            }
         });
         $("#snapsRenderedSwitcher").on("click", function(e) {
             $("#main1").toggleClass("col-12 col-9");
         });
+        ``
 
         $("#datetimepicker1").daterangepicker({
             timePicker: true,
@@ -667,7 +683,7 @@ function toggleCatsView() {
                 "Last 6 Months": [moment().subtract(6, "months").startOf('day'), moment()],
                 'This Month': [moment().startOf('month'), moment()],
                 'This Year': [moment().startOf('year'), moment()]
-                // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
             locale: {
                 format: "M/DD hh:mm A"
@@ -675,13 +691,22 @@ function toggleCatsView() {
 
         }, function(start, end, label) {
             ct.setSettingsFilter("time_filter", function(p, z, l) {
-                if (start.unix() < p.UnixTime && end.unix() > p.UnixTime) {
-                    return true;
+                if (objExists(p["UnixTime"])) {
+                    if (start.unix() < p.UnixTime && end.unix() > p.UnixTime) {
+                        return true;
+                    }
+                    return false;
+                } else {
+                    var punix = p.id / 1e9;
+                    if (start.unix() < punix && end.unix() > punix) {
+                        return true;
+                    }
+                    cd("nogo snapo", tfstart, tfend, punix);
+                    return false;
                 }
-               return false;
             });
             cd(start, end, label);
-            
+
             model.setState("tfstart", start.format());
             model.setState("tfend", end.format());
 
@@ -690,7 +715,7 @@ function toggleCatsView() {
 
         $("#btn-remove-date-filter").on("click", function(e) {
             ct.setSettingsFilter("time_filter", null);
-            
+
             model.setState("tfstart", null);
             model.setState("tfend", null);
 

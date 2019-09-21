@@ -17,6 +17,7 @@ var tileHost = "https://icanhazbounce.com?init=1&url=" + encodeURIComponent("htt
 // var tileHost =  "http://catonmap.info:8080";
 // var tileHost =  "http://localhost:8081";
 // var tileHost =  "http://localhost:8082"; // /tdata/ttiles
+// var tileHost = "http://localhost:3000";
 
 // var oef = function(feature, layer) {
 //     layer.on({
@@ -45,19 +46,19 @@ var baseTileLayerOpts = {
         return f.properties.name + f.properties.Time;
     },
     interactive: true
-    // , onEachFeature: oef
-    // onclick: function(a, b, c) {
-    //     cd("click pt", a, b, c);
-    // }
-    // onEachFeature: onEachFeature
-    // onEachFeature: function(feature, layer) {
-    //     if (feature.properties) {
-    //         layer.bindPopup(" " +feature.properties.name + " "  + "<br>Affected Bridges : " + feature.properties.Br_Affected + " ");
-    //     }
-    // }
-    // click: function(a,b,c) {
-    //     cd("abc", a, b,c);
-    // }
+        // , onEachFeature: oef
+        // onclick: function(a, b, c) {
+        //     cd("click pt", a, b, c);
+        // }
+        // onEachFeature: onEachFeature
+        // onEachFeature: function(feature, layer) {
+        //     if (feature.properties) {
+        //         layer.bindPopup(" " +feature.properties.name + " "  + "<br>Affected Bridges : " + feature.properties.Br_Affected + " ");
+        //     }
+        // }
+        // click: function(a,b,c) {
+        //     cd("abc", a, b,c);
+        // }
 };
 
 var bootstrapCSSLinks = {

@@ -60,7 +60,7 @@ var qJSON = function qJSON(url) {
         url: url,
         // data: ,
         dataType: "json",
-        timeout: 10000, // sets timeout to 3 seconds
+        timeout: 10000, 
         beforeSend: function(request) {
             // request.setRequestHeader("Access-Control-Allow-Origin", "*");
             // request.setRequestHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
