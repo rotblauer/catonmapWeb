@@ -48,12 +48,14 @@ var mapStateFn = function() {
     var _pbfURL = function(id) {
         // tileHost = "/home/ia/tdata/ttiles";
         // return tileHost + "/services/db/tiles/{z}/{x}/{y}.pbf" ;// .pbf";
-        return tileHost + "/" + id + "/{z}/{x}/{y}";
+
+        // return tileHost + "/" + id + "/{z}/{x}/{y}"; // <- the real one!
+
         // return tileHost +  "/{z}/{x}/{y}" + ".geojson";
 
         // id = "edge";
-        // id = "finalfinal";
-        // return tileHost + "/services/" + id + "/tiles/{z}/{x}/{y}.pbf";
+        // id = "master-test";
+        return tileHost + "/services/" + id + "/tiles/{z}/{x}/{y}.pbf";
     };
     var _pbfLayerOpts = {
         "activity": ct.baseTilesLayerOptsF("activity"),

@@ -12,12 +12,15 @@ var trackHost = "http://catonmap.info:3001";
 // var tileHost =  "https://icanhazbounce.com/" + encodeURI("catonmap.info:8080");
 
 // LIVE:
-var tileHost = "https://icanhazbounce.com?init=1&url=" + encodeURIComponent("http://catonmap.info:8080");
+// var tileHost = "https://icanhazbounce.com?init=1&url=" + encodeURIComponent("http://catonmap.info:8080");
 
 // var tileHost =  "http://catonmap.info:8080";
 // var tileHost =  "http://localhost:8081";
 // var tileHost =  "http://localhost:8082"; // /tdata/ttiles
 // var tileHost = "http://localhost:3000";
+
+var tileHost = "https://icanhazbounce.com?init=1&url=" + encodeURIComponent("http://159.203.56.33:8009");
+
 
 // var oef = function(feature, layer) {
 //     layer.on({
