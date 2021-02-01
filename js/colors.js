@@ -9,6 +9,10 @@ var catColors = (function() {
         "P2": color_ia,
         "ubp52": color_ia,
         "iha": color_ia,
+        "3582fb4e0c347601": color_ia,
+
+        "edacfea41ee0d0fa": "rgb(255, 109, 238)", // pink
+        "QP1A.191005.007.A3/Pixel XL": "rgb(255, 109, 238)",
 
         "RyePhone": color_jl,
         "Rye8": color_jl,
