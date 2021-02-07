@@ -39,11 +39,13 @@ var queryURL = function queryURL(host, path, paramsObj) {
         u.addSearch(key, paramsObj[key]);
     }
 
-    return URI({
-        protocol: "https",
-        hostname: "icanhazbounce.com",
-        query: "init=1&url=" + URI.encode(u.href())
-    }).href();
+    return u.href();
+
+    // return URI({
+    //     protocol: "https",
+    //     hostname: "icanhazbounce.com",
+    //     query: "init=1&url=" + URI.encode(u.href())
+    // }).href();
 
     // return URI("https://icanhazbounce.com").addPath(u.href()).href();
     // return  + u.href();
