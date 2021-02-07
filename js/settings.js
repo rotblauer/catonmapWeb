@@ -4,7 +4,8 @@ const latestiOSVersion = "V.customizableCatTrackHat";
 // var trackHost = "https://bigger.space?reset=true&url=track.areteh.co:3001";
 
 // LIVE:
-var trackHost = "http://catonmap.info:3001";
+// var trackHost = "http://catonmap.info:3001";
+var trackHost = "https://api.catonmap.info";
 
 // var tileHost =  "https://bigger.space?reset=true&url=catonmap.info:8080";
 // var tileHost =  "https://icanhazbounce.com/http://catonmap.info:8080";
@@ -19,7 +20,8 @@ var trackHost = "http://catonmap.info:3001";
 // var tileHost =  "http://localhost:8082"; // /tdata/ttiles
 // var tileHost = "http://localhost:3000";
 
-var tileHost = "https://icanhazbounce.com?init=1&url=" + encodeURIComponent("http://159.203.56.33:8009");
+// var tileHost = "https://icanhazbounce.com?init=1&url=" + encodeURIComponent("http://159.203.56.33:8009");
+var tileHost = "https://tiles.catonmap.info";
 
 
 // var oef = function(feature, layer) {
