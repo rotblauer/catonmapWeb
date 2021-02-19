@@ -12,6 +12,8 @@ var catColors = (function() {
         "3582fb4e0c347601": color_ia,
 
         "edacfea41ee0d0fa": "rgb(255, 109, 238)", // pink
+        "222d07fbf9c6ff9b": "rgb(255, 109, 238)", // pink
+        "marlin-Pixel-222d": "rgb(255, 109, 238)", // pink
         "QP1A.191005.007.A3/Pixel XL": "rgb(255, 109, 238)",
 
         "RyePhone": color_jl,
