@@ -81,8 +81,8 @@ model.getState = function() {
 
     return {
         zoom: s["zoom"] || 12,
-        lat: s["lat"] || 38.613651383524335, // 32,
-        lng: s["lng"] || -90.25388717651369,
+        lat: s["lat"] || 44.987854003, // 38.613651383524335, // 32,
+        lng: s["lng"] || -93.25876617, // -90.25388717651369,
         baseLayer: s["baseLayer"] || "terrain",
         tileLayer: s["tileLayer"] || "activity",
         visits: ((uri["visits"] || his["visits"] || ls["visits"] || "false") === "false") ? false : true,
