@@ -419,7 +419,8 @@ ct.onLastKnown = function(data) {
 };
 
 model.loadSnaps = function(snaps) {
-    var url = queryURL(trackHost, "/catsnaps");
+    let snapsStart = Math.floor(Date.now() / 1000) - 60*60*24*30; // start time in unix seconds of T-1month
+    var url = queryURL(trackHost, "/catsnaps?tstart=" + snapsStart);
     cd("GET", url);
     $.ajax(qJSON(url))
         .done(function(data) {
