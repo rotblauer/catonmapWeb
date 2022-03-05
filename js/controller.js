@@ -115,11 +115,18 @@ model.getMetadata = function() {
 model.doneMetadata = function(data) {
     cd("got metadata", data);
     var m = moment();
-    var content = `<small class="metadataservercontent">+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.<br><a href="http://punktlich.rotblauer.com/install/" target="_">Update CatTracks iOS App!</a></small>`;
+    var content = `<small class="metadataservercontent">+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>
+TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.
+<p style="line-height: 2em !important;">
+<a href="http://etcstatus.live/cattracks/" target="_"><img src="https://github.com/rotblauer/trackMobileCat/raw/master/Geotify/catTracksDev/Icon-App-20x20%402x.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 0.5em;"> iOS</a><br> 
+<a href="https://github.com/rotblauer/gcps/releases" target="_"><img src="/catdroid-icon.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 0.5em;"> Android</a></small>
+</p>
+`;
+
     // cd("content", content);
     var zin = $(".leaflet-top").first();
     view.$metadataDisplay.children(".metadataservercontent").first().remove();
-    view.$metadataDisplay.append($(content).css({ "line-height": "1.3em" }));
+    view.$metadataDisplay.append($(content));
     if (!renderCatsView) {
         view.$metadataDisplay.show();
     }
