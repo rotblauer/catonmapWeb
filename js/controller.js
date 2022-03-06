@@ -115,11 +115,11 @@ model.getMetadata = function() {
 model.doneMetadata = function(data) {
     cd("got metadata", data);
     var m = moment();
-    var content = `<small class="metadataservercontent">+${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>
-TileDB last updated: ${moment(data.TileDBLastUpdated).fromNow()}.
+    var content = `<small class="metadataservercontent">Cats added ${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>
+TileDB was last updated ${moment(data.TileDBLastUpdated).fromNow()}.
 <p style="line-height: 2em !important;">
-<a href="http://etcstatus.live/cattracks/" target="_"><img src="https://github.com/rotblauer/trackMobileCat/raw/master/Geotify/catTracksDev/Icon-App-20x20%402x.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 0.5em;"> iOS</a> | <a href="https://github.com/rotblauer/trackMobileCat">Code</a><br> 
-<a href="https://github.com/rotblauer/gcps/releases" target="_"><img src="/catdroid-icon.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 0.5em;"> Android</a> | <a href="https://github.com/rotblauer/gcps">Code</a>
+<a href="http://etcstatus.live/cattracks/" target="_"><img src="https://github.com/rotblauer/trackMobileCat/raw/master/Geotify/catTracksDev/Icon-App-20x20%402x.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 1em;"> iOS</a> | <a href="https://github.com/rotblauer/trackMobileCat">Code</a><br> 
+<a href="https://github.com/rotblauer/gcps/releases" target="_"><img src="/catdroid-icon.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 1em;"> Android</a> | <a href="https://github.com/rotblauer/gcps">Code</a>
 </small>
 </p>
 `;
