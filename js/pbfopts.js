@@ -9,6 +9,15 @@ var activityColorLegend = {
     "Fly": "mediumspringgreen"
 };
 
+// ct.getActivityLegendElementFn = function() {
+//     const keys = Object.keys(activityColorLegend)
+//     const el = $('<ul>')
+//     for (let i = 0; i < keys.length; i++) {
+//         const key = keys[i]
+//         el.append($('<li>').)
+//     }
+// }
+
 var nnn = 0;
 var ps = null;
 ct.activityFn = function(props, z, layer) {
@@ -209,13 +218,13 @@ function getRelDensity(zoom, n) {
 }
 
 var
-    tfds = [],
+    tippeFeatureDensitySamples = [],
     tfdSum = 0,
     tfdMax = 0,
     tfdMin = 0,
     tfdAvg = 0,
 
-    pcs = [],
+    tippePointCountSamples = [],
     pcSum = 0,
     pcMax = 0,
     pcMin = 0,
@@ -239,17 +248,23 @@ var minTFD = 0,
 
 ct.densityFn = function(properties, zoom, layer) {
 
+    // Set a defaulty value for point_count if the annotation is falsey.
     properties.point_count = properties.point_count || minPC;
-    var n = properties.point_count > properties.tippecanoe_feature_density ? ((properties.point_count - minPC) / rangePC) : ((properties.tippecanoe_feature_density - minTFD) / rangeTFD);
+
+    // Set up a generic 'n' value as a composite of point count feature density.
+    //
+    var n = properties.point_count > properties.tippecanoe_feature_density
+        ? ((properties.point_count - minPC) / rangePC) // represent the point count as a ratio of the overall point-count-range
+        : ((properties.tippecanoe_feature_density - minTFD) / rangeTFD); // or do the same for feature density
 
     if (nnn % 1000 === 0) {
         if (properties.clustered) {
-            pcs.push(properties.point_count);
+            tippePointCountSamples.push(properties.point_count);
             pcSum += properties.point_count;
-            pcAvg = pcSum / pcs.length;
-            pcMax = Math.max.apply(Math, pcs);
-            pcMin = Math.min.apply(Math, pcs);
-            pcMin = Math.min.apply(Math, pcs);
+            pcAvg = pcSum / tippePointCountSamples.length;
+            pcMax = Math.max.apply(Math, tippePointCountSamples);
+            pcMin = Math.min.apply(Math, tippePointCountSamples);
+            pcMin = Math.min.apply(Math, tippePointCountSamples);
         } else {
             noClus++;
         }
@@ -261,12 +276,12 @@ ct.densityFn = function(properties, zoom, layer) {
         nMin = Math.min.apply(Math, ns);
         nMin = Math.min.apply(Math, ns);
 
-        tfds.push(properties.tippecanoe_feature_density);
+        tippeFeatureDensitySamples.push(properties.tippecanoe_feature_density);
         tfdSum += properties.tippecanoe_feature_density;
-        tfdAvg = tfdSum / tfds.length;
-        tfdMax = Math.max.apply(Math, tfds);
-        tfdMin = Math.min.apply(Math, tfds);
-        tfdMin = Math.min.apply(Math, tfds);
+        tfdAvg = tfdSum / tippeFeatureDensitySamples.length;
+        tfdMax = Math.max.apply(Math, tippeFeatureDensitySamples);
+        tfdMin = Math.min.apply(Math, tippeFeatureDensitySamples);
+        tfdMin = Math.min.apply(Math, tippeFeatureDensitySamples);
 
         cd("1/1000", nnn, "n=", n, properties);
 
@@ -278,7 +293,7 @@ ct.densityFn = function(properties, zoom, layer) {
         );
 
         cd(
-            "tfd.len=", tfds.length,
+            "tfd.len=", tippeFeatureDensitySamples.length,
             "tfd.avg=", tfdAvg,
             "tfd.min=", tfdMin,
             "tfd.max=", tfdMax,
@@ -286,7 +301,7 @@ ct.densityFn = function(properties, zoom, layer) {
 
         cd(
             "noclus(==nopc).ln=", noClus,
-            "pc.len=", pcs.length,
+            "pc.len=", tippePointCountSamples.length,
             "pc.avg=", pcAvg,
             "pc.min=", pcMin,
             "pc.max=", pcMax,

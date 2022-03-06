@@ -156,6 +156,40 @@ var mapStateFn = function() {
     };
     var _mapOnClick = function() {};
 
+    var geoLayer
+    var addGeoJSON = function() {
+        // getJSON(`/linestring?cats=${encodeURIComponent(new URLSearchParams(location.search).get("cats"))}` + "&viewport=" + encodeURIComponent(`${sw.lat()},${sw.lng()}|${ne.lat()},${ne.lng()}`) + '&zoom=' + encodeURIComponent(`${zm}`),
+
+        const sw = _map.getBounds().getSouthWest()
+        const ne = _map.getBounds().getNorthEast()
+        /*
+        https://cattracks.cc/linestring?cats=yes&viewport=44.85%2C-93.35%7C45.09%2C-93.15&zoom=13
+         */
+        // const geoJSONURL = `https://cattracks.cc/linestring?cats=yes&viewport=`+encodeURIComponent(`${sw.lat.toPrecision(4)},${sw.lng.toPrecision(4)}|${ne.lat.toPrecision(4)},${ne.lng.toPrecision(4)}`) + `&zoom=${_map.getZoom()}`;
+        const geoJSONURL = `https://cattracks.cc/linestring?cats=yes`;
+
+        // console.log("geojson url", geoJSONURL)
+        // L.geoJSON(geoJSONURL, function (err) {
+        //     console.log('leaflet geojson failed, error:', err)
+        // })
+        //     .addTo(_map);
+
+        fetch(geoJSONURL)
+            .then(res => {
+                res.json()
+                    .then((jsonData) => {
+                        console.log('geojson fetch ok', jsonData)
+                        geoLayer.addData(jsonData)
+                    })
+                    .catch(err => {
+                        console.error('geojson failed to become json', err)
+                    })
+            })
+            .catch(err => {
+                console.error(err)
+            })
+    }
+
     var initMap = function() {
         var s = model.getState();
         _map = L.map('map', {
@@ -177,6 +211,9 @@ var mapStateFn = function() {
 
         // base, over, opts
         L.control.layers(_mapboxLayers, null, { position: "topleft" }).addTo(_map);
+
+        // geoLayer = L.geoJSON().addTo(_map);
+        // addGeoJSON()
 
         _currentPBFLayerOpt = s.tileLayer;
         setPBFOpt(_currentPBFLayerOpt);
