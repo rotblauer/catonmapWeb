@@ -435,7 +435,7 @@ model.loadSnaps = function(snaps) {
             var snaps = data.reverse();
             cd("GOT SNAPS", snaps);
             view.mapState.setLayer("snaps", null);
-            $("#snaps-display").html("");
+            $("#snaps-display").html("<h1 class='m-3'>Cat Snaps</h1>");
             $("#snapsRenderedSwitcher").show();
             ct.snapsClusterGroup = L.markerClusterGroup();
             var num = 0;
@@ -471,14 +471,58 @@ model.loadSnaps = function(snaps) {
                 };
 
                 var s3url = "https://s3.us-east-2.amazonaws.com/" + n["imgS3"];
-                var el = $("<img>").attr("src", s3url).css({
+                var el = $("<img>")
+                    .attr("src", s3url)
+                    // .addClass('catsnap-img')
+                    .addClass('card-img-top')
+                    .css({
                     "max-width": "100%"
                 }).on("click", function(e) {
                     view.mapState.getMap().setView([snap.lat, snap.long]);
                     snapPop(e);
                 });
+
+                console.log('snap model', snap);
+                /*
+                {
+  "uuid": "6C28C3AE-B723-4A25-9548-EA5C274038A1",
+  "pushToken": "d71911a5db2c1f96ba6b7a7eaefe8d215b31fd18584aedefac4b4e53dc08319e",
+  "version": "V.customizableCatTrackHat",
+  "id": 1644093351578000000,
+  "name": "Rye8",
+  "lat": 45.00067138671875,
+  "long": -93.57170104980469,
+  "accuracy": 0,
+  "vAccuracy": 0,
+  "elevation": 0,
+  "speed": -1,
+  "tilt": 0,
+  "heading": -1,
+  "heartrate": 0,
+  "time": "2022-02-05T20:35:51.578Z",
+  "floor": 0,
+  "notes": "{\"activity\":\"Walking\",\"numberOfSteps\":2945,\"averageActivePace\":1.2652621855874484,\"currentPace\":0.7360047698020935,\"currentCadence\":1.727471113204956,\"distance\":1974.664067177102,\"customNote\":\"\",\"floorsAscended\":1,\"floorsDescended\":4,\"currentTripStart\":\"2022-02-04T15:40:20.637Z\",\"pressure\":97.41651916503906,\"visit\":\"{\\\"validVisit\\\":false}\",\"heartRateS\":\"\",\"heartRateRawS\":\"\",\"batteryStatus\":\"{\\\"level\\\":0.98000001907348633,\\\"status\\\":\\\"unplugged\\\"}\",\"networkInfo\":\"{}\",\"imgb64\":\"\",\"imgS3\":\"rotblauercatsnaps/UKnVxqvGmWVCPVXMRdwLPXXoyUfQiUvS\"}",
+  "COVerified": true,
+  "remoteaddr": ""
+}
+                 */
+
+                var $card = $(`<div class="card m-3">
+  <div class="card-body">
+<!--    <h5 class="card-title"></h5>-->
+<!--    <p class="card-text">-->
+        <div class="d-flex w-100 justify-content-between">
+            <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
+            <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))}</span>
+        </div>
+<!--    </p>-->
+  </div>
+</div>`);
+
+                $card.prepend(el)
+
                 if (num < 50) {
-                    $("#snaps-display").append(el);
+                    $("#snaps-display").append($card);
                 }
 
                 // add markers
@@ -632,10 +676,10 @@ function toggleCatsView() {
         view.mapState = (mapStateFn)();
         view.init();
 
-        catsViewOn = false; // !isSmallScreen();
+        catsViewOn = !isSmallScreen();
         renderCatsView();
         if (catsViewOn) {
-            // $("#catsRenderedSwitcher").hide();
+            $("#catsRenderedSwitcher").hide();
         }
 
         ct.init();
@@ -676,7 +720,7 @@ function toggleCatsView() {
             }
         });
         $("#snapsRenderedSwitcher").on("click", function(e) {
-            $("#main1").toggleClass("col-12 col-9");
+            $("#main1").toggleClass("col-12 col-sm-9 col-md-10");
         });
         ``
 

@@ -21,9 +21,9 @@ var trackHost = "https://api.catonmap.info";
 // var tileHost = "http://localhost:3000";
 
 // var tileHost = "https://icanhazbounce.com?init=1&url=" + encodeURIComponent("http://159.203.56.33:8009");
-// var tileHost = "https://tiles.catonmap.info";
+var tileHost = "https://tiles.catonmap.info";
+// var tileHost = "https://cattracks-tiles-master.iisaac.workers.dev";
 // var tileHost = "http://127.0.0.1:8787";
-var tileHost = "https://cattracks-tiles-master.iisaac.workers.dev";
 
 
 // var oef = function(feature, layer) {
