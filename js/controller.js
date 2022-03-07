@@ -676,7 +676,7 @@ function toggleCatsView() {
         view.mapState = (mapStateFn)();
         view.init();
 
-        catsViewOn = !isSmallScreen();
+        catsViewOn = false // !isSmallScreen();
         renderCatsView();
         if (catsViewOn) {
             $("#catsRenderedSwitcher").hide();
