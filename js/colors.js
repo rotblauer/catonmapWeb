@@ -2,7 +2,7 @@ var color_ia = "rgb(255,0,0)"; //"rgb(254,65,26)"; // "rgb(235,41,0)";
 var color_jl = "rgb(0,0,255)"; // "rgb(0,162,235)";
 var catColors = (function() {
     return {
-        "Big Papa": "rgb(255,0,0)",
+        "Big Papa": color_ia,
         "E96EEFB7-3A69-434D-9453-8BBFE0C22542": color_ia,
         "Bigger Papa": color_ia,
         "8F0BAEE9-19CD-4203-A025-D64F5D706220": color_ia,
@@ -10,6 +10,7 @@ var catColors = (function() {
         "ubp52": color_ia,
         "iha": color_ia,
         "3582fb4e0c347601": color_ia,
+        "sophia-moto-fdb7": color_ia,
 
         "edacfea41ee0d0fa": "rgb(255, 109, 238)", // pink
         "222d07fbf9c6ff9b": "rgb(255, 109, 238)", // pink
@@ -19,6 +20,7 @@ var catColors = (function() {
         "RyePhone": color_jl,
         "Rye8": color_jl,
         "F1634108-A3D7-4EC4-BCE4-5BDA3814067F": color_jl,
+        "6C28C3AE-B723-4A25-9548-EA5C274038A1": color_jl,
         "jl": color_jl,
         "jal": color_jl,
 

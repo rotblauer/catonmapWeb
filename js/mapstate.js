@@ -156,6 +156,99 @@ var mapStateFn = function() {
     };
     var _mapOnClick = function() {};
 
+    var handleGeoJSONLaps = function(featureCollection) {
+        const $lapsContainer = $('#tracks-display')
+        const $lapsTable = $('<table class="table"></table>');
+        $lapsContainer.append($lapsTable)
+        const features = featureCollection.features;
+        for (let feature of features) {
+
+            /*
+            {
+  "type": "Feature",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        -93.25862884521484,
+        44.98798370361328
+      ],
+      [
+        -93.25841522216797,
+        44.98836898803711
+      ]
+    ]
+  },
+  "properties": {
+    "Activity": "Unknown",
+    "Down": 0,
+    "Duration": 80,
+    "KmpH": 2.740037500572758,
+    "MeasuredSimplifiedTraversedKilometers": 0.06089048335647811,
+    "MeasuredTraversedElevationDelta": 0,
+    "Name": "Rye8",
+    "Start": 1646065226,
+    "UUID": "6C28C3AE-B723-4A25-9548-EA5C274038A1",
+    "Up": 0
+  }
+}
+             */
+
+            // mogrifications
+            feature.properties.Start = moment(feature.properties.Start * 1000).toLocaleString()
+
+            // ui
+            let $card = $(`<div class="card m-3" style="border: none; background-color: whitesmoke;">
+  <div class="card-body" 
+    style="border-left: 0.3em solid ${catColors()[feature.properties.UUID]};"
+    >
+<!--    <h5 class="card-title"></h5>-->
+<!--    <p class="card-text">-->
+<!--    </p>-->
+        
+            <div class="card-text">
+                <div class="d-flex w-100 justify-content-between">
+                <span>
+                    <span style='color: ${catColors()[feature.properties.UUID]}'>${feature.properties.Name}</span>
+                </span>
+                <span class='text-muted'>${minimalTimeDisplay(moment(feature.properties.Start))} ago</span>
+                
+    <!--            <span>${JSON.stringify(feature.properties)}</span>-->
+                
+                </div>
+                <div class="d-flex w-100 justify-content-between text-small text-muted">
+                    <div class="">
+                        <span class="badge" style='color: white; background-color: ${activityColorLegend[feature.properties.Activity]};'>${feature.properties.Activity}</span>
+                    </div>
+                    <div class="">
+                        <span>${hmsFromSeconds(feature.properties.Duration)}</span><br>
+                    </div>
+                </div>
+                <div class="d-flex w-100 justify-content-between">
+                    <span style="color: black;">${feature.properties.MeasuredSimplifiedTraversedKilometers.toPrecision(2)} km
+                    <sup>+${feature.properties.Up}m</sup><sub>-${feature.properties.Down}m</sub>
+                    </span>
+                    <span>
+                    ${feature.properties.KmpH.toPrecision(2)} km/h
+                    </span>
+                </div>
+
+            </div>
+            
+        
+  </div>
+</div>`);
+
+//             const $tableRow = $(`<tr>
+//         <td><span style='color: ${catColors()[feature.properties.UUID]}'>${feature.properties.Name}</span></td>
+//         <td><span class='text-muted'>${minimalTimeDisplay(moment(feature.properties.Start))} ago</span></td>
+// </tr>`);
+//             $lapsTable.append($tableRow)
+
+            $lapsContainer.append($card)
+        }
+    }
+
     var geoLayer
     var addGeoJSON = function() {
         // getJSON(`/linestring?cats=${encodeURIComponent(new URLSearchParams(location.search).get("cats"))}` + "&viewport=" + encodeURIComponent(`${sw.lat()},${sw.lng()}|${ne.lat()},${ne.lng()}`) + '&zoom=' + encodeURIComponent(`${zm}`),
@@ -165,8 +258,10 @@ var mapStateFn = function() {
         /*
         https://cattracks.cc/linestring?cats=yes&viewport=44.85%2C-93.35%7C45.09%2C-93.15&zoom=13
          */
-        // const geoJSONURL = `https://cattracks.cc/linestring?cats=yes&viewport=`+encodeURIComponent(`${sw.lat.toPrecision(4)},${sw.lng.toPrecision(4)}|${ne.lat.toPrecision(4)},${ne.lng.toPrecision(4)}`) + `&zoom=${_map.getZoom()}`;
-        const geoJSONURL = `https://cattracks.cc/linestring?cats=yes`;
+        const geoJSONURL = `https://cattracks.cc/linestring?cats=yes&viewport=` +
+            encodeURIComponent(`${sw.lat.toPrecision(4)},${sw.lng.toPrecision(4)}|${ne.lat.toPrecision(4)},${ne.lng.toPrecision(4)}`) +
+            `&zoom=${_map.getZoom()}`;
+        // const geoJSONURL = `https://cattracks.cc/linestring?cats=yes`;
 
         // console.log("geojson url", geoJSONURL)
         // L.geoJSON(geoJSONURL, function (err) {
@@ -179,7 +274,14 @@ var mapStateFn = function() {
                 res.json()
                     .then((jsonData) => {
                         console.log('geojson fetch ok', jsonData)
+                        jsonData.features = jsonData.features.filter(feature => {
+                            return feature.properties.MeasuredSimplifiedTraversedKilometers >= 0.4
+                        })
+                        jsonData.features.sort(function (a, b) {
+                            return a.properties.Start < b.properties.Start ? 1 : -1;
+                        })
                         geoLayer.addData(jsonData)
+                        handleGeoJSONLaps(jsonData)
                     })
                     .catch(err => {
                         console.error('geojson failed to become json', err)
@@ -212,8 +314,17 @@ var mapStateFn = function() {
         // base, over, opts
         L.control.layers(_mapboxLayers, null, { position: "topleft" }).addTo(_map);
 
-        // geoLayer = L.geoJSON().addTo(_map);
-        // addGeoJSON()
+        geoLayer = L.geoJSON(null, {
+            style: {
+                'color': 'black',
+                'weight': 2,
+                'opacity': 1.00,
+            },
+            onEachFeature: function(feature, layer) {
+
+            }
+        }).addTo(_map);
+        addGeoJSON()
 
         _currentPBFLayerOpt = s.tileLayer;
         setPBFOpt(_currentPBFLayerOpt);

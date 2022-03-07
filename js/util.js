@@ -3,6 +3,18 @@ var cl = console.log;
 var cw = console.warn;
 var ce = console.error;
 
+// https://stackoverflow.com/a/25279340/4401322
+var hmsFromSeconds = function(SECONDS) {
+    var date = new Date(null);
+    date.setSeconds(SECONDS); // specify value for SECONDS here
+    var result = date.toISOString().substr(11, 8);
+    result = result.replace(':', 'h ')
+    result = result.replace(':', 'm ')
+    result += 's'
+    if (result.match(/^00/)) result = result.substring(4)
+    return result
+}
+
 // https://codepen.io/code_monk/pen/FvpfI
 //  random hex string generator
 var randHex = function(len) {

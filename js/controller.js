@@ -482,26 +482,49 @@ model.loadSnaps = function(snaps) {
                     snapPop(e);
                 });
 
-                console.log('snap model', snap);
+                if (num === 1) {
+                    const snapClone = new Object(snap)
+                    snapClone.notes = n;
+                    console.log('snap model', snapClone);
+                }
                 /*
-                {
-  "uuid": "6C28C3AE-B723-4A25-9548-EA5C274038A1",
-  "pushToken": "d71911a5db2c1f96ba6b7a7eaefe8d215b31fd18584aedefac4b4e53dc08319e",
-  "version": "V.customizableCatTrackHat",
-  "id": 1644093351578000000,
-  "name": "Rye8",
-  "lat": 45.00067138671875,
-  "long": -93.57170104980469,
-  "accuracy": 0,
-  "vAccuracy": 0,
-  "elevation": 0,
-  "speed": -1,
+{
+  "uuid": "3582fb4e0c347601",
+  "pushToken": "",
+  "version": "gcps/v0.0.0+1",
+  "id": 1646606264000000000,
+  "name": "sofia-moto-fdb7",
+  "lat": 48.0374413,
+  "long": -118.3679075,
+  "accuracy": 3.8,
+  "vAccuracy": 2.9,
+  "elevation": 388,
+  "speed": 0,
   "tilt": 0,
-  "heading": -1,
+  "heading": 180,
   "heartrate": 0,
-  "time": "2022-02-05T20:35:51.578Z",
+  "time": "2022-03-06T22:37:44Z",
   "floor": 0,
-  "notes": "{\"activity\":\"Walking\",\"numberOfSteps\":2945,\"averageActivePace\":1.2652621855874484,\"currentPace\":0.7360047698020935,\"currentCadence\":1.727471113204956,\"distance\":1974.664067177102,\"customNote\":\"\",\"floorsAscended\":1,\"floorsDescended\":4,\"currentTripStart\":\"2022-02-04T15:40:20.637Z\",\"pressure\":97.41651916503906,\"visit\":\"{\\\"validVisit\\\":false}\",\"heartRateS\":\"\",\"heartRateRawS\":\"\",\"batteryStatus\":\"{\\\"level\\\":0.98000001907348633,\\\"status\\\":\\\"unplugged\\\"}\",\"networkInfo\":\"{}\",\"imgb64\":\"\",\"imgS3\":\"rotblauercatsnaps/UKnVxqvGmWVCPVXMRdwLPXXoyUfQiUvS\"}",
+  "notes": {
+    "activity": "Stationary",
+    "numberOfSteps": 2397,
+    "averageActivePace": 0,
+    "currentPace": 0,
+    "currentCadence": 0,
+    "distance": 0,
+    "customNote": "",
+    "floorsAscended": 0,
+    "floorsDescended": 0,
+    "currentTripStart": "0001-01-01T00:00:00Z",
+    "pressure": 0,
+    "visit": "",
+    "heartRateS": "",
+    "heartRateRawS": "",
+    "batteryStatus": "{\"level\":0.83,\"status\":\"unplugged\"}",
+    "networkInfo": "",
+    "imgb64": "",
+    "imgS3": "rotblauercatsnaps/lMdouqoofKvqMreiCsQvBKVQOLAgIuTL"
+  },
   "COVerified": true,
   "remoteaddr": ""
 }
@@ -775,6 +798,59 @@ function toggleCatsView() {
             view.mapState.setPBFOpt(view.$selectDrawOpts.val());
         });
 
+        $("#datetimepicker2").daterangepicker({
+            timePicker: true,
+            startDate: moment().startOf("week"),
+            endDate: moment().startOf("hour").add(12, "hour"),
+            ranges: {
+                'Today': [moment().startOf('day'), moment()],
+                'Yesterday': [moment().subtract(1, 'day').startOf("day"), moment().subtract(1, "day").endOf("day")],
+                'Last 7 Days': [moment().subtract(7, 'days').startOf('day'), moment()],
+                'Last 30 Days': [moment().subtract(30, 'days').startOf('day'), moment()],
+                "Last 6 Months": [moment().subtract(6, "months").startOf('day'), moment()],
+                'This Month': [moment().startOf('month'), moment()],
+                'This Year': [moment().startOf('year'), moment()]
+                // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            locale: {
+                format: "M/DD hh:mm A"
+            }
+
+        }, function(start, end, label) {
+            // ct.setSettingsFilter("time_filter", function(p, z, l) {
+            //     if (objExists(p["UnixTime"])) {
+            //         if (start.unix() < p.UnixTime && end.unix() > p.UnixTime) {
+            //             return true;
+            //         }
+            //         return false;
+            //     } else {
+            //         var punix = p.id / 1e9;
+            //         if (start.unix() < punix && end.unix() > punix) {
+            //             return true;
+            //         }
+            //         cd("nogo linestring", tfstart, tfend, punix);
+            //         return false;
+            //     }
+            // });
+
+            cd(start, end, label);
+
+            model.setState("linestringStart", start.format());
+            model.setState("linestringEnd", end.format());
+
+
+
+            // view.mapState.setPBFOpt(view.$selectDrawOpts.val());
+        });
+
+        $("#btn-remove-date-filter2").on("click", function(e) {
+            // ct.setSettingsFilter("time_filter", null);
+            //
+            // model.setState("tfstart", null);
+            // model.setState("tfend", null);
+            //
+            // view.mapState.setPBFOpt(view.$selectDrawOpts.val());
+        });
     });
 
 }(window.jQuery, window, document));
