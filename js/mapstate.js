@@ -131,7 +131,7 @@ var mapStateFn = function() {
         // model.setLocalStore("y", b.lat);
         // model.setLocalStore("x", b.lng);
         // model.setLocalStore("z", _map.getZoom());
-        fetchLinestrings()
+        // fetchLinestrings()
 
         // setLinkValue();
         // TODO get moar visits and append them
@@ -229,7 +229,7 @@ var mapStateFn = function() {
                     <sup>+${feature.properties.Up}m</sup><sub>-${feature.properties.Down}m</sub>
                     </span>
                     <span>
-                    ${feature.properties.KmpH.toPrecision(2)} km/h
+                    ${feature.properties.KmpH.toFixed(1)} km/h
                     </span>
                 </div>
 
@@ -269,8 +269,8 @@ var mapStateFn = function() {
         /*
         https://cattracks.cc/linestring?cats=yes&viewport=44.85%2C-93.35%7C45.09%2C-93.15&zoom=13
          */
-        let geoJSONURL = `https://cattracks.cc/linestring?cats=yes&viewport=` +
-            encodeURIComponent(`${sw.lat.toPrecision(4)+'00'},${sw.lng.toPrecision(4)+'00'}|${ne.lat.toPrecision(4)+'00'},${ne.lng.toPrecision(4)+'00'}`) +
+        let geoJSONURL = `https://cattracks.cc/linestring?cats=yes` +
+            // '&viewport=' + encodeURIComponent(`${sw.lat.toPrecision(4)+'00'},${sw.lng.toPrecision(4)+'00'}|${ne.lat.toPrecision(4)+'00'},${ne.lng.toPrecision(4)+'00'}`) +
             `&zoom=${_map.getZoom()}`;
 
         if (!!tstart) geoJSONURL += `&tstart=${tstart}`;
