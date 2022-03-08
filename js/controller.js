@@ -781,6 +781,7 @@ function onSnapsButtonClick(e, el) {
         $("#catsRenderedSwitcher").on("click", function() {
             toggleCatsView();
             renderCatsView();
+            $('#brand').toggle();
             $(this).toggleClass("btn-primary btn-success");
             if (catsViewOn) {
                 $(this).text("Maps");
