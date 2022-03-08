@@ -22,7 +22,9 @@ img.catsnap-img {
     border: none !important;
     border-radius: 0 !important;
 }
-
+.hiding {
+    display: none;
+}
 .transparent50 {
     /* color: "lightgray"; */
 	  /* Theoretically for IE 8 & 9 (more valid) */
@@ -94,7 +96,7 @@ img.catsnap-img {
     display: block;
 }
 
-// overrides
+/*overrides*/
 .list-group-item {
 }
 

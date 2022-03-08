@@ -41,7 +41,7 @@
 
 
     <div id="main-display" class="row d-flex m-0 p-0" style="height:100%; overflow: hidden;">
-        <div id="snaps-display" class="col-sm-3 col-md-2  m-0 p-0 width hide collapse" style="max-height: 100%; overflow-y: scroll;">
+        <div id="snaps-display" class="col-sm-12 col-md-2  m-0 p-0 collapse" style="max-height: 100%; overflow-y: scroll;">
 
         </div>
 <!--        <div id="main1" class="col-sm-9 col-md-10 m-0 p-0" style="height: 100%;" >-->
@@ -49,16 +49,17 @@
 
             <!-- height: 100% -->
             <div class="box">
-                <p id="metadata-display" style="position: absolute; left: 60; top: 0; margin-top: 10px; z-index: 1000; ">
+                <p id="metadata-display" style="position: absolute; left: 60px; top: 0; margin-top: 10px; z-index: 1000; ">
                     <small>Map rendered <span class="shownPointsShower">0</span> points.<br/></small>
                 </p>
                 <div id="map"></div>
             </div>
 
-                <div style=" z-index: 1111; position: absolute; bottom: 0; left: 0; background: transparent; width: 100px;">
-                    <button id="snapsRenderedSwitcher" class="btn btn-lg btn-warning m-3 vshad" data-target="#snaps-display" data-toggle="collapse" >Snaps</button>
-                </div>
+        </div>
 
+        <div style=" z-index: 1111; position: absolute; bottom: 0; left: 0; background: transparent; width: 100px;">
+            <!--                    data-target="#snaps-display" data-toggle="collapse"-->
+            <button id="snapsRenderedSwitcher" class="btn btn-lg btn-warning m-3 vshad">Snaps</button>
         </div>
 
         <!-- // side or overlayd -->
