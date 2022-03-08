@@ -744,6 +744,8 @@ function onSnapsButtonClick(e, el) {
 
     // Listen for the jQuery ready event on the document
     $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+
         var b = $("body");
         view.$map = $("#map");
         view.mapState = (mapStateFn)();
