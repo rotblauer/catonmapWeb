@@ -478,8 +478,8 @@ model.loadSnaps = function(snaps) {
                     // .addClass('catsnap-img')
                     .addClass('card-img-top')
                     .css({
-                    "max-width": "100%",
-                        'max-height': '60vh',
+                    // "max-width": "100%",
+                    //     'max-height': '60vh',
                 }).on("click", function(e) {
                     view.mapState.getMap().setView([snap.lat, snap.long]);
                     snapMapPopup(e);
