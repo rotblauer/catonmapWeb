@@ -586,7 +586,17 @@ ct.onVisits = function(visits, overwrite) {
 view.init = function() {
     view.$shownPointsShower = $(".shownPointsShower");
     view.$lastKnown = $("#lastknown");
+
     view.$metadataDisplay = $("#metadata-display");
+    view.$metadataRecoverDisplay = $("#metadata-display-recover");
+
+    function toggleMetadata (el) {
+        view.$metadataDisplay.toggle();
+        $('#metadata-display-recover').toggle();
+    }
+    view.$metadataDisplay.on('click', toggleMetadata);
+    view.$metadataRecoverDisplay.on('click', toggleMetadata);
+
     view.$selectDrawOpts = $("#settings-select-drawopts");
     view.$settingsStyleView = $("#settings-style-view").on("change", function(e) {
         var ld = $(this).val();
