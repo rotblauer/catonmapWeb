@@ -456,7 +456,7 @@ model.loadSnaps = function(snaps) {
                     return;
                 }
 
-                var snapPop = function(e) {
+                var snapMapPopup = function(e) {
                     cd(e);
                     var url = s3url; // close
                     var content = `<a target="_" href="${url}"><img src='${url}' style='width:${isSmallScreen()?150:300}px;' /></a>
@@ -473,15 +473,21 @@ model.loadSnaps = function(snaps) {
                 };
 
                 var s3url = "https://s3.us-east-2.amazonaws.com/" + n["imgS3"];
-                var el = $("<img>")
+                var $img = $("<img>")
                     .attr("src", s3url)
                     // .addClass('catsnap-img')
                     .addClass('card-img-top')
                     .css({
-                    "max-width": "100%"
+                    "max-width": "100%",
+                        'max-height': '60vh',
                 }).on("click", function(e) {
                     view.mapState.getMap().setView([snap.lat, snap.long]);
-                    snapPop(e);
+                    snapMapPopup(e);
+
+                    const $snaps = $('#snaps-display');
+                    if ($snaps.width() > window.innerWidth * 3 / 4) {
+                        onSnapsButtonClick()
+                    }
                 });
 
                 if (num === 1) {
@@ -544,7 +550,12 @@ model.loadSnaps = function(snaps) {
   </div>
 </div>`);
 
-                $card.prepend(el)
+                // Run the "snaps button click" logic.
+                $card.on('click', function() {
+                    console.log('card click');
+                })
+
+                $card.prepend($img)
 
                 if (num < 50) {
                     $("#snaps-display").append($card);
@@ -553,7 +564,7 @@ model.loadSnaps = function(snaps) {
                 // add markers
                 var marker = L.marker([snap.lat, snap.long], {
                     icon: iconSnap
-                }).on("click", snapPop);
+                }).on("click", snapMapPopup);
                 ct.snapsClusterGroup.addLayer(marker);
                 // ct.markerClusterGroup.addLayer(marker);
             });
@@ -600,7 +611,17 @@ ct.onVisits = function(visits, overwrite) {
 view.init = function() {
     view.$shownPointsShower = $(".shownPointsShower");
     view.$lastKnown = $("#lastknown");
+
     view.$metadataDisplay = $("#metadata-display");
+    view.$metadataRecoverDisplay = $("#metadata-display-recover");
+
+    function toggleMetadata (el) {
+        view.$metadataDisplay.toggle();
+        $('#metadata-display-recover').toggle();
+    }
+    view.$metadataDisplay.on('click', toggleMetadata);
+    view.$metadataRecoverDisplay.on('click', toggleMetadata);
+
     view.$selectDrawOpts = $("#settings-select-drawopts");
     view.$settingsStyleView = $("#settings-style-view").on("change", function(e) {
         var ld = $(this).val();
@@ -690,6 +711,29 @@ function toggleCatsView() {
     renderCatsView();
 }
 
+function onSnapsButtonClick(e, el) {
+    console.log("fn: onSnapsButtonClick")
+    // $("#snaps-display").toggle();
+
+    const $snaps = $('#snaps-display')
+    const $snapsRenderedSwitcher = $("#snapsRenderedSwitcher");
+
+    const snapsShowing = $snaps.is(':visible');
+
+    $snaps.toggle()
+    $("#metadata-display").toggle();
+
+    $('#main1').toggleClass('col-12 col-md-10');
+
+    $snapsRenderedSwitcher.toggleClass('btn-warning btn-success');
+
+    if ($snapsRenderedSwitcher.html().indexOf("naps") >= 0) {
+        $snapsRenderedSwitcher.html("Maps");
+    } else {
+        $snapsRenderedSwitcher.html("Snaps");
+    }
+}
+
 // http://gregfranko.com/jquery-best-practices/#/8
 // IIFE - Immediately Invoked Function Expression
 (function($, window, document) {
@@ -744,10 +788,10 @@ function toggleCatsView() {
                 $(this).text("Cats");
             }
         });
-        $("#snapsRenderedSwitcher").on("click", function(e) {
-            $("#main1").toggleClass("col-12 col-sm-9 col-md-10");
-        });
-        ``
+        $("#snapsRenderedSwitcher").on("click", onSnapsButtonClick);
+
+
+
 
         $("#datetimepicker1").daterangepicker({
             timePicker: true,
