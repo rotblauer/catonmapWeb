@@ -127,7 +127,7 @@ var mapStateFn = function() {
 
     var _mapOnMoveEnd = function() {
         var b = _map.getCenter();
-        model.setState("lat", b.lat).setState("lng", b.lng);
+        model.setState("lat", b.lat.toFixed(5)).setState("lng", b.lng.toFixed(5));
         // model.setLocalStore("y", b.lat);
         // model.setLocalStore("x", b.lng);
         // model.setLocalStore("z", _map.getZoom());
@@ -200,7 +200,7 @@ var mapStateFn = function() {
             // ui
             let $card = $(`<div class="card m-3" style="border: none; background-color: whitesmoke;">
   <div class="card-body" 
-    style="border-left: 0.3em solid ${catColors()[feature.properties.UUID]};"
+    style="border-left: 0.3em solid ${catColors()[feature.properties.UUID]}; border-top: 0.2em solid black;"
     >
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
