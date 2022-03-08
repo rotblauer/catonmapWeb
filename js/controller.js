@@ -538,7 +538,7 @@ model.loadSnaps = function(snaps) {
 }
                  */
 
-                var $card = $(`<div class="card">
+                var $card = $(`<div class="card mb-3">
   <div class="card-body">
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
@@ -697,15 +697,15 @@ function renderCatsView() {
         $("#main2").show();
         if (isSmallScreen()) {
             $(".leaflet-control-container").hide();
-            $("#metadata-display").hide();
-            $("#snapsRenderedSwitcher").hide();
+            $("#mymetadata").hide();
+            // $("#snapsRenderedSwitcher").hide();
         }
     } else {
         $("#main2").hide();
         if (isSmallScreen()) {
             $(".leaflet-control-container").show();
-            $("#metadata-display").show();
-            $("#snapsRenderedSwitcher").show();
+            $("#mymetadata").show();
+            // $("#snapsRenderedSwitcher").show();
         }
     }
 }
@@ -796,6 +796,7 @@ function onSnapsButtonClick(e, el) {
             toggleCatsView();
             renderCatsView();
             $('#brand').toggle();
+            // $('#mymetadata').toggle();
             $(this).toggleClass("btn-primary btn-light");
         });
         $("#snapsRenderedSwitcher").on("click", onSnapsButtonClick);
