@@ -437,7 +437,7 @@ model.loadSnaps = function(snaps) {
             var snaps = data.reverse();
             cd("GOT SNAPS", snaps);
             view.mapState.setLayer("snaps", null);
-            $("#snaps-display").html("<h5 class='m-3'>Cat Snaps</h5>");
+            $("#snaps-display").html("");
             $("#snapsRenderedSwitcher").show();
             ct.snapsClusterGroup = L.markerClusterGroup();
             var num = 0;
@@ -538,7 +538,7 @@ model.loadSnaps = function(snaps) {
 }
                  */
 
-                var $card = $(`<div class="card m-3">
+                var $card = $(`<div class="card">
   <div class="card-body">
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
@@ -719,7 +719,7 @@ function onSnapsButtonClick(e, el) {
     console.log("fn: onSnapsButtonClick")
     // $("#snaps-display").toggle();
 
-    const $snaps = $('#snaps-display')
+    const $snaps = $('#snaps-display-container')
     const $snapsRenderedSwitcher = $("#snapsRenderedSwitcher");
 
     const snapsShowing = $snaps.is(':visible');
