@@ -127,7 +127,7 @@ var mapStateFn = function() {
 
     var _mapOnMoveEnd = function() {
         var b = _map.getCenter();
-        model.setState("lat", b.lat).setState("lng", b.lng);
+        model.setState("lat", b.lat.toFixed(5)).setState("lng", b.lng.toFixed(5));
         // model.setLocalStore("y", b.lat);
         // model.setLocalStore("x", b.lng);
         // model.setLocalStore("z", _map.getZoom());
