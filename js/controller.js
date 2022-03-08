@@ -437,7 +437,7 @@ model.loadSnaps = function(snaps) {
             var snaps = data.reverse();
             cd("GOT SNAPS", snaps);
             view.mapState.setLayer("snaps", null);
-            $("#snaps-display").html("<h1 class='m-3'>Cat Snaps</h1>");
+            $("#snaps-display").html("<h5 class='m-3'>Cat Snaps</h5>");
             $("#snapsRenderedSwitcher").show();
             ct.snapsClusterGroup = L.markerClusterGroup();
             var num = 0;
@@ -544,7 +544,11 @@ model.loadSnaps = function(snaps) {
 <!--    <p class="card-text">-->
         <div class="d-flex w-100 justify-content-between">
             <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
-            <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))}</span>
+            <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))} ago</span>
+        </div>
+        <div class="d-flex w-100 text-muted small justify-content-between">
+            <span>${snap.lat.toFixed(3)}, ${snap.long.toFixed(3)}</span>
+            <span class="text-right">${moment(snap.time).format('llll')}</span>
         </div>
 <!--    </p>-->
   </div>
