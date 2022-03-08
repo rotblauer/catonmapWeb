@@ -238,17 +238,17 @@ var dataLastKnownEntry = {
         }
 
         var bsStyle = function(name, fn) {
-            return $("<a>")
+            return $("<span>")
                 .css("cursor", "pointer")
                 .css("font-size", "0.8em")
-                .css("text-decoration", "underline")
-                .addClass("mr-3")
+                // .css("text-decoration", "underline")
+                .addClass("mr-3 mt-2")
                 .text(name)
                 .on("click", fn);
         };
 
-        var findlink = bsStyle("find", find);
-        var filterlink = bsStyle("filter", filter);
+        var findlink = bsStyle("find", find).addClass('badge badge-primary');
+        var filterlink = bsStyle("filter", filter).addClass('badge badge-warning');
         var followLink = bsStyle("follow", follow);
 
         if (ct.settings.follow === this.iid()) {
