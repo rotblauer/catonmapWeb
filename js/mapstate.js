@@ -158,7 +158,7 @@ var mapStateFn = function() {
     var _mapOnClick = function() {};
 
     var handleGeoJSONLaps = function(featureCollection) {
-        const $lapsContainer = $('#tracks-display')
+        const $lapsContainer = $('#laps-display')
         $lapsContainer.html("")
         const features = featureCollection.features;
         for (let feature of features) {
@@ -198,7 +198,7 @@ var mapStateFn = function() {
             feature.properties.Start = moment(feature.properties.Start * 1000).toLocaleString()
 
             // ui
-            let $card = $(`<div class="card m-3" style="border: none; background-color: whitesmoke;">
+            let $card = $(`<div class="card" style="border: none; background-color: whitesmoke;">
   <div class="card-body" 
     style="border-left: 0.3em solid ${catColors()[feature.properties.UUID]}; border-top: 0.2em solid black;"
     >
@@ -211,24 +211,26 @@ var mapStateFn = function() {
                 <span>
                     <span style='color: ${catColors()[feature.properties.UUID]}'>${feature.properties.Name}</span>
                 </span>
-                <span class='text-muted'>${minimalTimeDisplay(moment(feature.properties.Start))} ago</span>
-                
-    <!--            <span>${JSON.stringify(feature.properties)}</span>-->
-                
+                <span class="badge" style='color: white; background-color: ${activityColorLegend[feature.properties.Activity]};'>${feature.properties.Activity}</span>
                 </div>
                 <div class="d-flex w-100 justify-content-between text-small text-muted">
-                    <div class="">
-                        <span class="badge" style='color: white; background-color: ${activityColorLegend[feature.properties.Activity]};'>${feature.properties.Activity}</span>
+                    <div class="small">
+                       <span class='text-muted '>${moment(feature.properties.Start).format('llll')} </span>
                     </div>
-                    <div class="">
-                        <span>${hmsFromSeconds(feature.properties.Duration)}</span><br>
+                    <div class="small">
+                       <span class='text-muted'>${minimalTimeDisplay(moment(feature.properties.Start))} ago</span>
                     </div>
                 </div>
+             
                 <div class="d-flex w-100 justify-content-between">
-                    <span style="color: black;">${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km
-                    <sup>+${feature.properties.Up}m</sup><sub>-${feature.properties.Down}m</sub>
-                    </span>
-                    <span>
+                    <span style="color: black;">
+                    ${hmsFromSeconds(feature.properties.Duration)},
+                    ${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km&nbsp;
+                    <div style="display: inline-block;" class="align-baseline">
+                        <span style="font-size: 0.66em;">+${feature.properties.Up}m</span>
+                        <br>
+                        <span style="font-size: 0.66em;">-${feature.properties.Down}m</span>
+                    </div>,
                     ${feature.properties.KmpH.toFixed(1)} km/h
                     </span>
                 </div>
@@ -256,8 +258,13 @@ var mapStateFn = function() {
      */
     var fetchLinestrings = function() {
 
-        const tstart = model.getState().linestringStart
-        const tend = model.getState().linestringEnd
+        let tstart = model.getState().linestringStart
+        let tend = model.getState().linestringEnd
+
+        // HACK: Override
+
+        tend = moment().unix();
+        tstart = moment().subtract(3, 'day').startOf('day').unix();
 
         console.log(tstart, tend);
 

@@ -727,15 +727,15 @@ function onSnapsButtonClick(e, el) {
     $snaps.toggle()
     $("#metadata-display").toggle();
 
-    $('#main1').toggleClass('col-12 col-md-10');
+    // $('#main1').toggleClass('col-12 col-md-10');
 
-    $snapsRenderedSwitcher.toggleClass('btn-warning btn-success');
+    $snapsRenderedSwitcher.toggleClass('btn-warning btn-light');
 
-    if ($snapsRenderedSwitcher.html().indexOf("naps") >= 0) {
-        $snapsRenderedSwitcher.html("Maps");
-    } else {
-        $snapsRenderedSwitcher.html("Snaps");
-    }
+    // if ($snapsRenderedSwitcher.html().indexOf("naps") >= 0) {
+    //     $snapsRenderedSwitcher.html("Maps");
+    // } else {
+    //     $snapsRenderedSwitcher.html("Snaps");
+    // }
 }
 
 // http://gregfranko.com/jquery-best-practices/#/8
@@ -768,7 +768,13 @@ function onSnapsButtonClick(e, el) {
         //
         //     .css("z-index", 1000);
 
-        view.$viewSettingsToggleContainer = $("<div>").addClass("leaflet-control");
+        // data-toggle="tooltip" data-placement="right" title="Tap to hide"
+        view.$viewSettingsToggleContainer = $("<div>")
+            .addClass("leaflet-control")
+            .attr('data-toggle', 'tooltip')
+            .attr('data-placement', 'right')
+            .attr('title', 'Settings').tooltip();
+
         view.$viewSettingsToggle = $(`
                     <button>
                 `)
@@ -776,6 +782,8 @@ function onSnapsButtonClick(e, el) {
             .addClass("leaflet-control-viewsettings-toggle")
             .attr("data-toggle", "modal")
             .attr("data-target", ".settings-modal");
+
+
 
         view.$viewSettingsToggleContainer.append(view.$viewSettingsToggle);
         $(".leaflet-top.leaflet-left").append(view.$viewSettingsToggleContainer);
@@ -788,15 +796,13 @@ function onSnapsButtonClick(e, el) {
             toggleCatsView();
             renderCatsView();
             $('#brand').toggle();
-            $(this).toggleClass("btn-primary btn-success");
-            if (catsViewOn) {
-                $(this).text("Maps");
-            } else {
-                $(this).text("Cats");
-            }
+            $(this).toggleClass("btn-primary btn-light");
         });
         $("#snapsRenderedSwitcher").on("click", onSnapsButtonClick);
-
+        $("#lapsRenderButton").on('click', function (ev, el) {
+            $("#lapsRenderButton").toggleClass('btn-info btn-light')
+            $("#laps-column").toggle();
+        });
 
 
 
