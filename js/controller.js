@@ -688,7 +688,10 @@ function onSnapsButtonClick(e, el) {
     $snaps.toggle()
     $("#metadata-display").toggle();
 
+    $('#main1').toggleClass('col-12 col-md-10');
+
     $snapsRenderedSwitcher.toggleClass('btn-warning btn-success');
+
     if ($snapsRenderedSwitcher.html().indexOf("naps") >= 0) {
         $snapsRenderedSwitcher.html("Maps");
     } else {
