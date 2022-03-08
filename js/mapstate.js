@@ -131,6 +131,7 @@ var mapStateFn = function() {
         // model.setLocalStore("y", b.lat);
         // model.setLocalStore("x", b.lng);
         // model.setLocalStore("z", _map.getZoom());
+        fetchLinestrings()
 
         // setLinkValue();
         // TODO get moar visits and append them
@@ -158,8 +159,7 @@ var mapStateFn = function() {
 
     var handleGeoJSONLaps = function(featureCollection) {
         const $lapsContainer = $('#tracks-display')
-        const $lapsTable = $('<table class="table"></table>');
-        $lapsContainer.append($lapsTable)
+        $lapsContainer.html("")
         const features = featureCollection.features;
         for (let feature of features) {
 
@@ -225,7 +225,7 @@ var mapStateFn = function() {
                     </div>
                 </div>
                 <div class="d-flex w-100 justify-content-between">
-                    <span style="color: black;">${feature.properties.MeasuredSimplifiedTraversedKilometers.toPrecision(2)} km
+                    <span style="color: black;">${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km
                     <sup>+${feature.properties.Up}m</sup><sub>-${feature.properties.Down}m</sub>
                     </span>
                     <span>
@@ -250,24 +250,32 @@ var mapStateFn = function() {
     }
 
     var geoLayer
-    var addGeoJSON = function() {
+    /**
+     * @param {number} tstart is start time in seconds
+     * @param {number} tend is end time in seconds
+     */
+    var fetchLinestrings = function() {
+
+        const tstart = model.getState().linestringStart
+        const tend = model.getState().linestringEnd
+
+        console.log(tstart, tend);
+
         // getJSON(`/linestring?cats=${encodeURIComponent(new URLSearchParams(location.search).get("cats"))}` + "&viewport=" + encodeURIComponent(`${sw.lat()},${sw.lng()}|${ne.lat()},${ne.lng()}`) + '&zoom=' + encodeURIComponent(`${zm}`),
 
+        const _map = getMap()
         const sw = _map.getBounds().getSouthWest()
         const ne = _map.getBounds().getNorthEast()
         /*
         https://cattracks.cc/linestring?cats=yes&viewport=44.85%2C-93.35%7C45.09%2C-93.15&zoom=13
          */
-        const geoJSONURL = `https://cattracks.cc/linestring?cats=yes&viewport=` +
-            encodeURIComponent(`${sw.lat.toPrecision(4)},${sw.lng.toPrecision(4)}|${ne.lat.toPrecision(4)},${ne.lng.toPrecision(4)}`) +
+        let geoJSONURL = `https://cattracks.cc/linestring?cats=yes&viewport=` +
+            encodeURIComponent(`${sw.lat.toPrecision(4)+'00'},${sw.lng.toPrecision(4)+'00'}|${ne.lat.toPrecision(4)+'00'},${ne.lng.toPrecision(4)+'00'}`) +
             `&zoom=${_map.getZoom()}`;
-        // const geoJSONURL = `https://cattracks.cc/linestring?cats=yes`;
 
-        // console.log("geojson url", geoJSONURL)
-        // L.geoJSON(geoJSONURL, function (err) {
-        //     console.log('leaflet geojson failed, error:', err)
-        // })
-        //     .addTo(_map);
+        if (!!tstart) geoJSONURL += `&tstart=${tstart}`;
+        if (!!tend) geoJSONURL += `&tend=${tend}`;
+        // const geoJSONURL = `https://cattracks.cc/linestring?cats=yes`;
 
         fetch(geoJSONURL)
             .then(res => {
@@ -280,6 +288,23 @@ var mapStateFn = function() {
                         jsonData.features.sort(function (a, b) {
                             return a.properties.Start < b.properties.Start ? 1 : -1;
                         })
+
+                        // Reset the geoJSON layer to remove any existing data.
+                        if (!!geoLayer) {
+                            geoLayer.removeFrom(_map);
+                        }
+                        // Assign the geoLayer anew.
+                        geoLayer = L.geoJSON(null, {
+                            style: {
+                                'color': 'black',
+                                'weight': 2,
+                                'opacity': 1.00,
+                            },
+                            onEachFeature: function(feature, layer) {
+
+                            }
+                        }).addTo(_map);
+
                         geoLayer.addData(jsonData)
                         handleGeoJSONLaps(jsonData)
                     })
@@ -314,17 +339,7 @@ var mapStateFn = function() {
         // base, over, opts
         L.control.layers(_mapboxLayers, null, { position: "topleft" }).addTo(_map);
 
-        geoLayer = L.geoJSON(null, {
-            style: {
-                'color': 'black',
-                'weight': 2,
-                'opacity': 1.00,
-            },
-            onEachFeature: function(feature, layer) {
-
-            }
-        }).addTo(_map);
-        addGeoJSON()
+        fetchLinestrings(/*default*/)
 
         _currentPBFLayerOpt = s.tileLayer;
         setPBFOpt(_currentPBFLayerOpt);
@@ -343,6 +358,7 @@ var mapStateFn = function() {
     return {
         init: initMap,
         getMap: getMap,
+        fetchLinestrings: fetchLinestrings,
         setLayer: setLayer,
         setPBFOpt: setPBFOpt,
         goUpdateEdge: goUpdateEdge

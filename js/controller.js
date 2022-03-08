@@ -90,7 +90,9 @@ model.getState = function() {
         follow: s["follow"] || "",
         windowStyle: s["window"] || "light",
         tfstart: s["tfstart"],
-        tfend: s["tfend"]
+        tfend: s["tfend"],
+        linestringStart: s["linestringStart"],
+        linestringEnd: s["linestringEnd"],
     };
 
     // return {
@@ -835,15 +837,24 @@ function toggleCatsView() {
 
             cd(start, end, label);
 
-            model.setState("linestringStart", start.format());
-            model.setState("linestringEnd", end.format());
+            model.setState("linestringStart", start.unix());
+            model.setState("linestringEnd", end.unix());
 
-
+            view.mapState.fetchLinestrings();
 
             // view.mapState.setPBFOpt(view.$selectDrawOpts.val());
         });
 
         $("#btn-remove-date-filter2").on("click", function(e) {
+
+            const start = moment().startOf('day')
+            const end = moment()
+
+            model.setState("linestringStart", start.unix());
+            model.setState("linestringEnd", end.unix());
+
+            view.mapState.fetchLinestrings();
+
             // ct.setSettingsFilter("time_filter", null);
             //
             // model.setState("tfstart", null);
