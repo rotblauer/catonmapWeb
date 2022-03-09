@@ -161,7 +161,8 @@ var mapStateFn = function() {
         const $lapsContainer = $('#laps-display')
         $lapsContainer.html("")
         const features = featureCollection.features;
-        for (let feature of features) {
+        for (let i = 0; i < features.length; i++) {
+            const feature = features[i];
 
             /*
             {
@@ -198,7 +199,7 @@ var mapStateFn = function() {
             feature.properties.Start = moment(feature.properties.Start * 1000).toLocaleString()
 
             // ui
-            let $card = $(`<div class="card mb-1" style="border: none; background-color: whitesmoke;">
+            let $card = $(`<div class="card mb-1" style="border: none; background-color: whitesmoke; min-height: 20vh;">
   <div class="card-body" 
     style=""
     >
@@ -222,7 +223,13 @@ var mapStateFn = function() {
                        <span class='text-muted'>${minimalTimeDisplay(moment(feature.properties.Start))} ago</span>
                     </div>
                 </div>
-             
+                
+                <div  class="w-100 lap-map-container" style="height: 20vh;">
+                    <div class="box">
+                        <div id="lap-map-container-${feature.properties.Name}-${feature.properties.Start}" style="flex: 1 1 auto; border: 2px solid gray; border-radius: 3px;"></div>
+                    </div>
+                </div>
+                             
                 <div class="d-flex w-100 ">
                     <ul style="padding-left: 1em;">
                     <li>Distance: ${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km</li>
@@ -246,6 +253,24 @@ var mapStateFn = function() {
 //             $lapsTable.append($tableRow)
 
             $lapsContainer.append($card)
+
+            const mapCenter = [feature.geometry.coordinates[0][1], feature.geometry.coordinates[0][0]];
+            console.log('map center', mapCenter);
+            var __map = L.map(`lap-map-container-${feature.properties.Name}-${feature.properties.Start}`, {
+                center: mapCenter,
+                zoom: 13,
+                // noWrap: true,
+                // zoomControl: false,
+                // layers: [L.tileLayer(_mbtilesURL("ciy7ijqu3001a2rocq88pi8s4"), {})]
+            });
+
+            __map.setView(feature.geometry.coordinates[1])
+
+            __map.eachLayer(function (layer) {
+                layer.redraw();
+            })
+
+            L.geoJSON(feature).addTo(__map);
         }
     }
 
@@ -288,7 +313,8 @@ var mapStateFn = function() {
                     .then((jsonData) => {
                         console.log('geojson fetch ok', jsonData)
                         jsonData.features = jsonData.features.filter(feature => {
-                            return feature.properties.MeasuredSimplifiedTraversedKilometers >= 0.4
+                            return feature.properties.MeasuredSimplifiedTraversedKilometers >= 0.4 &&
+                                feature.properties.Duration > 120;
                         })
                         jsonData.features.sort(function (a, b) {
                             return a.properties.Start < b.properties.Start ? 1 : -1;

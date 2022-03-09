@@ -94,10 +94,14 @@ img.catsnap-img {
     width: 44px;
     height: 44px;
     background-image: url(images/icon-settings.png);
-    /* background-image: url(images/map-marker-icon.png); */
+     /*background-image: url(images/map-marker-icon.png);*/
     background-position: 50% 50%;
     background-repeat: no-repeat;
     display: block;
+}
+
+.leaflet-bottom.leaflet-right {
+    display: none !important;
 }
 
 /*overrides*/
