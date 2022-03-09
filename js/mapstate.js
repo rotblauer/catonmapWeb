@@ -198,9 +198,9 @@ var mapStateFn = function() {
             feature.properties.Start = moment(feature.properties.Start * 1000).toLocaleString()
 
             // ui
-            let $card = $(`<div class="card" style="border: none; background-color: whitesmoke;">
+            let $card = $(`<div class="card mb-1" style="border: none; background-color: whitesmoke;">
   <div class="card-body" 
-    style="border-left: 0.3em solid ${catColors()[feature.properties.UUID]}; border-top: 0.2em dashed black;"
+    style=""
     >
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
@@ -208,6 +208,7 @@ var mapStateFn = function() {
         
             <div class="card-text">
                 <div class="d-flex w-100 justify-content-between">
+                
                 <span>
                     <span style='color: ${catColors()[feature.properties.UUID]}'>${feature.properties.Name}</span>
                 </span>
@@ -222,24 +223,21 @@ var mapStateFn = function() {
                     </div>
                 </div>
              
-                <div class="d-flex w-100 justify-content-between">
-                    <span style="color: black;">
-                    ${hmsFromSeconds(feature.properties.Duration)},
-                    ${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km&nbsp;
-                    <div style="display: inline-block;" class="align-baseline">
-                        <span style="font-size: 0.66em;">+${feature.properties.Up}m</span>
-                        <br>
-                        <span style="font-size: 0.66em;">-${feature.properties.Down}m</span>
-                    </div>,
-                    ${feature.properties.KmpH.toFixed(1)} km/h
-                    </span>
+                <div class="d-flex w-100 ">
+                    <ul style="padding-left: 1em;">
+                    <li>Distance: ${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km</li>
+                    <li>Elevation:
+                        <span style="">+${feature.properties.Up}m</span>,
+                        <span style="">${feature.properties.Down}m</span>
+                    </li>
+                    <li>Duration: ${hmsFromSeconds(feature.properties.Duration)}</li>
+                    <li>Avg speed: ${feature.properties.KmpH.toFixed(1)} km/h</li>
+                    
+</ul>
                 </div>
-
             </div>
-            
-        
-  </div>
-</div>`);
+      </div>
+      </div>`);
 
 //             const $tableRow = $(`<tr>
 //         <td><span style='color: ${catColors()[feature.properties.UUID]}'>${feature.properties.Name}</span></td>
