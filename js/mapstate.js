@@ -301,7 +301,7 @@ var mapStateFn = function() {
                         // Assign the geoLayer anew.
                         geoLayer = L.geoJSON(null, {
                             style: {
-                                'color': 'black',
+                                'color': 'darkgreen',
                                 'weight': 2,
                                 'dashArray': '8 12', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
                                 'opacity': 1.00,
