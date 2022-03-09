@@ -538,13 +538,13 @@ model.loadSnaps = function(snaps) {
 }
                  */
 
-                var $card = $(`<div class="card mb-3">
+                var $card = $(`<div class="col-10 offset-1"><div class="card mb-3">
   <div class="card-body">
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
         <div class="d-flex w-100 justify-content-between">
             <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
-            <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))} ago</span>
+            <span class='text-right text-muted'>${minimalTimeDisplay(moment(snap.time))} ago</span>
         </div>
         <div class="d-flex w-100 text-muted small justify-content-between">
             <span>${snap.lat.toFixed(3)}, ${snap.long.toFixed(3)}</span>
@@ -552,7 +552,7 @@ model.loadSnaps = function(snaps) {
         </div>
 <!--    </p>-->
   </div>
-</div>`);
+</div></div>`);
 
                 // Run the "snaps button click" logic.
                 $card.on('click', function() {
@@ -722,14 +722,16 @@ function onSnapsButtonClick(e, el) {
     const $snaps = $('#snaps-display-container')
     const $snapsRenderedSwitcher = $("#snapsRenderedSwitcher");
 
-    const snapsShowing = $snaps.is(':visible');
 
     $snaps.toggle()
-    $("#metadata-display").toggle();
+    const snapsShowing = $snaps.is(':visible');
+
+    // if (snapsShowing) $("#metadata-display").hide();
+    // else $("#metadata-display").show();
 
     // $('#main1').toggleClass('col-12 col-md-10');
 
-    $snapsRenderedSwitcher.toggleClass('btn-warning btn-light');
+    $snapsRenderedSwitcher.toggleClass('btn-dark btn-light');
 
     // if ($snapsRenderedSwitcher.html().indexOf("naps") >= 0) {
     //     $snapsRenderedSwitcher.html("Maps");
@@ -797,11 +799,11 @@ function onSnapsButtonClick(e, el) {
             renderCatsView();
             $('#brand').toggle();
             // $('#mymetadata').toggle();
-            $(this).toggleClass("btn-primary btn-light");
+            $(this).toggleClass("btn-dark btn-light");
         });
         $("#snapsRenderedSwitcher").on("click", onSnapsButtonClick);
         $("#lapsRenderButton").on('click', function (ev, el) {
-            $("#lapsRenderButton").toggleClass('btn-info btn-light')
+            $("#lapsRenderButton").toggleClass('btn-dark btn-light')
             $("#laps-column").toggle();
         });
 

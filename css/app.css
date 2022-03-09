@@ -48,6 +48,10 @@ img.catsnap-img {
 	  opacity: 0.5;
 }
 
+.btn-dark {
+    border-bottom: 2px solid whitesmoke;
+}
+
 .lastknown-col {
     background: rgba(255,255,255,0.45);
     /* filter:blur(4px); */
@@ -131,16 +135,16 @@ img.catsnap-img {
 
 
 .shad {
-    -webkit-box-shadow: -3px 6px 9px 0px rgba(0,0,0,0.38);
-    -moz-box-shadow: -3px 6px 9px 0px rgba(0,0,0,0.38);
-    box-shadow: -3px 6px 9px 0px rgba(0,0,0,0.38);
+    -webkit-box-shadow: -1px 2px 3px 0px rgba(0,0,0,0.38);
+    -moz-box-shadow: -1px 2px 3px 0px rgba(0,0,0,0.38);
+    box-shadow: -1px 2px 3px 0px rgba(0,0,0,0.38);
 }
 
-.shad {
-    -webkit-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);
-    -moz-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);
-    box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);
-}
+/*.shad {*/
+/*    -webkit-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);*/
+/*    -moz-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);*/
+/*    box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38);*/
+/*}*/
 
 .vshad {
     /* -webkit-box-shadow: -3px 6px 18px 4px rgba(0,0,0,0.38); */

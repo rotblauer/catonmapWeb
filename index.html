@@ -77,9 +77,10 @@
                 <p id="metadata-display" data-toggle="tooltip" data-placement="right" title="Tap to hide" style="cursor: pointer; display: none; position: absolute; left: 60px; top: 0; margin-top: 10px; z-index: 1000; ">
                     <small>Map rendered <span class="shownPointsShower">0</span> points.<br/></small>
                 </p>
-                <p id="metadata-display-recover" class="small" style="cursor: pointer; position: absolute; left: 60px; top: 0; margin-top: 10px; z-index: 1000; text-decoration: underline; color: blue;">
-                    + Metadata...
-                </p>
+                    <p id="metadata-display-recover" class="small" style="cursor: pointer; position: absolute; left: 60px; top: 0; margin-top: 10px; z-index: 1000; text-decoration: underline; color: blue;">
+                        + Metadata...
+                    </p>
+
                 </div>
                 <div id="map"></div>
             </div>
@@ -102,14 +103,19 @@
             </div>
         </div>
 
-        <div style=" z-index: 1111; position: absolute; bottom: 0; left: 0; background: transparent; width: 100px;">
-            <!--                    data-target="#snaps-display" data-toggle="collapse"-->
-            <button id="lapsRenderButton" class="btn btn-lg btn-info mb-3 vshad" style="border-bottom-left-radius: 0; border-top-left-radius: 0;">Laps</button>
-            <button id="snapsRenderedSwitcher" class="btn btn-lg btn-warning mb-3 vshad" style="border-bottom-left-radius: 0; border-top-left-radius: 0;">Snaps</button>
-        </div>
     </div>
 
-    <button id="catsRenderedSwitcher" class="btn btn-lg btn-primary mb-3 vshad" style=" z-index: 1111; position: fixed; bottom: 0; right: 0; border-bottom-right-radius: 0; border-top-right-radius: 0;">Cats</button>
+<!--    <btn id="metadata-display-recover" class="btn btn-dark btn-sm" style="cursor: pointer; position: absolute; left: 60px; top: 0; z-index: 1000; border-top-left-radius: 0; border-top-right-radius: 0;">-->
+<!--        + Metadata...-->
+<!--    </btn>-->
+
+    <div style=" z-index: 1111; position: absolute; bottom: 0; left: 0; background: transparent; width: 100px;">
+        <!--                    data-target="#snaps-display" data-toggle="collapse"-->
+        <button id="lapsRenderButton" class="btn btn-lg btn-dark mb-3 vshad" style="border-bottom-left-radius: 0; border-top-left-radius: 0;">Laps</button>
+        <button id="snapsRenderedSwitcher" class="btn btn-lg btn-dark mb-3 vshad" style="border-bottom-left-radius: 0; border-top-left-radius: 0; ">Snaps</button>
+    </div>
+
+    <button id="catsRenderedSwitcher" class="btn btn-lg btn-dark mb-3 vshad" style=" z-index: 1111; position: fixed; bottom: 0; right: 0; border-bottom-right-radius: 0; border-top-right-radius: 0; ">Cats</button>
 
     <div id="viewsettings-div" class="modal fade settings-modal" tabindex="-1" role="dialog" aria-labelledby="settingsModal" aria-hidden=" true">
         <div class="modal-dialog modal-sm ">
