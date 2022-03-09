@@ -7,7 +7,9 @@ push_target_pro=sfcom:/www/catonmap.net/
 push_target="$push_target_beta"
 
 if [[ "$1" == "beta" ]]; then
+  echo "Pushing to BETA endpoint"
 elif [[ "$1" == "pro" ]]; then
+  echo "Pushing to PRO endpoint"
   push_target="$push_target_pro"
 else
 	echo "unknown arg"
