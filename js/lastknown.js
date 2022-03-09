@@ -247,8 +247,8 @@ var dataLastKnownEntry = {
                 .on("click", fn);
         };
 
-        var findlink = bsStyle("Find", find).addClass('badge badge-primary shad');
-        var filterlink = bsStyle("Filter", filter).addClass('badge badge-success shad');
+        var findlink = bsStyle("Find", find).addClass('badge badge-dark');
+        var filterlink = bsStyle("Filter", filter).addClass('badge badge-dark');
         var followLink = bsStyle("follow", follow);
 
         if (ct.settings.follow === this.iid()) {
