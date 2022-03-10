@@ -1,5 +1,7 @@
 var mapStateFn = function() {
     var _map = null;
+    var geoLayer;
+    var lapMaps = [];
     var _currentTileLayer = null;
     var _mapboxToken = "pk.eyJ1Ijoicm90YmxhdWVyIiwiYSI6ImNpeTdidjZxajAwMzEycW1waGdrNmh3NmsifQ.OpXHPqEHK2sTbQ4-pmhAMQ";
     var _mbtilesURL = function(id) {
@@ -157,6 +159,83 @@ var mapStateFn = function() {
     };
     var _mapOnClick = function() {};
 
+    var refreshLapMaps = function() {
+      for (let i = 0; i < lapMaps.length; i++) {
+          const lm = lapMaps[i];
+          console.log('invalidating map size', lm);
+          lm.map.invalidateSize();
+          // lm.map.layers.forEach((layer) => {
+          //     layer.remove();
+          // })
+          lm.map.fitBounds(lm.bounds);
+          L.geoJSON(lm.data, {
+              style: {
+                  'color': 'darkgreen',
+                  'weight': 2,
+              },
+          }).addTo(lm.map);
+      }
+    };
+
+    var addMiniLeaflet = function(feature) {
+        var swLat;
+        var swLng;
+        var neLat;
+        var neLng;
+
+        for (let x = 0; x < feature.geometry.coordinates.length; x++) {
+            const coord = feature.geometry.coordinates[x];
+            if (typeof swLat === 'undefined' || coord[1] < swLat) swLat = coord[1];
+            if (typeof swLng === 'undefined' || coord[0] < swLng) swLng = coord[0];
+
+            if (typeof neLat === 'undefined' || coord[1] > neLat) neLat = coord[1];
+            if (typeof neLng === 'undefined' || coord[0] > neLng) neLng = coord[0];
+        }
+
+        const bounds = L.latLngBounds(L.latLng(swLat, swLng), L.latLng(neLat, neLng));
+
+        console.log(feature);
+        try {
+            var _mymap = L.map(`lap-map-container-${feature.properties.Name}-${feature.properties.Start}`, {
+                dragging: false,
+                boxZoom: false,
+                doubleClickZoom: false,
+                zoomControl: false,
+                scrollWheelZoom: false,
+                attributionControl: false,
+            });
+            _mymap.setView({lat: feature.geometry.coordinates[0][1], lng: feature.geometry.coordinates[0][0]}, 13);
+            console.log('mini leaflet', _mymap);
+
+            // L.control.zoom({position: "topright"}).addTo(_mymap);
+            // _mymap.addLayer(_mapboxLayers["light"]);
+
+
+            _mymap.on('click', function (data) {
+                _map.fitBounds(bounds)
+                // geoLayer.setStyle({'color': 'black'});
+
+                // on small (mobile) screens
+                if ($("#laps-column").width() > window.innerWidth * 3 / 4) {
+                    $("#lapsRenderButton").toggleClass('btn-dark btn-light')
+                    $("#laps-column").toggle();
+                }
+            })
+
+            lapMaps.push({map: _mymap, data: feature, bounds: bounds});
+
+        } catch (err) {
+            console.error(err)
+        }
+
+
+        // __map.setView(feature.geometry.coordinates[1])
+
+        // __map.eachLayer(function (layer) {
+        //     layer.redraw();
+        // })
+    }
+
     var handleGeoJSONLaps = function(featureCollection) {
         const $lapsContainer = $('#laps-display')
         $lapsContainer.html("")
@@ -196,13 +275,12 @@ var mapStateFn = function() {
              */
 
             // mogrifications
-            feature.properties.Start = moment(feature.properties.Start * 1000).toLocaleString()
+            feature.properties.StartDate = moment(feature.properties.Start * 1000).toLocaleString()
 
             // ui
-            let $card = $(`<div class="card mb-1" style="border: none; background-color: whitesmoke; min-height: 20vh;">
-  <div class="card-body" 
-    style=""
-    >
+            let $card = $(`
+<div class="card mb-3" style="border-bottom: 2px dashed black; background-color: whitesmoke; min-height: 200px;">
+<div class="card-body" style="">
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
 <!--    </p>-->
@@ -220,31 +298,29 @@ var mapStateFn = function() {
                        <span class='text-muted '>${moment(feature.properties.Start).format('llll')} </span>
                     </div>
                     <div class="small">
-                       <span class='text-muted'>${minimalTimeDisplay(moment(feature.properties.Start))} ago</span>
+                       <span class='text-muted'>${minimalTimeDisplay(moment(feature.properties.StartDate))} ago</span>
                     </div>
                 </div>
                 
-                <div  class="w-100 lap-map-container" style="height: 20vh;">
-                    <div class="box">
-                        <div id="lap-map-container-${feature.properties.Name}-${feature.properties.Start}" style="flex: 1 1 auto; border: 2px solid gray; border-radius: 3px;"></div>
-                    </div>
-                </div>
                              
-                <div class="d-flex w-100 ">
-                    <ul style="padding-left: 1em;">
-                    <li>Distance: ${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km</li>
-                    <li>Elevation:
-                        <span style="">+${feature.properties.Up}m</span>,
-                        <span style="">${feature.properties.Down}m</span>
-                    </li>
-                    <li>Duration: ${hmsFromSeconds(feature.properties.Duration)}</li>
-                    <li>Avg speed: ${feature.properties.KmpH.toFixed(1)} km/h</li>
+                <div class="d-flex w-100 justify-content-between">
+                    <span>
+                    <small style="color: darkgreen;" class=""><span style="">+${feature.properties.Up}m</span>&nbsp;<span style="">${feature.properties.Down}m</span></small>
+                    <small style="color: darkgreen;" class="">(${feature.properties.KmpH.toFixed(1)} km/h)</small>
+</span>
                     
-</ul>
+                    
+                    <span class="text-right">
+                    <small style="color: darkgreen;" class="">${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km</small>
+                    <small style="color: darkgreen;" class="">${hmsFromSeconds(feature.properties.Duration)}</small>
+                    </span>
                 </div>
             </div>
-      </div>
-      </div>`);
+            
+            <div id="lap-map-container-${feature.properties.Name}-${feature.properties.Start}" class="flex-fill lap-leaflet-map"></div>
+</div>
+</div>        
+`);
 
 //             const $tableRow = $(`<tr>
 //         <td><span style='color: ${catColors()[feature.properties.UUID]}'>${feature.properties.Name}</span></td>
@@ -252,29 +328,11 @@ var mapStateFn = function() {
 // </tr>`);
 //             $lapsTable.append($tableRow)
 
-            $lapsContainer.append($card)
-
-            const mapCenter = [feature.geometry.coordinates[0][1], feature.geometry.coordinates[0][0]];
-            console.log('map center', mapCenter);
-            var __map = L.map(`lap-map-container-${feature.properties.Name}-${feature.properties.Start}`, {
-                center: mapCenter,
-                zoom: 13,
-                // noWrap: true,
-                // zoomControl: false,
-                // layers: [L.tileLayer(_mbtilesURL("ciy7ijqu3001a2rocq88pi8s4"), {})]
-            });
-
-            __map.setView(feature.geometry.coordinates[1])
-
-            __map.eachLayer(function (layer) {
-                layer.redraw();
-            })
-
-            L.geoJSON(feature).addTo(__map);
+            $lapsContainer.append($card);
+            addMiniLeaflet(feature);
         }
     }
 
-    var geoLayer
     /**
      * @param {number} tstart is start time in seconds
      * @param {number} tend is end time in seconds
@@ -334,7 +392,7 @@ var mapStateFn = function() {
 
                             },
                             onEachFeature: function(feature, layer) {
-
+                                feature.properties.id = feature.properties.Name + feature.properties.Start;
                             }
                         }).addTo(_map);
 
@@ -394,6 +452,7 @@ var mapStateFn = function() {
         fetchLinestrings: fetchLinestrings,
         setLayer: setLayer,
         setPBFOpt: setPBFOpt,
-        goUpdateEdge: goUpdateEdge
+        goUpdateEdge: goUpdateEdge,
+        refreshLapMaps: refreshLapMaps,
     };
 }

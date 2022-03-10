@@ -805,6 +805,7 @@ function onSnapsButtonClick(e, el) {
         $("#lapsRenderButton").on('click', function (ev, el) {
             $("#lapsRenderButton").toggleClass('btn-dark btn-light')
             $("#laps-column").toggle();
+            view.mapState.refreshLapMaps();
         });
 
 

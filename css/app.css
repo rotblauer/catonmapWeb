@@ -16,6 +16,7 @@ img.catsnap-img {
     flex-flow: column;
     height: 100%;
 }
+
 .lastKnown {
     /* background: transparent; */
     background: inherit;
@@ -84,10 +85,17 @@ img.catsnap-img {
     font-weight: bold;
 }
 
+.lap-leaflet-map {
+    height: 200px;
+    width: 100%;
+    background-color: pink;
+}
+
 .leaflet-container {
     /* background: white !important; */
     /* background: #222 ; */
     background: inherit !important ;
+    /*border: 1px solid lime;*/
 }
 
 .leaflet-control-viewsettings-toggle {
@@ -101,7 +109,7 @@ img.catsnap-img {
 }
 
 .leaflet-bottom.leaflet-right {
-    display: none !important;
+    /*display: none !important;*/
 }
 
 /*overrides*/
