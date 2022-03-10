@@ -170,7 +170,7 @@ var mapStateFn = function() {
           lm.map.fitBounds(lm.bounds);
           L.geoJSON(lm.data, {
               style: {
-                  'color': 'darkgreen',
+                  'color': activityColorLegend[lm.data.properties.Activity],
                   'weight': 2,
               },
           }).addTo(lm.map);
@@ -279,7 +279,7 @@ var mapStateFn = function() {
 
             // ui
             let $card = $(`
-<div class="card mb-3" style="border-bottom: 2px dashed black; background-color: whitesmoke; min-height: 200px;">
+<div class="card mb-3" style="border-bottom: 2px dashed black; min-height: 200px;">
 <div class="card-body" style="">
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
