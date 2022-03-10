@@ -116,6 +116,10 @@ img.catsnap-img {
 .list-group-item {
 }
 
+.card.focused {
+    border: 3px solid darkgreen;
+}
+
 /* #main2-links { */
 /*     background: inherit; */
 /*     /\* filter:blur(10px); *\/ */

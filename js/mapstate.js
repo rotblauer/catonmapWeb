@@ -177,6 +177,10 @@ var mapStateFn = function() {
       }
     };
 
+    var geoCoords2LatLng = function(coordsArray) {
+        return L.latLng({lat: coordsArray[1], lng: coordsArray[0]});
+    }
+
     var addMiniLeaflet = function(feature) {
         var swLat;
         var swLng;
@@ -194,7 +198,7 @@ var mapStateFn = function() {
 
         const bounds = L.latLngBounds(L.latLng(swLat, swLng), L.latLng(neLat, neLng));
 
-        console.log(feature);
+        // console.log(feature);
         try {
             var _mymap = L.map(`lap-map-container-${feature.properties.Name}-${feature.properties.Start}`, {
                 dragging: false,
@@ -204,16 +208,77 @@ var mapStateFn = function() {
                 scrollWheelZoom: false,
                 attributionControl: false,
             });
-            _mymap.setView({lat: feature.geometry.coordinates[0][1], lng: feature.geometry.coordinates[0][0]}, 13);
-            console.log('mini leaflet', _mymap);
+
+            _mymap.setView(geoCoords2LatLng(feature.geometry.coordinates[0]), 13);
+            // console.log('mini leaflet', _mymap);
+
+            const markStart = L.circleMarker(geoCoords2LatLng(feature.geometry.coordinates[0]), {
+                radius: 8,
+                fillColor: "#3eb23b",
+                color: "#3eb23b",
+                weight: 1,
+                opacity: 0.5,
+                fillOpacity: 0.5
+            });
+            markStart.addTo(_mymap);
+
+            const markStop = L.circleMarker(geoCoords2LatLng(feature.geometry.coordinates[feature.geometry.coordinates.length - 1]), {
+                radius: 8,
+                fillColor: "#fa3903",
+                color: "#fa3903",
+                weight: 1,
+                opacity: 0.5,
+                fillOpacity: 0.5
+            });
+            markStop.addTo(_mymap);
 
             // L.control.zoom({position: "topright"}).addTo(_mymap);
             _mymap.addLayer(L.tileLayer(_mbtilesURL("ciy7ijqu3001a2rocq88pi8s4"), LtileLayerDefaults));
 
-
             _mymap.on('click', function (data) {
-                _map.fitBounds(bounds)
-                // geoLayer.setStyle({'color': 'black'});
+
+
+                const $myLapCard = $(`.lap-card#lap-card-${feature.properties.UUID}-${feature.properties.Start}`);
+                const $myLapCardAlreadyFocused = $myLapCard.hasClass('focused');
+
+                if (!$myLapCardAlreadyFocused) _map.fitBounds(bounds)
+
+                $('.lap-card').removeClass('focused');
+
+                _map.eachLayer((layer) => {
+
+                    // Initial experiment:
+                    // if (layer.myTag && layer.myTag === 'geojsonTag') console.log('myTag layer:', layer);
+                    // else console.log('tag miss', layer);
+
+                    // GeoJSON via linestring/ endpoint assigns ids to the geojson features.
+                    // feature.properties.id = feature.properties.Name + feature.properties.Start;
+                    let _linestringId = feature.properties.Name + feature.properties.Start;
+                    if (!$myLapCardAlreadyFocused && layer.myTag && layer.myTag === 'geojsonTag' && layer.feature.properties.id === _linestringId) {
+                        console.log('myTag layer:', layer);
+
+                        // This is the corresponding linestring from the laps view, but already on the big map.
+                        const f = layer.feature;
+                        layer.setStyle({
+                            color: activityColorLegend[f.properties.Activity],
+                            dashArray: null,
+                            weight: 4,
+                        });
+                        layer.bringToFront();
+
+                        $myLapCard.addClass('focused');
+
+
+                    } else if (layer.myTag && layer.myTag === 'geojsonTag') {
+                        // Reset the original geojson style.
+                        layer.setStyle({
+                            'color': 'darkgreen',
+                            'weight': 2,
+                            'dashArray': '8 12', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+                            'opacity': 1.00,
+                        })
+                    }
+                });
 
                 // on small (mobile) screens
                 if ($("#laps-column").width() > window.innerWidth * 3 / 4) {
@@ -279,7 +344,7 @@ var mapStateFn = function() {
 
             // ui
             let $card = $(`
-<div class="card mb-3" style="border-bottom: 2px dashed black; min-height: 200px;">
+<div id="lap-card-${feature.properties.UUID}-${feature.properties.Start}" class="card mb-3 lap-card" style="min-height: 200px;">
 <div class="card-body" style="">
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
@@ -295,7 +360,7 @@ var mapStateFn = function() {
                 </div>
                 <div class="d-flex w-100 justify-content-between text-small text-muted">
                     <div class="small">
-                       <span class='text-muted '>${moment(feature.properties.Start).format('llll')} </span>
+                       <span class='text-muted '>${moment(feature.properties.Start * 1000).format('llll')} </span>
                     </div>
                     <div class="small">
                        <span class='text-muted'>${minimalTimeDisplay(moment(feature.properties.StartDate))} ago</span>
@@ -311,14 +376,14 @@ var mapStateFn = function() {
                     
                     
                     <span class="text-right">
-                    <small style="color: darkgreen;" class=""><strong>${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km</strong></small>
+                    <small style="color: darkgreen;" class=""><strong>${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)}km</strong></small>
                     <small style="color: darkgreen;" class="">${hmsFromSeconds(feature.properties.Duration)}</small>
                     </span>
                 </div>
             </div>
             
-            <div id="lap-map-container-${feature.properties.Name}-${feature.properties.Start}" class="flex-fill lap-leaflet-map"></div>
 </div>
+            <div id="lap-map-container-${feature.properties.Name}-${feature.properties.Start}" class="flex-fill lap-leaflet-map"></div>
 </div>        
 `);
 
@@ -389,9 +454,9 @@ var mapStateFn = function() {
                                 'weight': 2,
                                 'dashArray': '8 12', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
                                 'opacity': 1.00,
-
                             },
                             onEachFeature: function(feature, layer) {
+                                layer.myTag = 'geojsonTag';
                                 feature.properties.id = feature.properties.Name + feature.properties.Start;
                             }
                         }).addTo(_map);
@@ -454,5 +519,6 @@ var mapStateFn = function() {
         setPBFOpt: setPBFOpt,
         goUpdateEdge: goUpdateEdge,
         refreshLapMaps: refreshLapMaps,
+
     };
 }

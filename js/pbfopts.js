@@ -283,30 +283,30 @@ ct.densityFn = function(properties, zoom, layer) {
         tfdMin = Math.min.apply(Math, tippeFeatureDensitySamples);
         tfdMin = Math.min.apply(Math, tippeFeatureDensitySamples);
 
-        cd("1/1000", nnn, "n=", n, properties);
-
-        cd(
-            "n.len=", ns.length,
-            "n.avg=", nAvg,
-            "n.min=", nMin,
-            "n.max=", nMax,
-        );
-
-        cd(
-            "tfd.len=", tippeFeatureDensitySamples.length,
-            "tfd.avg=", tfdAvg,
-            "tfd.min=", tfdMin,
-            "tfd.max=", tfdMax,
-        );
-
-        cd(
-            "noclus(==nopc).ln=", noClus,
-            "pc.len=", tippePointCountSamples.length,
-            "pc.avg=", pcAvg,
-            "pc.min=", pcMin,
-            "pc.max=", pcMax,
-        );
-        cd("z", view.mapState.getMap().getZoom());
+        // cd("1/1000", nnn, "n=", n, properties);
+        //
+        // cd(
+        //     "n.len=", ns.length,
+        //     "n.avg=", nAvg,
+        //     "n.min=", nMin,
+        //     "n.max=", nMax,
+        // );
+        //
+        // cd(
+        //     "tfd.len=", tippeFeatureDensitySamples.length,
+        //     "tfd.avg=", tfdAvg,
+        //     "tfd.min=", tfdMin,
+        //     "tfd.max=", tfdMax,
+        // );
+        //
+        // cd(
+        //     "noclus(==nopc).ln=", noClus,
+        //     "pc.len=", tippePointCountSamples.length,
+        //     "pc.avg=", pcAvg,
+        //     "pc.min=", pcMin,
+        //     "pc.max=", pcMax,
+        // );
+        // cd("z", view.mapState.getMap().getZoom());
 
     }
 
