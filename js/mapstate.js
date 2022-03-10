@@ -208,7 +208,7 @@ var mapStateFn = function() {
             console.log('mini leaflet', _mymap);
 
             // L.control.zoom({position: "topright"}).addTo(_mymap);
-            // _mymap.addLayer(_mapboxLayers["light"]);
+            _mymap.addLayer(L.tileLayer(_mbtilesURL("ciy7ijqu3001a2rocq88pi8s4"), LtileLayerDefaults));
 
 
             _mymap.on('click', function (data) {
@@ -311,7 +311,7 @@ var mapStateFn = function() {
                     
                     
                     <span class="text-right">
-                    <small style="color: darkgreen;" class="">${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km</small>
+                    <small style="color: darkgreen;" class=""><strong>${feature.properties.MeasuredSimplifiedTraversedKilometers.toFixed(1)} km</strong></small>
                     <small style="color: darkgreen;" class="">${hmsFromSeconds(feature.properties.Duration)}</small>
                     </span>
                 </div>
