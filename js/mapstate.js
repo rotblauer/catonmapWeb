@@ -252,59 +252,73 @@ var mapStateFn = function() {
             // L.control.zoom({position: "topright"}).addTo(_mymap);
             _mymap.addLayer(L.tileLayer(_mbtilesURL("ciy7ijqu3001a2rocq88pi8s4"), LtileLayerDefaults));
 
-            _mymap.on('click', function (noop) {
+            // force is a bool.
+            // if truthy, the main map will be forcibly adjusted to
+            // center on the linestring.
+            // if falsey, the main map will only be adjusted to center on the linestring
+            // if the linestring intersects with the current view.
+            const onMapFocus = function (force) {
+                return function() {
 
+                    const $myLapCard = $(`.lap-card#lap-card-${feature.properties.UUID}-${feature.properties.Start}`);
+                    const $myLapCardAlreadyFocused = $myLapCard.hasClass('focused');
 
-                const $myLapCard = $(`.lap-card#lap-card-${feature.properties.UUID}-${feature.properties.Start}`);
-                const $myLapCardAlreadyFocused = $myLapCard.hasClass('focused');
-
-                // if (!$myLapCardAlreadyFocused) _map.fitBounds(bounds)
-                // ->           lm.map.setView(lm.bounds.getCenter());
-                if (!$myLapCardAlreadyFocused) _map.setView(bounds.getCenter());
-
-                $('.lap-card').removeClass('focused');
-
-                _map.eachLayer((layer) => {
-
-                    // Initial experiment:
-                    // if (layer.myTag && layer.myTag === 'geojsonTag') console.log('myTag layer:', layer);
-                    // else console.log('tag miss', layer);
-
-                    // GeoJSON via linestring/ endpoint assigns ids to the geojson features.
-                    // feature.properties.id = feature.properties.Name + feature.properties.Start;
-                    let _linestringId = feature.properties.Name + feature.properties.Start;
-                    if (!$myLapCardAlreadyFocused && layer.myTag && layer.myTag === 'geojsonTag' && layer.feature.properties.id === _linestringId) {
-                        console.log('myTag layer:', layer);
-
-                        // This is the corresponding linestring from the laps view, but already on the big map.
-                        const f = layer.feature;
-                        layer.setStyle({
-                            color: activityColorLegend[f.properties.Activity],
-                            dashArray: null,
-                            weight: 4,
-                        });
-                        layer.bringToFront();
-
-                        $myLapCard.addClass('focused');
-
-
-                    } else if (layer.myTag && layer.myTag === 'geojsonTag') {
-                        // Reset the original geojson style.
-                        layer.setStyle({
-                            'color': 'darkgreen',
-                            'weight': 2,
-                            'dashArray': '8 12', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-                            'opacity': 1.00,
-                        })
+                    // if (!$myLapCardAlreadyFocused) _map.fitBounds(bounds)
+                    // ->           lm.map.setView(lm.bounds.getCenter());
+                    if (force) {
+                        if (!$myLapCardAlreadyFocused) _map.setView(bounds.getCenter());
+                    } else {
+                        const isIntersecting = _map.getBounds().intersects(bounds);
+                        if (!$myLapCardAlreadyFocused && isIntersecting) _map.setView(bounds.getCenter());
                     }
-                });
 
-                // on small (mobile) screens
-                if ($("#laps-column").width() > window.innerWidth * 3 / 4) {
-                    $("#lapsRenderButton").toggleClass('btn-dark btn-light')
-                    $("#laps-column").toggle();
+                    $('.lap-card').removeClass('focused');
+
+                    _map.eachLayer((layer) => {
+
+                        // Initial experiment:
+                        // if (layer.myTag && layer.myTag === 'geojsonTag') console.log('myTag layer:', layer);
+                        // else console.log('tag miss', layer);
+
+                        // GeoJSON via linestring/ endpoint assigns ids to the geojson features.
+                        // feature.properties.id = feature.properties.Name + feature.properties.Start;
+                        let _linestringId = feature.properties.Name + feature.properties.Start;
+                        if (!$myLapCardAlreadyFocused && layer.myTag && layer.myTag === 'geojsonTag' && layer.feature.properties.id === _linestringId) {
+                            console.log('myTag layer:', layer);
+
+                            // This is the corresponding linestring from the laps view, but already on the big map.
+                            const f = layer.feature;
+                            layer.setStyle({
+                                color: activityColorLegend[f.properties.Activity],
+                                dashArray: null,
+                                weight: 4,
+                            });
+                            layer.bringToFront();
+
+                            $myLapCard.addClass('focused');
+
+
+                        } else if (layer.myTag && layer.myTag === 'geojsonTag') {
+                            // Reset the original geojson style.
+                            layer.setStyle({
+                                'color': 'darkgreen',
+                                'weight': 2,
+                                'dashArray': '8 12', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+                                'opacity': 1.00,
+                            })
+                        }
+                    });
+
+                    // on small (mobile) screens
+                    if ($("#laps-column").width() > window.innerWidth * 3 / 4) {
+                        $("#lapsRenderButton").toggleClass('btn-dark btn-light')
+                        $("#laps-column").toggle();
+                    }
                 }
-            })
+            };
+
+            _mymap.on('click', onMapFocus(true));
+            // if (!isSmallScreen()) _mymap.on('mouseover', onMapFocus(false));
 
             lapMaps.push({map: _mymap, data: feature, bounds: bounds});
 
