@@ -266,7 +266,7 @@ var mapStateFn = function() {
                     // if (!$myLapCardAlreadyFocused) _map.fitBounds(bounds)
                     // ->           lm.map.setView(lm.bounds.getCenter());
                     if (force) {
-                        if (!$myLapCardAlreadyFocused) _map.setView(bounds.getCenter());
+                        if (!$myLapCardAlreadyFocused && !_map.getBounds().contains(bounds)) _map.setView(bounds.getCenter());
                     } else {
                         const isIntersecting = _map.getBounds().intersects(bounds);
                         if (!$myLapCardAlreadyFocused && isIntersecting) _map.setView(bounds.getCenter());
