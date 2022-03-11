@@ -80,7 +80,7 @@ var mapStateFn = function() {
         }
         return {
             "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n)),
-            "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n)),
+            // "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n)),
             "master": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts(n))
 
             // "master": L.vectorGrid.protobuf(_pbfURL("finalfinal"), _pbfOpts(n))
@@ -137,7 +137,24 @@ var mapStateFn = function() {
 
         // setLinkValue();
         // TODO get moar visits and append them
+
+        let lapMaps = getLapMaps();
+        const mapBounds = getMap().getBounds();
+        for (let lm of lapMaps) {
+            const $lapCard = $(`.lap-card#lap-card-${lm.data.properties.UUID}-${lm.data.properties.Start}`);
+            if (!view.$lapsColFilterToMapArea.is(':checked')) {
+                // Show everything if the box is not checked.
+                $lapCard.show();
+                console.log('show card');
+                continue
+            }
+            // Show only on-map laps.
+            if (!mapBounds.intersects(lm.bounds)) $lapCard.hide();
+            else $lapCard.show();
+        }
+        refreshLapMaps();
     };
+
     var _mapOnZoomEnd = function() {
         // model.setLocalStore("z", _map.getZoom());
         cd("zoom", _map.getZoom());
@@ -235,13 +252,15 @@ var mapStateFn = function() {
             // L.control.zoom({position: "topright"}).addTo(_mymap);
             _mymap.addLayer(L.tileLayer(_mbtilesURL("ciy7ijqu3001a2rocq88pi8s4"), LtileLayerDefaults));
 
-            _mymap.on('click', function (data) {
+            _mymap.on('click', function (noop) {
 
 
                 const $myLapCard = $(`.lap-card#lap-card-${feature.properties.UUID}-${feature.properties.Start}`);
                 const $myLapCardAlreadyFocused = $myLapCard.hasClass('focused');
 
-                if (!$myLapCardAlreadyFocused) _map.fitBounds(bounds)
+                // if (!$myLapCardAlreadyFocused) _map.fitBounds(bounds)
+                // ->           lm.map.setView(lm.bounds.getCenter());
+                if (!$myLapCardAlreadyFocused) _map.setView(bounds.getCenter());
 
                 $('.lap-card').removeClass('focused');
 
@@ -396,6 +415,8 @@ var mapStateFn = function() {
             $lapsContainer.append($card);
             addMiniLeaflet(feature);
         }
+
+        _mapOnMoveEnd()
     }
 
     /**
@@ -511,6 +532,10 @@ var mapStateFn = function() {
         setTimeout(goUpdateEdge, 60 * 1000);
     };
 
+    var getLapMaps = function() {
+        return lapMaps;
+    }
+
     return {
         init: initMap,
         getMap: getMap,
@@ -519,6 +544,6 @@ var mapStateFn = function() {
         setPBFOpt: setPBFOpt,
         goUpdateEdge: goUpdateEdge,
         refreshLapMaps: refreshLapMaps,
-
+        getLapMaps: getLapMaps,
     };
 }

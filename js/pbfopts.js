@@ -1,12 +1,13 @@
 var activityColorLegend = {
     "": "lightgray",
-    "Unknown": "lightgray",
-    "Stationary": "blueviolet",
-    "Walking": "dodgerblue",
-    "Running": "lightgreen",
-    "Bike": "gold",
-    "Automotive": "orangered",
-    "Fly": "mediumspringgreen"
+    "Unknown": "#d3d3d3", // "lightgray"
+    "Stationary": "#ee82ee", // "blueviolet",
+    "Walking": "#1e90ff", // "dodgerblue",
+    // "Running": "#90ee90", // "lightgreen",
+    "Running": "#4dd74d", // "lightgreen",
+    "Bike": "#ffd700", // "gold",
+    "Automotive": "#ff4500", // "orangered",
+    "Fly": "#00fa9a", // "mediumspringgreen",
 };
 
 // ct.getActivityLegendElementFn = function() {

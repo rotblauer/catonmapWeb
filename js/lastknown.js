@@ -241,14 +241,16 @@ var dataLastKnownEntry = {
             return $("<span>")
                 .css("cursor", "pointer")
                 .css("font-size", "0.8em")
+                .css("color", "blue")
+                .css("text-decoration", "underline")
                 // .css("text-decoration", "underline")
                 .addClass("mr-3 mt-2")
                 .text(name)
                 .on("click", fn);
         };
 
-        var findlink = bsStyle("Find", find).addClass('badge badge-dark');
-        var filterlink = bsStyle("Filter", filter).addClass('badge badge-dark');
+        var findlink = bsStyle("Find", find).addClass('');
+        var filterlink = bsStyle("Filter", filter).addClass('');
         var followLink = bsStyle("follow", follow);
 
         if (ct.settings.follow === this.iid()) {

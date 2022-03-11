@@ -538,7 +538,7 @@ model.loadSnaps = function(snaps) {
 }
                  */
 
-                var $card = $(`<div class="col-10 offset-1"><div class="card mb-3">
+                var $card = $(`<div class="col-sm-10 offset-sm-1 col-md-12 offset-md-0"><div class="card mb-3">
   <div class="card-body">
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
@@ -618,6 +618,27 @@ view.init = function() {
 
     view.$metadataDisplay = $("#metadata-display");
     view.$metadataRecoverDisplay = $("#metadata-display-recover");
+
+    view.$lapsColFilterToMapArea = $("input:checkbox#laps-filter-to-map-area");
+    view.$lapsColFilterToMapArea.on('click', function () {
+        console.log('click');
+            // lapMaps.push({map: _mymap, data: feature, bounds: bounds});
+        let lapMaps = view.mapState.getLapMaps();
+        const mapBounds = view.mapState.getMap().getBounds();
+        for (let lm of lapMaps) {
+            const $lapCard = $(`.lap-card#lap-card-${lm.data.properties.UUID}-${lm.data.properties.Start}`);
+            if (!view.$lapsColFilterToMapArea.is(':checked')) {
+                // Show everything if the box is not checked.
+                $lapCard.show();
+                console.log('show card');
+                continue
+            }
+            // Show only on-map laps.
+            if (!mapBounds.intersects(lm.bounds)) $lapCard.hide();
+            else $lapCard.show();
+        }
+        view.mapState.refreshLapMaps();
+    });
 
     function toggleMetadata (el) {
         view.$metadataDisplay.toggle();
@@ -803,8 +824,10 @@ function onSnapsButtonClick(e, el) {
         });
         $("#snapsRenderedSwitcher").on("click", onSnapsButtonClick);
         $("#lapsRenderButton").on('click', function (ev, el) {
-            $("#lapsRenderButton").toggleClass('btn-dark btn-light')
-            $("#laps-column").toggle();
+            const $lapsCol = $("#laps-column");
+            $lapsCol.toggle();
+            if ($lapsCol.is(':visible')) $("#lapsRenderButton").removeClass('btn-light').addClass('btn-dark');
+            else $("#lapsRenderButton").removeClass('btn-dark').addClass('btn-light')
             view.mapState.refreshLapMaps();
         });
 
