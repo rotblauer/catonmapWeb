@@ -98,6 +98,13 @@ img.catsnap-img {
     /*border: 1px solid lime;*/
 }
 
+#lapsRenderButton.btn.btn-dark {
+    color: whitesmoke;
+}
+#lapsRenderButton.btn.btn-light {
+    color: darkgreen;
+}
+
 .leaflet-control-viewsettings-toggle {
     width: 44px;
     height: 44px;

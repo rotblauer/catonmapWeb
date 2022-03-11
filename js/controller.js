@@ -754,6 +754,9 @@ function onSnapsButtonClick(e, el) {
 
     $snapsRenderedSwitcher.toggleClass('btn-dark btn-light');
 
+    view.mapState.getMap().invalidateSize();
+
+
     // if ($snapsRenderedSwitcher.html().indexOf("naps") >= 0) {
     //     $snapsRenderedSwitcher.html("Maps");
     // } else {
@@ -767,7 +770,7 @@ function onSnapsButtonClick(e, el) {
 
     // Listen for the jQuery ready event on the document
     $(function() {
-        $('[data-toggle="tooltip"]').tooltip()
+        if (!isSmallScreen()) $('[data-toggle="tooltip"]').tooltip()
 
         var b = $("body");
         view.$map = $("#map");
@@ -829,6 +832,7 @@ function onSnapsButtonClick(e, el) {
             if ($lapsCol.is(':visible')) $("#lapsRenderButton").removeClass('btn-light').addClass('btn-dark');
             else $("#lapsRenderButton").removeClass('btn-dark').addClass('btn-light')
             view.mapState.refreshLapMaps();
+            view.mapState.getMap().invalidateSize();
         });
 
 
