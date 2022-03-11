@@ -179,7 +179,7 @@ var mapStateFn = function() {
     var refreshLapMaps = function() {
       for (let i = 0; i < lapMaps.length; i++) {
           const lm = lapMaps[i];
-          console.log('invalidating map size', lm);
+          // console.log('invalidating map size', lm);
           lm.map.invalidateSize();
           // lm.map.layers.forEach((layer) => {
           //     layer.remove();

@@ -239,8 +239,8 @@ var
 
     noClus = 0;
 
-var minPC = 1000,
-    maxPC = 5000, // 10000 // 59534, // 172, //351, // 172, //9,
+var minPC = 1, // 1000,
+    maxPC = 500, // 5000, // 10000 // 59534, // 172, //351, // 172, //9,
     rangePC = maxPC - minPC;
 
 var minTFD = 0,
@@ -248,6 +248,8 @@ var minTFD = 0,
     rangeTFD = maxTFD - minTFD;
 
 ct.densityFn = function(properties, zoom, layer) {
+
+    maxPC = maxPC * Math.sqrt(view.mapState.getMap().getZoom())
 
     // Set a defaulty value for point_count if the annotation is falsey.
     properties.point_count = properties.point_count || minPC;
