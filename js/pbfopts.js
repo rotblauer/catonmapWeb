@@ -21,7 +21,7 @@ var activityColorLegend = {
 
 var nnn = 0;
 var ps = null;
-ct.activityFn = function(props, z, layer) {
+controller.activityFn = function(props, z, layer) {
     if (nnn === 0) {
         cd("props", props);
         nnn++;
@@ -30,7 +30,7 @@ ct.activityFn = function(props, z, layer) {
     // if (!props.Accuracy || props.Accuracy !== 5) {
     //     return {};
     // }
-    if (!ct.settingsFilter(props, z, layer)) {
+    if (!controller.settingsFilter(props, z, layer)) {
         return {};
     }
     view.sps++;
@@ -124,8 +124,8 @@ function invert(rgb) {
 }
 
 var n = 0;
-ct.recencyFn = function(properties, zoom, layer) {
-    if (!ct.settingsFilter(properties, zoom, layer)) {
+controller.recencyFn = function(properties, zoom, layer) {
+    if (!controller.settingsFilter(properties, zoom, layer)) {
         return {};
     }
     view.sps++;
@@ -143,8 +143,8 @@ ct.recencyFn = function(properties, zoom, layer) {
     return out;
 };
 
-ct.speedFn = function(properties, zoom, layer) {
-    if (!ct.settingsFilter(properties, zoom, layer)) {
+controller.speedFn = function(properties, zoom, layer) {
+    if (!controller.settingsFilter(properties, zoom, layer)) {
         return {};
     }
     view.sps++;
@@ -247,7 +247,7 @@ var minTFD = 0,
     maxTFD = 0, // 62,
     rangeTFD = maxTFD - minTFD;
 
-ct.densityFn = function(properties, zoom, layer) {
+controller.densityFn = function(properties, zoom, layer) {
 
     const mapZoom = view.mapState.getMap().getZoom();
     maxPC = 100 * Math.sqrt(mapZoom)
@@ -322,7 +322,7 @@ ct.densityFn = function(properties, zoom, layer) {
     }
     nnn++;
 
-    if (!ct.settingsFilter(properties, zoom, layer)) {
+    if (!controller.settingsFilter(properties, zoom, layer)) {
         return {};
     }
 
@@ -412,24 +412,24 @@ ct.densityFn = function(properties, zoom, layer) {
 
 var vectorTileLayerStyles = {
     "speed": {
-        'catTrack': ct.speedFn,
-        'catTrackEdge': ct.speedFn
+        'catTrack': controller.speedFn,
+        'catTrackEdge': controller.speedFn
     },
     "recent": {
-        'catTrack': ct.recencyFn,
-        'catTrackEdge': ct.recencyFn
+        'catTrack': controller.recencyFn,
+        'catTrackEdge': controller.recencyFn
     },
     "activity": {
-        'catTrack': ct.activityFn,
-        'catTrackEdge': ct.activityFn
+        'catTrack': controller.activityFn,
+        'catTrackEdge': controller.activityFn
     },
     "density": {
-        'catTrack': ct.densityFn,
-        'catTrackEdge': ct.densityFn
+        'catTrack': controller.densityFn,
+        'catTrackEdge': controller.densityFn
     }
 };
 
-ct.baseTilesLayerOptsF = function(name) {
+controller.baseTilesLayerOptsF = function(name) {
     var b = Object.create(baseTileLayerOpts);
     b["vectorTileLayerStyles"] = vectorTileLayerStyles[name];
     return b;

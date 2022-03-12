@@ -1,4 +1,4 @@
-var ct = ct || {};
+var controller = controller || {};
 var view = view || {};
 var model = model || {};
 
@@ -141,7 +141,8 @@ model.errorMetadata = function(err) {
 };
 
 var ago3days = moment().add(-3, "days").unix();
-ct.settings = {
+
+controller.settings = {
     on: false,
     // on: true,
     filter: {
@@ -160,16 +161,17 @@ ct.settings = {
     },
     follow: null
 };
-ct.settingsFilter = function(props, zoom, layer) {
-    if (!ct.settings.hasOwnProperty("on") ||
-        !ct.settings["on"] ||
-        !ct.settings.hasOwnProperty("filter")) return true; // no filter settings applied, or disabled (on=false)
 
-    for (var k in ct.settings.filter) {
-        if (!ct.settings.filter.hasOwnProperty(k)) {
+controller.settingsFilter = function(props, zoom, layer) {
+    if (!controller.settings.hasOwnProperty("on") ||
+        !controller.settings["on"] ||
+        !controller.settings.hasOwnProperty("filter")) return true; // no filter settings applied, or disabled (on=false)
+
+    for (var k in controller.settings.filter) {
+        if (!controller.settings.filter.hasOwnProperty(k)) {
             continue;
         }
-        var fn = ct.settings.filter[k];
+        var fn = controller.settings.filter[k];
         if (!fn(props, zoom, layer)) {
             return false;
         }
@@ -177,26 +179,26 @@ ct.settingsFilter = function(props, zoom, layer) {
     return true;
 };
 
-ct.setSettingsFilter = function(key, fn) {
+controller.setSettingsFilter = function(key, fn) {
     if (objExists(fn)) {
-        ct.settings["on"] = true;
-        ct.settings["filter"] = ct.settings["filter"] || {};
-        ct.settings["filter"][key] = fn;
+        controller.settings["on"] = true;
+        controller.settings["filter"] = controller.settings["filter"] || {};
+        controller.settings["filter"][key] = fn;
     } else {
-        if (ct.settings.hasOwnProperty("filter")) {
-            if (ct.settings.filter.hasOwnProperty(key)) {
-                delete ct.settings.filter[key];
+        if (controller.settings.hasOwnProperty("filter")) {
+            if (controller.settings.filter.hasOwnProperty(key)) {
+                delete controller.settings.filter[key];
             }
-            if (Object.keys(ct.settings.filter).length === 0) {
-                ct.settings.on = false;
+            if (Object.keys(controller.settings.filter).length === 0) {
+                controller.settings.on = false;
             }
         }
     }
-    cd("ct.settings", ct.settings);
+    cd("ct.settings", controller.settings);
 };
 
 model.getLocalStore = function(key) {
-    if (objExists(ct.browserSupportsLocal) && !ct.browserSupportsLocal) {
+    if (objExists(controller.browserSupportsLocal) && !controller.browserSupportsLocal) {
         return null;
     }
     var v = window.localStorage.getItem(key);
@@ -205,7 +207,7 @@ model.getLocalStore = function(key) {
 };
 
 model.setLocalStore = function(key, val) {
-    if (ct.browserSupportsLocal) {
+    if (controller.browserSupportsLocal) {
         window.localStorage.setItem(key, val);
     }
 };
@@ -280,7 +282,7 @@ model.setVisits = function(data) {
         }
         model.visitsData[v.id()] = v;
     });
-    ct.onVisits(model.visitsData, true);
+    controller.onVisits(model.visitsData, true);
 };
 
 model.appendVisits = function(data) {
@@ -298,7 +300,7 @@ model.appendVisits = function(data) {
         model.visitsData[v.iid()] = v;
         newVs[v.iid()] = v;
     });
-    ct.onVisits(newVs, false);
+    controller.onVisits(newVs, false);
 };
 
 model.errVisits = function(err) {
@@ -306,7 +308,7 @@ model.errVisits = function(err) {
 };
 
 model.doneLastKnownCats = function(data) {
-    ct.onLastKnown(model.setLastKnown(data));
+    controller.onLastKnown(model.setLastKnown(data));
 };
 
 model.logAndMockInstead = function(err) {
@@ -315,8 +317,8 @@ model.logAndMockInstead = function(err) {
     model.doneLastKnownCats(mockLastknown);
 };
 
-ct.dataLoop = function(n) {
-    ct.settings.follow = model.getState().follow; // localOrDefault("fc", "");
+controller.dataLoop = function(n) {
+    controller.settings.follow = model.getState().follow; // localOrDefault("fc", "");
 
     model.getMetadata()
         .done(model.doneMetadata)
@@ -349,9 +351,9 @@ ct.dataLoop = function(n) {
     // setTimeout(ct.dataLoop, (n || 55) * 1000);
 };
 
-ct.init = (function() {
+controller.init = (function() {
     setWindowTitle();
-    ct.browserSupportsLocal = browserSupportsLocalStorage;
+    controller.browserSupportsLocal = browserSupportsLocalStorage;
     model.visitsOn = model.getState().visits;
     model.snapsOn = model.getState().snaps;
     // var von = model.getState().visits;
@@ -365,7 +367,7 @@ ct.init = (function() {
     var tfstart = model.getState().tfstart;
     var tfend = model.getState().tfend;
     if (objExists(tfstart) || objExists(tfend)) {
-        ct.setSettingsFilter("time_filter", function(p, z, l) {
+        controller.setSettingsFilter("time_filter", function(p, z, l) {
             if (objExists(p["UnixTime"])) {
                 if (moment(tfstart).unix() < p.UnixTime && moment(tfend).unix() > p.UnixTime) {
                     return true;
@@ -384,10 +386,10 @@ ct.init = (function() {
 
     view.mapState.init();
 
-    ct.dataLoop();
+    controller.dataLoop();
 });
 
-ct.onLastKnown = function(data) {
+controller.onLastKnown = function(data) {
     var catsort = data
         .where(function(k, cat) {
             return cat.hasOwnProperty("time") &&
@@ -439,10 +441,10 @@ model.loadSnaps = function(snaps) {
             view.mapState.setLayer("snaps", null);
             $("#snaps-display").html("");
             $("#snapsRenderedSwitcher").show();
-            ct.snapsClusterGroup = L.markerClusterGroup();
+            controller.snapsClusterGroup = L.markerClusterGroup();
             var num = 0;
             snaps.forEach(function(snap) {
-                if (!ct.settingsFilter(snap, 3, "snaps")) {
+                if (!controller.settingsFilter(snap, 3, "snaps")) {
                     cd("snap return", snap);
                     return;
                 }
@@ -569,11 +571,11 @@ model.loadSnaps = function(snaps) {
                 var marker = L.marker([snap.lat, snap.long], {
                     icon: iconSnap
                 }).on("click", snapMapPopup);
-                ct.snapsClusterGroup.addLayer(marker);
+                controller.snapsClusterGroup.addLayer(marker);
                 // ct.markerClusterGroup.addLayer(marker);
             });
 
-            view.mapState.setLayer("snaps", ct.snapsClusterGroup);
+            view.mapState.setLayer("snaps", controller.snapsClusterGroup);
             // view.mapState.setLayer("snaps", ct.markerClusterGroup);
 
         })
@@ -582,7 +584,7 @@ model.loadSnaps = function(snaps) {
         });
 };
 
-ct.onVisits = function(visits, overwrite) {
+controller.onVisits = function(visits, overwrite) {
     if (!model.visitsOn) {
         cd("removing visits layer");
         view.mapState.setLayer("visits", null);
@@ -594,8 +596,8 @@ ct.onVisits = function(visits, overwrite) {
         return;
     };
 
-    ct.markerClusterGroup = ct.markerClusterGroup || L.markerClusterGroup();
-    if (overwrite) ct.markerClusterGroup = L.markerClusterGroup().setZIndex(11);;
+    controller.markerClusterGroup = controller.markerClusterGroup || L.markerClusterGroup();
+    if (overwrite) controller.markerClusterGroup = L.markerClusterGroup().setZIndex(11);;
 
     // these should only be unique visits
     for (var k in visits) {
@@ -603,12 +605,12 @@ ct.onVisits = function(visits, overwrite) {
             continue;
         }
         var v = visits[k];
-        ct.markerClusterGroup.addLayer(v.marker(view.mapState.getMap()));
+        controller.markerClusterGroup.addLayer(v.marker(view.mapState.getMap()));
         // cd("new visit marker", v);
     }
-    cd("marker cluster group", ct.markerClusterGroup);
+    cd("marker cluster group", controller.markerClusterGroup);
 
-    view.mapState.setLayer("visits", ct.markerClusterGroup);
+    view.mapState.setLayer("visits", controller.markerClusterGroup);
 };
 
 
@@ -650,7 +652,7 @@ view.init = function() {
     view.$selectDrawOpts = $("#settings-select-drawopts");
     view.$settingsStyleView = $("#settings-style-view").on("change", function(e) {
         var ld = $(this).val();
-        ct.setViewStyle(ld);
+        controller.setViewStyle(ld);
     });
 
     // view.$selectDrawOpts.val(localOrDefault("l", "activity"));
@@ -698,7 +700,7 @@ view.init = function() {
     $("#latest-version-ios").text(latestiOSVersion);
 };
 
-ct.setViewStyle = function(lightOrDark) {
+controller.setViewStyle = function(lightOrDark) {
     cd("setting view  style", lightOrDark);
     // model.setLocalStore("vm", lightOrDark);
     model.setState("window", lightOrDark);
@@ -785,7 +787,7 @@ function onSnapsButtonClick(e, el) {
             $("#catsRenderedSwitcher").hide();
         }
 
-        ct.init();
+        controller.init();
         // var zin = $(".leaflet-top").first();
         // view.$metadataDisplay
         //     .css("position", "fixed")
@@ -811,24 +813,27 @@ function onSnapsButtonClick(e, el) {
             .attr("data-toggle", "modal")
             .attr("data-target", ".settings-modal");
 
-
-
         view.$viewSettingsToggleContainer.append(view.$viewSettingsToggle);
         $(".leaflet-top.leaflet-left").append(view.$viewSettingsToggleContainer);
 
         var ld = model.getState().windowStyle; // localOrDefault("vm", "light");
         view.$settingsStyleView.val(ld);
-        ct.setViewStyle(ld);
+        controller.setViewStyle(ld);
 
-        $("#catsRenderedSwitcher").on("click", function() {
+        view.$catsViewButton = $("#catsRenderedSwitcher")
+        view.$catsViewButton.on("click", function() {
             toggleCatsView();
             renderCatsView();
             $('#brand').toggle();
             // $('#mymetadata').toggle();
             $(this).toggleClass("btn-dark btn-light");
         });
-        $("#snapsRenderedSwitcher").on("click", onSnapsButtonClick);
-        $("#lapsRenderButton").on('click', function (ev, el) {
+
+        view.$snapsViewButton = $("#snapsRenderedSwitcher");
+        view.$snapsViewButton.on("click", onSnapsButtonClick);
+
+        view.$lapsViewButton = $("#lapsRenderButton");
+        view.$lapsViewButton.on('click', function (ev, el) {
             const $lapsCol = $("#laps-column");
             $lapsCol.toggle();
             if ($lapsCol.is(':visible')) $("#lapsRenderButton").removeClass('btn-light').addClass('btn-dark');
@@ -838,7 +843,6 @@ function onSnapsButtonClick(e, el) {
 
             if (isSmallScreen()) $("#snapsRenderedSwitcher").toggle();
         });
-
 
 
         $("#datetimepicker1").daterangepicker({
@@ -860,7 +864,7 @@ function onSnapsButtonClick(e, el) {
             }
 
         }, function(start, end, label) {
-            ct.setSettingsFilter("time_filter", function(p, z, l) {
+            controller.setSettingsFilter("time_filter", function(p, z, l) {
                 if (objExists(p["UnixTime"])) {
                     if (start.unix() < p.UnixTime && end.unix() > p.UnixTime) {
                         return true;
@@ -884,7 +888,7 @@ function onSnapsButtonClick(e, el) {
         });
 
         $("#btn-remove-date-filter").on("click", function(e) {
-            ct.setSettingsFilter("time_filter", null);
+            controller.setSettingsFilter("time_filter", null);
 
             model.setState("tfstart", null);
             model.setState("tfend", null);
@@ -892,68 +896,70 @@ function onSnapsButtonClick(e, el) {
             view.mapState.setPBFOpt(view.$selectDrawOpts.val());
         });
 
-        $("#datetimepicker2").daterangepicker({
-            timePicker: true,
-            startDate: moment().startOf("week"),
-            endDate: moment().startOf("hour").add(12, "hour"),
-            ranges: {
-                'Today': [moment().startOf('day'), moment()],
-                'Yesterday': [moment().subtract(1, 'day').startOf("day"), moment().subtract(1, "day").endOf("day")],
-                'Last 7 Days': [moment().subtract(7, 'days').startOf('day'), moment()],
-                'Last 30 Days': [moment().subtract(30, 'days').startOf('day'), moment()],
-                "Last 6 Months": [moment().subtract(6, "months").startOf('day'), moment()],
-                'This Month': [moment().startOf('month'), moment()],
-                'This Year': [moment().startOf('year'), moment()]
-                // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            },
-            locale: {
-                format: "M/DD hh:mm A"
-            }
+        // This is/was for the linestrings (aka laps) query.
 
-        }, function(start, end, label) {
-            // ct.setSettingsFilter("time_filter", function(p, z, l) {
-            //     if (objExists(p["UnixTime"])) {
-            //         if (start.unix() < p.UnixTime && end.unix() > p.UnixTime) {
-            //             return true;
-            //         }
-            //         return false;
-            //     } else {
-            //         var punix = p.id / 1e9;
-            //         if (start.unix() < punix && end.unix() > punix) {
-            //             return true;
-            //         }
-            //         cd("nogo linestring", tfstart, tfend, punix);
-            //         return false;
-            //     }
-            // });
-
-            cd(start, end, label);
-
-            model.setState("linestringStart", start.unix());
-            model.setState("linestringEnd", end.unix());
-
-            view.mapState.fetchLinestrings();
-
-            // view.mapState.setPBFOpt(view.$selectDrawOpts.val());
-        });
-
-        $("#btn-remove-date-filter2").on("click", function(e) {
-
-            const start = moment().startOf('day')
-            const end = moment()
-
-            model.setState("linestringStart", start.unix());
-            model.setState("linestringEnd", end.unix());
-
-            view.mapState.fetchLinestrings();
-
-            // ct.setSettingsFilter("time_filter", null);
-            //
-            // model.setState("tfstart", null);
-            // model.setState("tfend", null);
-            //
-            // view.mapState.setPBFOpt(view.$selectDrawOpts.val());
-        });
+        // $("#datetimepicker2").daterangepicker({
+        //     timePicker: true,
+        //     startDate: moment().startOf("week"),
+        //     endDate: moment().startOf("hour").add(12, "hour"),
+        //     ranges: {
+        //         'Today': [moment().startOf('day'), moment()],
+        //         'Yesterday': [moment().subtract(1, 'day').startOf("day"), moment().subtract(1, "day").endOf("day")],
+        //         'Last 7 Days': [moment().subtract(7, 'days').startOf('day'), moment()],
+        //         'Last 30 Days': [moment().subtract(30, 'days').startOf('day'), moment()],
+        //         "Last 6 Months": [moment().subtract(6, "months").startOf('day'), moment()],
+        //         'This Month': [moment().startOf('month'), moment()],
+        //         'This Year': [moment().startOf('year'), moment()]
+        //         // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        //     },
+        //     locale: {
+        //         format: "M/DD hh:mm A"
+        //     }
+        //
+        // }, function(start, end, label) {
+        //     // ct.setSettingsFilter("time_filter", function(p, z, l) {
+        //     //     if (objExists(p["UnixTime"])) {
+        //     //         if (start.unix() < p.UnixTime && end.unix() > p.UnixTime) {
+        //     //             return true;
+        //     //         }
+        //     //         return false;
+        //     //     } else {
+        //     //         var punix = p.id / 1e9;
+        //     //         if (start.unix() < punix && end.unix() > punix) {
+        //     //             return true;
+        //     //         }
+        //     //         cd("nogo linestring", tfstart, tfend, punix);
+        //     //         return false;
+        //     //     }
+        //     // });
+        //
+        //     cd(start, end, label);
+        //
+        //     model.setState("linestringStart", start.unix());
+        //     model.setState("linestringEnd", end.unix());
+        //
+        //     view.mapState.fetchLinestrings();
+        //
+        //     // view.mapState.setPBFOpt(view.$selectDrawOpts.val());
+        // });
+        //
+        // $("#btn-remove-date-filter2").on("click", function(e) {
+        //
+        //     const start = moment().startOf('day')
+        //     const end = moment()
+        //
+        //     model.setState("linestringStart", start.unix());
+        //     model.setState("linestringEnd", end.unix());
+        //
+        //     view.mapState.fetchLinestrings();
+        //
+        //     // ct.setSettingsFilter("time_filter", null);
+        //     //
+        //     // model.setState("tfstart", null);
+        //     // model.setState("tfend", null);
+        //     //
+        //     // view.mapState.setPBFOpt(view.$selectDrawOpts.val());
+        // });
     });
 
 }(window.jQuery, window, document));

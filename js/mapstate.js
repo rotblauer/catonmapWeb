@@ -60,10 +60,10 @@ var mapStateFn = function() {
         return tileHost + "/services/" + id + "/tiles/{z}/{x}/{y}.pbf";
     };
     var _pbfLayerOpts = {
-        "activity": ct.baseTilesLayerOptsF("activity"),
-        "recent": ct.baseTilesLayerOptsF("recent"),
-        "speed": ct.baseTilesLayerOptsF("speed"),
-        "density": ct.baseTilesLayerOptsF("density")
+        "activity": controller.baseTilesLayerOptsF("activity"),
+        "recent": controller.baseTilesLayerOptsF("recent"),
+        "speed": controller.baseTilesLayerOptsF("speed"),
+        "density": controller.baseTilesLayerOptsF("density")
     };
     var _pbfOpts = function(optName) {
         if (_pbfLayerOpts.hasOwnProperty(optName)) {
@@ -179,7 +179,7 @@ var mapStateFn = function() {
     var refreshLapMaps = function() {
       for (let i = 0; i < lapMaps.length; i++) {
           const lm = lapMaps[i];
-          console.log('invalidating map size', lm);
+          // console.log('invalidating map size', lm);
 
           // L.geoJSON(lm.data, {
           //     style: {
@@ -256,6 +256,11 @@ var mapStateFn = function() {
                 scrollWheelZoom: false,
                 attributionControl: false,
             });
+
+            // $(_mymap.getContainer()).on('resize', function () {
+            //     _mymap.invalidateSize();
+            //     _mymap.fitBounds(lm.bounds);
+            // });
 
             _mymap.setView(geoCoords2LatLng(feature.geometry.coordinates[0]), 13);
             // console.log('mini leaflet', _mymap);

@@ -154,9 +154,9 @@ var dataLastKnownEntry = {
             $(".follow-highlight").removeClass("follow-highlight");
             var t = $(e.target).closest(".lastKnown");
             var iid = t.attr("data-iid");
-            ct.settings.follow === iid ? (ct.settings.follow = "") : (ct.settings.follow = iid);
-            ct.settings.follow === "" ? $(e.target).removeClass("follow-highlight") : $(e.target).addClass("follow-highlight");
-            model.setLocalStore("fc", ct.settings.follow);
+            controller.settings.follow === iid ? (controller.settings.follow = "") : (controller.settings.follow = iid);
+            controller.settings.follow === "" ? $(e.target).removeClass("follow-highlight") : $(e.target).addClass("follow-highlight");
+            model.setLocalStore("fc", controller.settings.follow);
             var lat = t.attr("data-lat");
             var lng = t.attr("data-lng");
 
@@ -191,7 +191,7 @@ var dataLastKnownEntry = {
             if (filterers.length === 0) {
                 fn = null;
             }
-            ct.setSettingsFilter("viewables", fn);
+            controller.setSettingsFilter("viewables", fn);
             view.mapState.setPBFOpt(localOrDefault("l", "activity"));
 
             view.mapState.setLayer("visits", null);
@@ -253,7 +253,7 @@ var dataLastKnownEntry = {
         var filterlink = bsStyle("Filter", filter).addClass('');
         var followLink = bsStyle("follow", follow);
 
-        if (ct.settings.follow === this.iid()) {
+        if (controller.settings.follow === this.iid()) {
             followLink.addClass("follow-highlight");
         }
 
@@ -344,9 +344,9 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
         this.el().append(d);
 
         // init follow if following
-        if (ct.settings.follow !== "") {
+        if (controller.settings.follow !== "") {
             if (objExists(model.lastKnownData)) {
-                var c = model.lastKnownData.get(ct.settings.follow);
+                var c = model.lastKnownData.get(controller.settings.follow);
                 if (objExists(c)) {
                     view.mapState.getMap().flyTo([c.lat, c.long]);
                 }
