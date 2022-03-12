@@ -570,7 +570,7 @@ var mapStateFn = function() {
             .on("click", _mapOnClick);
 
         // base, over, opts
-        L.control.layers(_mapboxLayers, null, { position: "topleft" }).addTo(_map);
+        L.control.layers(_mapboxLayers, null, { position: "topleft", collapsed: isSmallScreen() }).addTo(_map);
 
         fetchLinestrings(/*default*/)
 
