@@ -213,3 +213,13 @@ $.fn.flash = function(duration, iterations) {
 var minimalTimeDisplay = function(time) {
     return time.fromNow(true).replace("a few seconds", "0m").replace("a ", "1").replace("an", "1").replace("hours", "h").replace("hour", "h").replace("minutes", "m").replace("minute", "m").replace(" ","").replace("days","d").replace("day", "d").replace("months", "M").replace("month", "M");
 }
+
+// https://stackoverflow.com/a/40658647/4401322
+$.fn.intersectsViewport = function() {
+    var elementTop = $(this).offset().top;
+    var elementBottom = elementTop + $(this).outerHeight();
+    var viewportTop = $(window).scrollTop();
+    var viewportBottom = viewportTop + $(window).height();
+    // return elementBottom > viewportTop && elementTop < viewportBottom;
+    return elementTop <= viewportBottom && elementBottom >= viewportTop;
+};

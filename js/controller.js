@@ -756,6 +756,8 @@ function onSnapsButtonClick(e, el) {
 
     view.mapState.getMap().invalidateSize();
 
+    if (isSmallScreen()) $("#lapsRenderButton").toggle();
+
 
     // if ($snapsRenderedSwitcher.html().indexOf("naps") >= 0) {
     //     $snapsRenderedSwitcher.html("Maps");
@@ -832,7 +834,9 @@ function onSnapsButtonClick(e, el) {
             if ($lapsCol.is(':visible')) $("#lapsRenderButton").removeClass('btn-light').addClass('btn-dark');
             else $("#lapsRenderButton").removeClass('btn-dark').addClass('btn-light')
             view.mapState.refreshLapMaps();
-            view.mapState.getMap().invalidateSize();
+            setTimeout(view.mapState.getMap().invalidateSize, 300);
+
+            if (isSmallScreen()) $("#snapsRenderedSwitcher").toggle();
         });
 
 

@@ -179,18 +179,49 @@ var mapStateFn = function() {
     var refreshLapMaps = function() {
       for (let i = 0; i < lapMaps.length; i++) {
           const lm = lapMaps[i];
-          // console.log('invalidating map size', lm);
-          lm.map.invalidateSize();
-          // lm.map.layers.forEach((layer) => {
-          //     layer.remove();
-          // })
-          lm.map.fitBounds(lm.bounds);
-          L.geoJSON(lm.data, {
+          console.log('invalidating map size', lm);
+
+          // L.geoJSON(lm.data, {
+          //     style: {
+          //         'color': activityColorLegend[lm.data.properties.Activity],
+          //         'weight': 2,
+          //     },
+          // }).addTo(lm.map);
+
+          // lm.map.fitBounds(lm.bounds);
+
+          const myLayer = lm.layer || L.geoJSON(lm.data, {
               style: {
                   'color': activityColorLegend[lm.data.properties.Activity],
                   'weight': 2,
               },
-          }).addTo(lm.map);
+          });
+
+          if (!lm.map.hasLayer(myLayer)) {
+              lapMaps[i].layer = myLayer;
+              lapMaps[i].layer.addTo(lm.map);
+          }
+
+
+          lm.map.invalidateSize();
+          lm.map.fitBounds(lm.bounds);
+          // if (!lm.map.hasLayer(myLayer)) {
+
+
+
+
+          // }
+
+          // const $mapContainer = $(lm.map.getContainer());
+          // if ($mapContainer.intersectsViewport()) lm.map.invalidateSize();
+          // else lm.map.invalidateSize();
+          // else setTimeout(() => {
+          //     lm.map.invalidateSize();
+          // }, 500);
+
+          // lm.map.layers.forEach((layer) => {
+          //     layer.remove();
+          // })
       }
     };
 

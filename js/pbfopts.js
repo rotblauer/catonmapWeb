@@ -197,7 +197,7 @@ function percentToRGB(percent) {
 
 // -ag or --calculate-feature-density: Add a new attribute, tippecanoe_feature_density, to each feature, to record how densely features are spaced in that area of the tile. You can use this attribute in the style to produce a glowing effect where points are densely packed. It can range from 0 in the sparsest areas to 255 in the densest.
 var maxDensity = 62; //255;
-var maxRadius = 8;
+var maxRadius = 2;
 
 var zRangeMin = 3;
 var zRangeMax = 19;
@@ -251,7 +251,8 @@ ct.densityFn = function(properties, zoom, layer) {
 
     const mapZoom = view.mapState.getMap().getZoom();
     maxPC = 100 * Math.sqrt(mapZoom)
-    if (mapZoom >= 17) maxPC /= 4
+    if (mapZoom >= 15) maxPC /= 4
+    if (mapZoom >= 17) maxPC /= 3
     rangePC = maxPC - minPC
 
     // Set a defaulty value for point_count if the annotation is falsey.
