@@ -124,6 +124,12 @@ var mapStateFn = function() {
             _map.addLayer(l);
             lays.push(l);
         };
+
+        if (name === "activity") {
+            $('#activity-legend').show();
+        }  else {
+            $('#activity-legend').hide();
+        }
         // setLinkValue();
     };
 
@@ -145,7 +151,7 @@ var mapStateFn = function() {
             if (!view.$lapsColFilterToMapArea.is(':checked')) {
                 // Show everything if the box is not checked.
                 $lapCard.show();
-                console.log('show card');
+                // console.log('show card');
                 continue
             }
             // Show only on-map laps.

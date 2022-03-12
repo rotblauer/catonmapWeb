@@ -758,7 +758,11 @@ function onSnapsButtonClick(e, el) {
 
     view.mapState.getMap().invalidateSize();
 
-    if (isSmallScreen()) $("#lapsRenderButton").toggle();
+    if (isSmallScreen()) view.$lapsViewButton.toggle();
+
+
+    if (model.getState().tileLayer === "activity" && isSmallScreen() && $snaps.is(':visible')) $('#activity-legend').hide();
+    else if (model.getState().tileLayer === "activity" && isSmallScreen()) $('#activity-legend').show();
 
 
     // if ($snapsRenderedSwitcher.html().indexOf("naps") >= 0) {
@@ -842,6 +846,9 @@ function onSnapsButtonClick(e, el) {
             setTimeout(view.mapState.getMap().invalidateSize, 300);
 
             if (isSmallScreen()) $("#snapsRenderedSwitcher").toggle();
+
+            if (model.getState().tileLayer === "activity" && isSmallScreen() && $lapsCol.is(':visible')) $('#activity-legend').hide();
+            else if (model.getState().tileLayer === "activity" && isSmallScreen()) $('#activity-legend').show();
         });
 
 
