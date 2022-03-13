@@ -1,4 +1,6 @@
-var controller = controller || {};
+var controller = controller || {
+    snapsClusterGroup: L.markerClusterGroup(),
+};
 var view = view || {};
 var model = model || {};
 
@@ -375,6 +377,7 @@ controller.init = (function() {
     controller.browserSupportsLocal = browserSupportsLocalStorage;
     model.visitsOn = model.getState().visits;
     model.snapsOn = model.getState().snaps;
+
     // var von = model.getState().visits;
     // model.visitsOn = (von === true || von === "true") ? true : false; // localOrDefault("von", "yes");
     // (model.visitsOn) ? view.$visitsCheckbox.val("yes").attr("checked", true): view.$visitsCheckbox.val("no").attr("checked", false);
@@ -460,7 +463,6 @@ model.loadSnaps = function(snaps) {
             view.mapState.setLayer("snaps", null);
             $("#snaps-display").html("");
             $("#snapsRenderedSwitcher").show();
-            controller.snapsClusterGroup = L.markerClusterGroup();
             var num = 0;
             snaps.forEach(function(snap) {
                 if (!controller.settingsFilter(snap, 3, "snaps")) {

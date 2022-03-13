@@ -1,6 +1,5 @@
 var mapStateFn = function() {
     var _map = null;
-    var geoLayer;
     var lapMaps = [];
     var _currentTileLayer = null;
     var _mapboxToken = "pk.eyJ1Ijoicm90YmxhdWVyIiwiYSI6ImNpeTdidjZxajAwMzEycW1waGdrNmh3NmsifQ.OpXHPqEHK2sTbQ4-pmhAMQ";
@@ -27,6 +26,7 @@ var mapStateFn = function() {
         }
 
         cd("_overlayLayers", _overlayLayers);
+
         if (layer === null) {
             if (_overlayLayers[name]) {
                 var l = _overlayLayers[name];
@@ -73,7 +73,7 @@ var mapStateFn = function() {
         return {};
     };
 
-    var _pbfOverlayLayers = {
+    var _overlays = {
         "activity": L.layerGroup([
             L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("activity")),
             L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("activity")),
@@ -82,6 +82,19 @@ var mapStateFn = function() {
             L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("density")),
             L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("density")),
         ]),
+        "snaps": controller.snapsClusterGroup,
+        "laps": L.geoJSON(null, {
+            style: {
+                'color': 'darkgreen',
+                'weight': 2,
+                'dashArray': '8 12', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+                'opacity': 1.00,
+            },
+            onEachFeature: function(feature, layer) {
+                layer.myTag = 'geojsonTag';
+                feature.properties.id = feature.properties.Name + feature.properties.Start;
+            }
+        }),
     };
 
     var lays = [];
@@ -109,7 +122,7 @@ var mapStateFn = function() {
     var setPBFOpt = function(name) {
         view.sps = 0;
 
-        const layer = _pbfOverlayLayers[name];
+        const layer = _overlays[name];
 
         // Short circuit if the name is a hacky empty value.
         if (name === "") {
@@ -555,24 +568,13 @@ var mapStateFn = function() {
                         })
 
                         // Reset the geoJSON layer to remove any existing data.
-                        if (!!geoLayer) {
-                            geoLayer.removeFrom(_map);
-                        }
-                        // Assign the geoLayer anew.
-                        geoLayer = L.geoJSON(null, {
-                            style: {
-                                'color': 'darkgreen',
-                                'weight': 2,
-                                'dashArray': '8 12', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-                                'opacity': 1.00,
-                            },
-                            onEachFeature: function(feature, layer) {
-                                layer.myTag = 'geojsonTag';
-                                feature.properties.id = feature.properties.Name + feature.properties.Start;
-                            }
-                        }).addTo(_map);
 
-                        geoLayer.addData(jsonData)
+                        _overlays["laps"].removeFrom(_map);
+
+                        // Assign the _overlays["cat glaps"] anew.
+                        _overlays["laps"].addTo(_map);
+
+                        _overlays["laps"].addData(jsonData)
                         handleGeoJSONLaps(jsonData)
                     })
                     .catch(err => {
@@ -589,8 +591,6 @@ var mapStateFn = function() {
 
         cd('map init state', s);
 
-        let initLayers = [_mapboxLayers[s.baseLayer]];
-
         _map = L.map('map', {
                 keyboard: true,
                 keyboardPanDelta: 140,
@@ -599,7 +599,7 @@ var mapStateFn = function() {
                 center: [+s.lat, +s.lng], // [32, -80],
                 zoom: +s.zoom,
                 noWrap: true,
-                layers: initLayers,
+                layers: [_mapboxLayers[s.baseLayer]],
                     // preferCanvas: true
             })
             .on("moveend", _mapOnMoveEnd)
@@ -615,7 +615,7 @@ var mapStateFn = function() {
         // L.control.layers(_mapboxLayers, null, { position: "topleft", collapsed: isSmallScreen() }).addTo(_map);
 
         L.control
-            .layers(_mapboxLayers, _pbfOverlayLayers,
+            .layers(_mapboxLayers, _overlays,
             {
                 position: "topleft",
                 collapsed: isSmallScreen(),
@@ -623,14 +623,14 @@ var mapStateFn = function() {
             .addTo(_map);
 
         // add or remove overlay / cat tile layers from the map per the retrieved model state
-        const pbfOverlayLayerActivity = _pbfOverlayLayers["activity"];
+        const pbfOverlayLayerActivity = _overlays["activity"];
         if (s.overlay_activity === "true" || s.overlay_activity === true) {
             if (!_map.hasLayer(pbfOverlayLayerActivity)) _map.addLayer(pbfOverlayLayerActivity);
         } else {
             if (_map.hasLayer(pbfOverlayLayerActivity)) _map.removeLayer(pbfOverlayLayerActivity);
         }
 
-        const pbfOverlayLayerDensity = _pbfOverlayLayers["density"];
+        const pbfOverlayLayerDensity = _overlays["density"];
         if (s.overlay_density === "true" || s.overlay_density === true) {
             if (!_map.hasLayer(pbfOverlayLayerDensity)) _map.addLayer(pbfOverlayLayerDensity);
         } else {
