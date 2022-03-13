@@ -198,6 +198,15 @@ var mapStateFn = function() {
         model.setState("baseLayer", ev.name);
         // setLinkValue();
     };
+
+    var _mapOnOverlayAdd = function(ev) {
+        model.setState(`overlay_${ev.name}`, true);
+    };
+
+    var _mapOnOverlayRemove = function(ev) {
+        model.setState(`overlay_${ev.name}`, false);
+    };
+
     var _mapOnLoad = function() {
         // model.setLocalStore("y", b.lat);
         // model.setLocalStore("x", b.lng);
@@ -577,6 +586,11 @@ var mapStateFn = function() {
 
     var initMap = function() {
         var s = model.getState();
+
+        cd('map init state', s);
+
+        let initLayers = [_mapboxLayers[s.baseLayer]];
+
         _map = L.map('map', {
                 keyboard: true,
                 keyboardPanDelta: 140,
@@ -585,31 +599,48 @@ var mapStateFn = function() {
                 center: [+s.lat, +s.lng], // [32, -80],
                 zoom: +s.zoom,
                 noWrap: true,
-                layers: [_mapboxLayers[s.baseLayer]]
+                layers: initLayers,
                     // preferCanvas: true
             })
             .on("moveend", _mapOnMoveEnd)
             .on("zoomend", _mapOnZoomEnd)
             .on("baselayerchange", _mapOnBaselayerChange)
+            .on("overlayadd", _mapOnOverlayAdd)
+            .on("overlayremove", _mapOnOverlayRemove)
             .on("load", _mapOnLoad)
             .on("click", _mapOnClick);
 
         // base, over, opts
-        L.control.layers(_mapboxLayers, null, { position: "topleft", collapsed: isSmallScreen() }).addTo(_map);
-        L.control.layers(null,
-        // Overlay layers (cat tiles)
-            _pbfOverlayLayers,
-            // options
+
+        // L.control.layers(_mapboxLayers, null, { position: "topleft", collapsed: isSmallScreen() }).addTo(_map);
+
+        L.control
+            .layers(_mapboxLayers, _pbfOverlayLayers,
             {
                 position: "topleft",
                 collapsed: isSmallScreen(),
             })
             .addTo(_map);
 
+        // add or remove overlay / cat tile layers from the map per the retrieved model state
+        const pbfOverlayLayerActivity = _pbfOverlayLayers["activity"];
+        if (s.overlay_activity === "true" || s.overlay_activity === true) {
+            if (!_map.hasLayer(pbfOverlayLayerActivity)) _map.addLayer(pbfOverlayLayerActivity);
+        } else {
+            if (_map.hasLayer(pbfOverlayLayerActivity)) _map.removeLayer(pbfOverlayLayerActivity);
+        }
+
+        const pbfOverlayLayerDensity = _pbfOverlayLayers["density"];
+        if (s.overlay_density === "true" || s.overlay_density === true) {
+            if (!_map.hasLayer(pbfOverlayLayerDensity)) _map.addLayer(pbfOverlayLayerDensity);
+        } else {
+            if (_map.hasLayer(pbfOverlayLayerDensity)) _map.removeLayer(pbfOverlayLayerDensity);
+        }
+
         fetchLinestrings(/*default*/)
 
-        _currentPBFLayerOpt = s.tileLayer;
-        setPBFOpt(_currentPBFLayerOpt);
+        // _currentPBFLayerOpt = s.tileLayer;
+        // setPBFOpt(_currentPBFLayerOpt);
         view.$map.focus();
     };
 

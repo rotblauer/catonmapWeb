@@ -46,47 +46,66 @@ URI.fragmentPrefix = "@";
 
 model.state = {};
 model.setState = function(k, v) {
-    if (typeof k === "Object") {
-        window.history.replaceState(k, "catmapN", URI(window.location.href).setFragment(k));
+    if (typeof k === "object") {
+        cd('model set state object', k);
+        window.history.replaceState(k, "---", URI(window.location.href).setFragment(k));
         window.localStorage.setItem("data", JSON.stringify(k));
         return model;
     }
 
-    // window.history.replaceState({}, "catmapN", URI(window.url).setSearch());
+    // window.history.replaceState({}, "---", URI(window.url).setSearch());
     var o = window.history.state || {};
     o[k] = v;
-    window.history.replaceState(o, "catmapN", URI(window.location.href).setFragment(k, v));
+    window.history.replaceState(o, "---", URI(window.location.href).setFragment(k, v));
     window.localStorage.setItem("data", JSON.stringify(o));
+
+    model.state[k] = v;
+    cd('model setState', model);
+
     return model;
 };
 
 model.getState = function() {
 
-    var uri = URI(window.location.href).fragment(true);
+    // http://localhost:8080/
+    // #@zoom=14&lat=44.98307&lng=-93.24882
+    // &baseLayer=light
+    // &tileLayer=density
+    // &visits=false
+    // &snaps=true
+    // &follow=
+    // &windowStyle=light
+    // &tfstart
+    // &tfend
+    // &linestringStart
+    // &linestringEnd
+    // &window=light
+    var uriParam = URI(window.location.href).fragment(true);
+    var windowHistory = window.history;
+    var localStore = {};
 
-    var his = window.history;
-
-    var ls = {};
     try {
         var d = window.localStorage.getItem("data");
         if (d !== "" && objExists(d)) {
-            ls = JSON.parse(d);
+            localStore = JSON.parse(d);
         }
     } catch (err) {}
 
     var s = {};
-    Object.assign(s, ls);
-    Object.assign(s, his);
-    Object.assign(s, uri);
+    Object.assign(s, localStore);
+    Object.assign(s, windowHistory);
+    Object.assign(s, uriParam);
 
     return {
         zoom: s["zoom"] || 12,
         lat: s["lat"] || 44.987854003, // 38.613651383524335, // 32,
         lng: s["lng"] || -93.25876617, // -90.25388717651369,
         baseLayer: s["baseLayer"] || "terrain",
+        overlay_activity: s["overlay_activity"] || false,
+        overlay_density: s["overlay_density"] || true,
         tileLayer: s["tileLayer"] || "activity",
-        visits: ((uri["visits"] || his["visits"] || ls["visits"] || "false") === "false") ? false : true,
-        snaps: ((uri["snaps"] || his["snaps"] || ls["snaps"] || "true") === "false") ? false : true,
+        visits: ((uriParam["visits"] || windowHistory["visits"] || localStore["visits"] || "false") === "false") ? false : true,
+        snaps: ((uriParam["snaps"] || windowHistory["snaps"] || localStore["snaps"] || "true") === "false") ? false : true,
         follow: s["follow"] || "",
         windowStyle: s["window"] || "light",
         tfstart: s["tfstart"],
@@ -96,14 +115,14 @@ model.getState = function() {
     };
 
     // return {
-    //     zoom: uri["zoom"] || his["zoom"] || ls["zoom"] || 12,
-    //     lat: uri["lat"] || his["lat"] || ls["lat"] || 38.613651383524335, // 32,
-    //     lng: uri["lng"] || his["lng"] || ls["lng"] || -90.25388717651369,
-    //     baseLayer: uri["baseLayer"] || his["baseLayer"] || ls["baseLayer"] || "terrain",
-    //     tileLayer: uri["tileLayer"] || his["tileLayer"] || ls["tileLayer"] || "activity",
+    //     zoom: uriParam["zoom"] || windowHistory["zoom"] || localStore["zoom"] || 12,
+    //     lat: uriParam["lat"] || windowHistory["lat"] || localStore["lat"] || 38.613651383524335, // 32,
+    //     lng: uriParam["lng"] || windowHistory["lng"] || localStore["lng"] || -90.25388717651369,
+    //     baseLayer: uriParam["baseLayer"] || windowHistory["baseLayer"] || localStore["baseLayer"] || "terrain",
+    //     tileLayer: uriParam["tileLayer"] || windowHistory["tileLayer"] || localStore["tileLayer"] || "activity",
     //     visits: (vs === "false") ? false : true,
-    //     follow: uri["follow"] || his["follow"] || ls["follow"] || "",
-    //     windowStyle: uri["window"] || uri["window"] || uri["window"] || "light"
+    //     follow: uriParam["follow"] || windowHistory["follow"] || localStore["follow"] || "",
+    //     windowStyle: uriParam["window"] || uriParam["window"] || uriParam["window"] || "light"
     // };
 
 };
@@ -613,93 +632,6 @@ controller.onVisits = function(visits, overwrite) {
     view.mapState.setLayer("visits", controller.markerClusterGroup);
 };
 
-
-view.init = function() {
-    view.$shownPointsShower = $(".shownPointsShower");
-    view.$lastKnown = $("#lastknown");
-
-    view.$metadataDisplay = $("#metadata-display");
-    view.$metadataRecoverDisplay = $("#metadata-display-recover");
-
-    view.$lapsColFilterToMapArea = $("input:checkbox#laps-filter-to-map-area");
-    view.$lapsColFilterToMapArea.on('click', function () {
-        console.log('click');
-            // lapMaps.push({map: _mymap, data: feature, bounds: bounds});
-        let lapMaps = view.mapState.getLapMaps();
-        const mapBounds = view.mapState.getMap().getBounds();
-        for (let lm of lapMaps) {
-            const $lapCard = $(`.lap-card#lap-card-${lm.data.properties.UUID}-${lm.data.properties.Start}`);
-            if (!view.$lapsColFilterToMapArea.is(':checked')) {
-                // Show everything if the box is not checked.
-                $lapCard.show();
-                console.log('show card');
-                continue
-            }
-            // Show only on-map laps.
-            if (!mapBounds.intersects(lm.bounds)) $lapCard.hide();
-            else $lapCard.show();
-        }
-        view.mapState.refreshLapMaps();
-    });
-
-    function toggleMetadata (el) {
-        view.$metadataDisplay.toggle();
-        $('#metadata-display-recover').toggle();
-    }
-    view.$metadataDisplay.on('click', toggleMetadata);
-    view.$metadataRecoverDisplay.on('click', toggleMetadata);
-
-    view.$selectDrawOpts = $("#settings-select-drawopts");
-    view.$settingsStyleView = $("#settings-style-view").on("change", function(e) {
-        var ld = $(this).val();
-        controller.setViewStyle(ld);
-    });
-
-    // view.$selectDrawOpts.val(localOrDefault("l", "activity"));
-    var ms = model.getState();
-    model.setState(ms);
-
-    if (!ms.snaps) {
-        $("#snapsRenderedSwitcher").hide();
-    }
-
-    view.$selectDrawOpts.val(ms.tileLayer);
-
-    view.$selectDrawOpts.on("change", function(e) { // FIXME on._ change, select, whatever
-        view.mapState.setPBFOpt($(e.target).val());
-    });
-
-    view.$visitsCheckbox = $("#visits-checkbox")
-        .attr("checked", ms.visits)
-        .on("change", function(e) {
-            model.visitsOn = $(this).is(":checked");
-            // model.setLocalStore("von", model.visitsOn);
-            model.setState("visits", model.visitsOn);
-            if (!model.visitsOn) {
-                $(".lastVisit").remove();
-            }
-            model.visitsParams.get()
-                .done(model.setVisits)
-                .catch(model.errVisits);
-        });
-
-    view.$snapsCheckbox = $("#snaps-checkbox")
-        .attr("checked", ms.snaps)
-        .on("change", function(e) {
-            model.snapsOn = $(this).is(":checked");
-            // model.setLocalStore("von", model.visitsOn);
-            model.setState("snaps", model.snapsOn);
-            if (!model.snapsOn) {
-                view.mapState.setLayer("snaps", null);
-                $("#snaps-display").html("");
-                $("#snapsRenderedSwitcher").hide();
-            } else {
-                model.loadSnaps();
-            }
-        });
-    $("#latest-version-ios").text(latestiOSVersion);
-};
-
 controller.setViewStyle = function(lightOrDark) {
     cd("setting view  style", lightOrDark);
     // model.setLocalStore("vm", lightOrDark);
@@ -772,6 +704,98 @@ function onSnapsButtonClick(e, el) {
     // }
 }
 
+view.init = function() {
+
+    // last cats:
+    view.$lastKnown = $("#lastknown");
+
+    // "metadata" / about this site / debugging:
+    view.$metadataDisplay = $("#metadata-display");
+    view.$metadataRecoverDisplay = $("#metadata-display-recover");
+
+    view.$shownPointsShower = $(".shownPointsShower");
+    function toggleMetadata (el) {
+        view.$metadataDisplay.toggle();
+        $('#metadata-display-recover').toggle();
+    }
+    view.$metadataDisplay.on('click', toggleMetadata);
+    view.$metadataRecoverDisplay.on('click', toggleMetadata);
+
+    // cat laps:
+    view.$lapsColFilterToMapArea = $("input:checkbox#laps-filter-to-map-area");
+    view.$lapsColFilterToMapArea.on('click', function () {
+        console.log('click');
+        // lapMaps.push({map: _mymap, data: feature, bounds: bounds});
+        let lapMaps = view.mapState.getLapMaps();
+        const mapBounds = view.mapState.getMap().getBounds();
+        for (let lm of lapMaps) {
+            const $lapCard = $(`.lap-card#lap-card-${lm.data.properties.UUID}-${lm.data.properties.Start}`);
+            if (!view.$lapsColFilterToMapArea.is(':checked')) {
+                // Show everything if the box is not checked.
+                $lapCard.show();
+                console.log('show card');
+                continue
+            }
+            // Show only on-map laps.
+            if (!mapBounds.intersects(lm.bounds)) $lapCard.hide();
+            else $lapCard.show();
+        }
+        view.mapState.refreshLapMaps();
+    });
+
+    // site settings:
+    // handles dark mode/light mode?
+    // view.$settingsStyleView = $("#settings-style-view").on("change", function(e) {
+    //     var ld = $(this).val();
+    //     controller.setViewStyle(ld);
+    // });
+
+    // view.$selectDrawOpts.val(localOrDefault("l", "activity"));
+    var ms = model.getState();
+    model.setState(ms);
+
+    if (!ms.snaps) {
+        $("#snapsRenderedSwitcher").hide();
+    }
+
+    view.$selectDrawOpts = $("#settings-select-drawopts");
+    view.$selectDrawOpts.val(ms.tileLayer);
+
+    view.$selectDrawOpts.on("change", function(e) { // FIXME on._ change, select, whatever
+        view.mapState.setPBFOpt($(e.target).val());
+    });
+
+    view.$visitsCheckbox = $("#visits-checkbox")
+        .attr("checked", ms.visits)
+        .on("change", function(e) {
+            model.visitsOn = $(this).is(":checked");
+            // model.setLocalStore("von", model.visitsOn);
+            model.setState("visits", model.visitsOn);
+            if (!model.visitsOn) {
+                $(".lastVisit").remove();
+            }
+            model.visitsParams.get()
+                .done(model.setVisits)
+                .catch(model.errVisits);
+        });
+
+    view.$snapsCheckbox = $("#snaps-checkbox")
+        .attr("checked", ms.snaps)
+        .on("change", function(e) {
+            model.snapsOn = $(this).is(":checked");
+            // model.setLocalStore("von", model.visitsOn);
+            model.setState("snaps", model.snapsOn);
+            if (!model.snapsOn) {
+                view.mapState.setLayer("snaps", null);
+                $("#snaps-display").html("");
+                $("#snapsRenderedSwitcher").hide();
+            } else {
+                model.loadSnaps();
+            }
+        });
+    $("#latest-version-ios").text(latestiOSVersion);
+};
+
 // http://gregfranko.com/jquery-best-practices/#/8
 // IIFE - Immediately Invoked Function Expression
 (function($, window, document) {
@@ -783,6 +807,8 @@ function onSnapsButtonClick(e, el) {
         var b = $("body");
         view.$map = $("#map");
         view.mapState = (mapStateFn)();
+
+
         view.init();
 
         catsViewOn = false // !isSmallScreen();
@@ -820,13 +846,10 @@ function onSnapsButtonClick(e, el) {
         // view.$viewSettingsToggleContainer.append(view.$viewSettingsToggle);
         // $(".leaflet-top.leaflet-left").append(view.$viewSettingsToggleContainer);
 
-        view.$snapsCheckbox2Container = $('#snaps-checkbox2-container');
         // view.$snapsCheckbox2Container.insertAfter(view.$viewSettingsToggleContainer);
-        $(".leaflet-top.leaflet-left").append(view.$snapsCheckbox2Container);
-
 
         var ld = model.getState().windowStyle; // localOrDefault("vm", "light");
-        view.$settingsStyleView.val(ld);
+        // view.$settingsStyleView.val(ld);
         controller.setViewStyle(ld);
 
         view.$catsViewButton = $("#catsRenderedSwitcher")
