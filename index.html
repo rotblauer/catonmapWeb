@@ -104,7 +104,14 @@
 
         </div>
 
-        <h6 id="brand" style="z-index: 1000; position: absolute; right: 0; top: 0;" class="m-2" data-toggle="tooltip" data-placement="left" title="Track your cats" >Cat Tracks</h6>
+        <div id="brand" class="text-right m-3" style="z-index: 1000; position: absolute; right: 0; top: 0;" data-toggle="tooltip" data-placement="left" title="Track your cats" >
+            <h6 >Cat Tracks</h6>
+            <p class="small" style="line-height: 2em !important;">
+                <a href="http://etcstatus.live/cattracks/" target="_">iOS</a> | <a href="https://github.com/rotblauer/trackMobileCat">Code</a> <img src="https://github.com/rotblauer/trackMobileCat/raw/master/Geotify/catTracksDev/Icon-App-20x20%402x.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 0.5em;"><br>
+                <a href="https://github.com/rotblauer/gcps/releases" target="_">Android</a> | <a href="https://github.com/rotblauer/gcps">Code</a> <img src="/catdroid-icon.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 0.5em;">
+            </p>
+        </div>
+
 
         <div id="activity-legend" class="text-right mr-2" style="z-index: 500; position: absolute; top: 2em; right: 0px; display: none;">
             <span class="badge m-1" style="background-color: #ee82ee; color: white; ">Stationary</span><br>
@@ -142,14 +149,14 @@
 <!--        + Metadata...-->
 <!--    </btn>-->
     <div style=" z-index: 1111; position: absolute; bottom: 60px; left: 0; background: transparent; width: 100px;">
-        <button id="lapsRenderButton" class="btn btn-lg btn-light mb-3 vshad" style="border: 3px dashed darkgreen; border-left: none; border-bottom-left-radius: 0; border-top-left-radius: 0;">Laps</button>
+        <button id="lapsRenderButton" class="btn btn-lg btn-light mb-3 vshad" style="border: 3px dashed darkgreen; border-left: none; border-radius: 0;">Laps</button>
     </div>
     <div style=" z-index: 1111; position: absolute; bottom: 0; left: 0; background: transparent; width: 100px;">
         <!--                    data-target="#snaps-display" data-toggle="collapse"-->
-        <button id="snapsRenderedSwitcher" class="btn btn-lg btn-light mb-3 vshad" style="border: 3px solid darkgray; border-left: none; border-bottom-left-radius: 0; border-top-left-radius: 0; ">Snaps</button>
+        <button id="snapsRenderedSwitcher" class="btn btn-lg btn-light mb-3 vshad" style="border: 3px solid darkgray; border-left: none; border-radius: 0; ">Snaps</button>
     </div>
 
-    <button id="catsRenderedSwitcher" class="btn btn-lg btn-light mb-3 vshad" style=" z-index: 1111; position: fixed; bottom: 0; right: 0; border: 3px solid darkgray; border-right: none; border-bottom-right-radius: 0; border-top-right-radius: 0;">Cats</button>
+    <button id="catsRenderedSwitcher" class="btn btn-lg btn-light mb-3 vshad" style=" z-index: 1111; position: fixed; bottom: 0; right: 0; border: 3px solid darkgray; border-right: none; border-radius: 0;">Cats</button>
 
     <div id="viewsettings-div" class="modal fade settings-modal" tabindex="-1" role="dialog" aria-labelledby="settingsModal" aria-hidden=" true">
         <div class="modal-dialog modal-sm ">

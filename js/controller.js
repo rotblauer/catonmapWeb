@@ -105,6 +105,8 @@ model.getState = function() {
         baseLayer: s["baseLayer"] || "terrain",
         overlay_activity: s["overlay_activity"] || false,
         overlay_density: s["overlay_density"] || true,
+        overlay_laps: s["overlay_laps"] || true,
+        overlay_snaps: s["overlay_snaps"] || true,
         tileLayer: s["tileLayer"] || "activity",
         visits: ((uriParam["visits"] || windowHistory["visits"] || localStore["visits"] || "false") === "false") ? false : true,
         snaps: ((uriParam["snaps"] || windowHistory["snaps"] || localStore["snaps"] || "true") === "false") ? false : true,
@@ -140,12 +142,7 @@ model.doneMetadata = function(data) {
     var m = moment();
     var content = `<small class="metadataservercontent">Cats added ${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>
 TileDB was last updated ${moment(data.TileDBLastUpdated).fromNow()}.
-<p style="line-height: 2em !important;">
-<a href="http://etcstatus.live/cattracks/" target="_"><img src="https://github.com/rotblauer/trackMobileCat/raw/master/Geotify/catTracksDev/Icon-App-20x20%402x.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 1em;"> iOS</a> | <a href="https://github.com/rotblauer/trackMobileCat">Code</a><br> 
-<a href="https://github.com/rotblauer/gcps/releases" target="_"><img src="/catdroid-icon.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 1em;"> Android</a> | <a href="https://github.com/rotblauer/gcps">Code</a>
-</small>
-</p>
-`;
+</small>`;
 
     // cd("content", content);
     var zin = $(".leaflet-top").first();
@@ -449,7 +446,13 @@ controller.onLastKnown = function(data) {
             moment().add(-3, "days").isBefore(cat.time);
     }).asLayerGroup();
 
-    view.mapState.setLayer("lastKnown", lg);
+    lg.eachLayer((layer) => {
+        view.mapState.getOverlays()["cats"].addLayer(layer);
+    });
+
+    view.mapState.getMap().addLayer(view.mapState.getOverlays()["cats"]);
+
+    // view.mapState.setLayer("lastKnown", lg);
 };
 
 model.loadSnaps = function(snaps) {
@@ -460,7 +463,7 @@ model.loadSnaps = function(snaps) {
         .done(function(data) {
             var snaps = data.reverse();
             cd("GOT SNAPS", snaps);
-            view.mapState.setLayer("snaps", null);
+            // view.mapState.setLayer("snaps", null);
             $("#snaps-display").html("");
             $("#snapsRenderedSwitcher").show();
             var num = 0;
@@ -596,7 +599,7 @@ model.loadSnaps = function(snaps) {
                 // ct.markerClusterGroup.addLayer(marker);
             });
 
-            view.mapState.setLayer("snaps", controller.snapsClusterGroup);
+            // view.mapState.setLayer("snaps", controller.snapsClusterGroup);
             // view.mapState.setLayer("snaps", ct.markerClusterGroup);
 
         })

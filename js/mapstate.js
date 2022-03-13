@@ -82,6 +82,7 @@ var mapStateFn = function() {
             L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("density")),
             L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("density")),
         ]),
+        "cats": L.layerGroup(),
         "snaps": controller.snapsClusterGroup,
         "laps": L.geoJSON(null, {
             style: {
@@ -570,11 +571,17 @@ var mapStateFn = function() {
                         // Reset the geoJSON layer to remove any existing data.
 
                         _overlays["laps"].removeFrom(_map);
+                        _overlays["laps"].addData(jsonData);
 
                         // Assign the _overlays["cat glaps"] anew.
-                        _overlays["laps"].addTo(_map);
+                        const s = model.getState();
+                        const pbfOverlayLayerLaps = _overlays["laps"];
+                        if (s.overlay_laps === "true" || s.overlay_laps === true) {
+                            _overlays["laps"].addTo(_map);
+                        } else {
+                            if (_map.hasLayer(pbfOverlayLayerLaps)) _map.removeLayer(pbfOverlayLayerLaps);
+                        }
 
-                        _overlays["laps"].addData(jsonData)
                         handleGeoJSONLaps(jsonData)
                     })
                     .catch(err => {
@@ -637,6 +644,13 @@ var mapStateFn = function() {
             if (_map.hasLayer(pbfOverlayLayerDensity)) _map.removeLayer(pbfOverlayLayerDensity);
         }
 
+        const pbfOverlayLayerSnaps = _overlays["snaps"];
+        if (s.overlay_snaps === "true" || s.overlay_snaps === true) {
+            if (!_map.hasLayer(pbfOverlayLayerSnaps)) _map.addLayer(pbfOverlayLayerSnaps);
+        } else {
+            if (_map.hasLayer(pbfOverlayLayerSnaps)) _map.removeLayer(pbfOverlayLayerSnaps);
+        }
+
         fetchLinestrings(/*default*/)
 
         // _currentPBFLayerOpt = s.tileLayer;
@@ -657,11 +671,16 @@ var mapStateFn = function() {
         return lapMaps;
     }
 
+    var getOverlays = function() {
+        return _overlays;
+    }
+
     return {
         init: initMap,
         getMap: getMap,
         fetchLinestrings: fetchLinestrings,
         setLayer: setLayer,
+        getOverlays: getOverlays,
         setPBFOpt: setPBFOpt,
         goUpdateEdge: goUpdateEdge,
         refreshLapMaps: refreshLapMaps,
