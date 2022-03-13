@@ -807,7 +807,7 @@ function onSnapsButtonClick(e, el) {
             .addClass("leaflet-control")
             .attr('data-toggle', 'tooltip')
             .attr('data-placement', 'right')
-            .attr('title', 'Settings').tooltip();
+            .attr('title', 'Settings'); // .tooltip();
 
         view.$viewSettingsToggle = $(`
                     <button>

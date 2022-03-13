@@ -571,6 +571,18 @@ var mapStateFn = function() {
 
         // base, over, opts
         L.control.layers(_mapboxLayers, null, { position: "topleft", collapsed: isSmallScreen() }).addTo(_map);
+        L.control.layers(null,
+        // Overlay layers (cat tiles)
+            {
+            "activity": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("activity")),
+            "density": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("density"))
+        },
+            // options
+            {
+                position: "topleft",
+                collapsed: isSmallScreen(),
+            })
+            .addTo(_map);
 
         fetchLinestrings(/*default*/)
 

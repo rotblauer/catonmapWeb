@@ -80,8 +80,19 @@
         <div id="main1" class="col m-0 p-0" style="height: 100%;" >
 <!--        <div id="main1" class="col-12 m-0 p-0" style="height: 100%;" >-->
 
+            <div class="leaflet-bottom leaflet-left">
+                <div class="p-3">
+                    <label for="snaps-checkbox" class="">
+                        <input id="snaps-checkbox" name="" type="checkbox" value="yes" class="" />
+                        Show snaps
+                    </label>
+                </div>
+            </div>
+
+
             <!-- height: 100% -->
             <div class="box">
+
                 <div id="mymetadata">
                 <p id="metadata-display" data-toggle="tooltip" data-placement="right" title="Tap to hide" style="cursor: pointer; display: none; position: absolute; left: 60px; top: 0; margin-top: 10px; z-index: 1000; ">
                     <small>Map rendered <span class="shownPointsShower">0</span> points.<br/></small>
@@ -92,6 +103,8 @@
 
                 </div>
                 <div id="map"></div>
+
+
             </div>
 
         </div>
@@ -150,12 +163,12 @@
 <!--                                    Show visits-->
 <!--                                </label>-->
 <!--                            </div>-->
-                            <div class="form-check">
-                                <label for="snaps-checkbox" class="form-check-label">
-                                    <input id="snaps-checkbox" name="" type="checkbox" value="yes" class="form-check-input" />
-                                    Show snaps
-                                </label>
-                            </div>
+<!--                            <div class="form-check">-->
+<!--                                <label for="snaps-checkbox" class="form-check-label">-->
+<!--                                    <input id="snaps-checkbox" name="" type="checkbox" value="yes" class="form-check-input" />-->
+<!--                                    Show snaps-->
+<!--                                </label>-->
+<!--                            </div>-->
 
                             <!-- choose map drawing points style -->
                             <div class="form-group">
