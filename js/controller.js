@@ -803,22 +803,27 @@ function onSnapsButtonClick(e, el) {
         //     .css("z-index", 1000);
 
         // data-toggle="tooltip" data-placement="right" title="Tap to hide"
-        view.$viewSettingsToggleContainer = $("<div>")
-            .addClass("leaflet-control")
-            .attr('data-toggle', 'tooltip')
-            .attr('data-placement', 'right')
-            .attr('title', 'Settings'); // .tooltip();
+        // view.$viewSettingsToggleContainer = $("<div>")
+        //     .addClass("leaflet-control")
+        //     .attr('data-toggle', 'tooltip')
+        //     .attr('data-placement', 'right')
+        //     .attr('title', 'Settings'); // .tooltip();
+        //
+        // view.$viewSettingsToggle = $(`
+        //             <button>
+        //         `)
+        //     .addClass("btn")
+        //     .addClass("leaflet-control-viewsettings-toggle")
+        //     .attr("data-toggle", "modal")
+        //     .attr("data-target", ".settings-modal");
+        //
+        // view.$viewSettingsToggleContainer.append(view.$viewSettingsToggle);
+        // $(".leaflet-top.leaflet-left").append(view.$viewSettingsToggleContainer);
 
-        view.$viewSettingsToggle = $(`
-                    <button>
-                `)
-            .addClass("btn")
-            .addClass("leaflet-control-viewsettings-toggle")
-            .attr("data-toggle", "modal")
-            .attr("data-target", ".settings-modal");
+        view.$snapsCheckbox2Container = $('#snaps-checkbox2-container');
+        // view.$snapsCheckbox2Container.insertAfter(view.$viewSettingsToggleContainer);
+        $(".leaflet-top.leaflet-left").append(view.$snapsCheckbox2Container);
 
-        view.$viewSettingsToggleContainer.append(view.$viewSettingsToggle);
-        $(".leaflet-top.leaflet-left").append(view.$viewSettingsToggleContainer);
 
         var ld = model.getState().windowStyle; // localOrDefault("vm", "light");
         view.$settingsStyleView.val(ld);

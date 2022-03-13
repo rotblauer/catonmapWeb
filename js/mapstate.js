@@ -65,11 +65,23 @@ var mapStateFn = function() {
         "speed": controller.baseTilesLayerOptsF("speed"),
         "density": controller.baseTilesLayerOptsF("density")
     };
+
     var _pbfOpts = function(optName) {
         if (_pbfLayerOpts.hasOwnProperty(optName)) {
             return _pbfLayerOpts[optName];
         }
         return {};
+    };
+
+    var _pbfOverlayLayers = {
+        "activity": L.layerGroup([
+            L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("activity")),
+            L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("activity")),
+        ]),
+        "density": L.layerGroup([
+            L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("density")),
+            L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("density")),
+        ]),
     };
 
     var lays = [];
@@ -96,34 +108,47 @@ var mapStateFn = function() {
 
     var setPBFOpt = function(name) {
         view.sps = 0;
+
+        const layer = _pbfOverlayLayers[name];
+
+        // Short circuit if the name is a hacky empty value.
         if (name === "") {
-            lays[0].redraw(); // redraw edge layer... will it work?
+            _map.eachLayer((layer) => layer.redraw);
+            // layer.redraw(); // redraw edge layer... will it work?
             return;
         }
-        for (var i = 0; i < lays.length; i++) {
-            if (_map.hasLayer(lays[i])) {
-                // _map.removeLayer(lays[i]);
-                lays[i].remove();
-                lays[i].vectorTileLayerStyles = vectorTileLayerStyles[name];
-                lays[i].redraw();
-            }
+
+        const mapHasLayer = _map.hasLayer(layer);
+        if (!mapHasLayer) {
+            _map.addLayer(layer);
+        } else {
+            _map.removeLayer(layer);
         }
+
+        // for (var i = 0; i < lays.length; i++) {
+        //     if (_map.hasLayer(lays[i])) {
+        //         // _map.removeLayer(lays[i]);
+        //         lays[i].remove();
+        //         lays[i].vectorTileLayerStyles = vectorTileLayerStyles[name];
+        //         lays[i].redraw();
+        //     }
+        // }
 
         _currentPBFLayerOpt = name;
         model.setState("tileLayer", name);
         // model.setLocalStore("l", name);
 
-        var ls = _pbfLayers(_currentPBFLayerOpt);
-        var keys = Object.keys(ls); // master, devop, edge
+        // var ls = _pbfLayers(_currentPBFLayerOpt);
+        // var keys = Object.keys(ls); // master, devop, edge
 
-        for (var j = 0; j < keys.length; j++) {
-            var l = ls[keys[j]].bringToFront().setZIndex(10).on("viewreset", function(e) { view.sps = 0; }).on("load", function(e) {
-                view.$shownPointsShower.text("" + numberWithCommas(view.sps));
-            });
-            l.pane = "overlayPane";
-            _map.addLayer(l);
-            lays.push(l);
-        };
+        // for (var j = 0; j < keys.length; j++) {
+        //     var l = ls[keys[j]].bringToFront().setZIndex(10).on("viewreset", function(e) { view.sps = 0; }).on("load", function(e) {
+        //         view.$shownPointsShower.text("" + numberWithCommas(view.sps));
+        //     });
+        //     l.pane = "overlayPane";
+        //     _map.addLayer(l);
+        //     lays.push(l);
+        // };
 
         if (name === "activity") {
             $('#activity-legend').show();
@@ -573,10 +598,7 @@ var mapStateFn = function() {
         L.control.layers(_mapboxLayers, null, { position: "topleft", collapsed: isSmallScreen() }).addTo(_map);
         L.control.layers(null,
         // Overlay layers (cat tiles)
-            {
-            "activity": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("activity")),
-            "density": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("density"))
-        },
+            _pbfOverlayLayers,
             // options
             {
                 position: "topleft",
