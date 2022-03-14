@@ -617,6 +617,8 @@ var mapStateFn = function() {
             .on("load", _mapOnLoad)
             .on("click", _mapOnClick);
 
+        // _map.zoomControl.setOptions({position: "bottomleft"});
+
         // base, over, opts
 
         // L.control.layers(_mapboxLayers, null, { position: "topleft", collapsed: isSmallScreen() }).addTo(_map);
@@ -628,6 +630,10 @@ var mapStateFn = function() {
                 collapsed: isSmallScreen(),
             })
             .addTo(_map);
+
+        // L.control.zoom({position: "bottomleft"}).addTo(_map);
+
+        fetchLinestrings()
 
         // add or remove overlay / cat tile layers from the map per the retrieved model state
         const pbfOverlayLayerActivity = _overlays["activity"];
@@ -651,7 +657,7 @@ var mapStateFn = function() {
             if (_map.hasLayer(pbfOverlayLayerSnaps)) _map.removeLayer(pbfOverlayLayerSnaps);
         }
 
-        fetchLinestrings(/*default*/)
+
 
         // _currentPBFLayerOpt = s.tileLayer;
         // setPBFOpt(_currentPBFLayerOpt);

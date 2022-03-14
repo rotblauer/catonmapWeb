@@ -41,62 +41,77 @@
 
 <body class="container-fluid p-0" style="height: 100%;">
 
-
     <div id="main-display" class="row d-flex m-0 p-0" style="height:100%; overflow: hidden;">
-        <div id="snaps-display-container" class="col-sm-12 col-md-3 p-3 collapse" style="max-height: 100%; overflow-y: scroll;">
-            <div class="pr-3 pl-3">
-            <img class="mt-3" style="float: right" src="camera-icon.png" alt="">
-            <h5>Cat Snaps</h5>
-            <span class="text-muted small">Showing snaps from last <strong>30 days</strong>.</span>
+
+
+        <div id="snaps-display-container" class="col col-sm-9 col-md-3 p-3 myoverlay" style="max-height: 100%; overflow-y: scroll; display: none;">
+            <div class="pr-3">
+                <h5>Cat Snaps</h5>
+                <span class="text-muted small">Showing snaps from last <strong>30 days</strong>.</span>
             </div>
             <div id="snaps-display" class="mt-3"></div>
         </div>
 
-        <div id="laps-column" class="col-sm-12 col-md-3 m-0 p-3" style="height: 100%; overflow-y: scroll; display: none;">
-            <div class="pl-3" style="border-left: 3px dashed darkgreen">
-<!--        <div id="laps-column" class="col-sm-12 col-md-3 m-0 p-3" style="height: 100%; overflow-y: scroll;">-->
-            <h5 class="">Cat Laps</h5>
-            <span class="text-muted small">Showing laps <strong>>500m</strong> from last <strong>3 days</strong>.</span>
-            <div style="position:sticky;">
-                <input type="checkbox" name="filter-to-map-area" id="laps-filter-to-map-area" />
-                <label for="laps-filter-to-map-area"><small>Filter to map area</small></label>
-            </div>
+        <div id="laps-column" class="col col-sm-9 col-md-3 m-0 p-3 myoverlay" style="height: 100%; overflow-y: scroll; display: none;">
+            <div class="pb-3" style="border-bottom: 3px dashed darkgreen;">
+                <!--        <div id="laps-column" class="col-sm-12 col-md-3 m-0 p-3" style="height: 100%; overflow-y: scroll;">-->
+                <h5 class="">Cat Laps</h5>
+                <span class="text-muted small">Showing laps <strong>>500m</strong> from last <strong>3 days</strong>.</span>
+                <div style="position:sticky;">
+                    <input type="checkbox" name="filter-to-map-area" id="laps-filter-to-map-area" />
+                    <label for="laps-filter-to-map-area"><small>Filter to map area</small></label>
+                </div>
             </div>
 
 
-<!--            <div class="m-3">-->
-<!--            <div class="form-group">-->
-<!--                <label for="datetimepicker2">Period</label>-->
-<!--                <input id="datetimepicker2" name="" type="text" class="form-control" />-->
-<!--            </div>-->
-<!--            <div class="">-->
-<!--                <button id="btn-remove-date-filter2" class="btn btn-md btn-warning">Reset lap date filter</button>-->
-<!--            </div>-->
-<!--            </div>-->
+            <!--            <div class="m-3">-->
+            <!--            <div class="form-group">-->
+            <!--                <label for="datetimepicker2">Period</label>-->
+            <!--                <input id="datetimepicker2" name="" type="text" class="form-control" />-->
+            <!--            </div>-->
+            <!--            <div class="">-->
+            <!--                <button id="btn-remove-date-filter2" class="btn btn-md btn-warning">Reset lap date filter</button>-->
+            <!--            </div>-->
+            <!--            </div>-->
 
             <div id="laps-display" class="mt-3"></div>
 
         </div>
+
         <div id="main1" class="col m-0 p-0" style="height: 100%;" >
-<!--        <div id="main1" class="col-12 m-0 p-0" style="height: 100%;" >-->
-
-<!--            <div class="leaflet-top leaflet-left">-->
-
-<!--            </div>-->
 
 
-            <!-- height: 100% -->
             <div class="box">
 
-                <div id="mymetadata">
-                <p id="metadata-display" data-toggle="tooltip" data-placement="right" title="Tap to hide" style="cursor: pointer; display: none; position: absolute; left: 60px; top: 0; margin-top: 10px; z-index: 1000; ">
-                    <small>Map rendered <span class="shownPointsShower">0</span> points.<br/></small>
-                </p>
-                    <p id="metadata-display-recover" class="small" style="cursor: pointer; position: absolute; left: 60px; top: 0; margin-top: 10px; z-index: 1000; text-decoration: underline; color: blue;">
-                        + Metadata...
-                    </p>
+                <div id="my-view-togglers" class="">
+                    <div class="leaflet-control leaflet-bar leaflet-control-resource-views">
+                        <p class="" style="margin-bottom: 0.5em;">List</p>
+                    <form id="my-view-togglers-form" style="margin: 0;" class="">
+                        <input type="radio" name="radio-show-list" id="radio-toggle-none" value="none" />
+                        <label for="radio-toggle-none"><small>None</small></label>
+                        <br>
+                        <input type="radio" name="radio-show-list" id="radio-toggle-cats" value="cats" />
+                        <label for="radio-toggle-cats"><small>Cats</small></label>
+                        <br>
+                        <input type="radio" name="radio-show-list" id="radio-toggle-laps" value="laps" />
+                        <label for="radio-toggle-laps"><small>Laps</small></label>
+                        <br>
+                        <input type="radio" name="radio-show-list" id="radio-toggle-snaps" value="snaps" />
+                        <label for="radio-toggle-snaps"><small>Snaps</small></label>
 
+                    </form>
+                    </div>
                 </div>
+
+<!--                <div id="mymetadata">-->
+<!--                <p id="metadata-display" data-toggle="tooltip" data-placement="right" title="Tap to hide" style="cursor: pointer; display: none; position: absolute; left: 60px; top: 0; margin-top: 10px; z-index: 1000; ">-->
+<!--                    <small>Map rendered <span class="shownPointsShower">0</span> points.<br/></small>-->
+<!--                </p>-->
+<!--                    <p id="metadata-display-recover" class="small" style="cursor: pointer; position: absolute; left: 60px; top: 0; margin-top: 10px; z-index: 1000; text-decoration: underline; color: blue;">-->
+<!--                        + Metadata...-->
+<!--                    </p>-->
+
+<!--                </div>-->
                 <div id="map"></div>
 
 
@@ -106,8 +121,9 @@
 
         <div id="brand" class="text-right m-3" style="z-index: 1000; position: absolute; right: 0; top: 0;" data-toggle="tooltip" data-placement="left" title="Track your cats" >
             <h6 >Cat Tracks</h6>
-            <p class="small" style="line-height: 2em !important;">
-                <a href="http://etcstatus.live/cattracks/" target="_">iOS</a> | <a href="https://github.com/rotblauer/trackMobileCat">Code</a> <img src="https://github.com/rotblauer/trackMobileCat/raw/master/Geotify/catTracksDev/Icon-App-20x20%402x.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 0.5em;"><br>
+            <p class="small" style="line-height: 2rem !important;">
+<!--                <span class="text-muted">Track your cats.</span><br>-->
+                <a href="https://etcstatus.live/cattracks/" target="_">iOS</a> | <a href="https://github.com/rotblauer/trackMobileCat">Code</a> <img src="https://github.com/rotblauer/trackMobileCat/raw/master/Geotify/catTracksDev/Icon-App-20x20%402x.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 0.5em;"><br>
                 <a href="https://github.com/rotblauer/gcps/releases" target="_">Android</a> | <a href="https://github.com/rotblauer/gcps">Code</a> <img src="/catdroid-icon.png" alt="" style="border-radius: 50%; max-height: 1.8em; margin-left: 0.5em;">
             </p>
         </div>
@@ -123,7 +139,8 @@
         </div>
 
         <!-- // side or overlayd -->
-        <div id="main2" class="offset-sm-8 offset-md-9 col-sm-4 col-md-3 offset-xl-10 col-xl-2 m-0 p-0" style="display: none; height: 100%; position: absolute; top: 0; right: 0; background: transparent; z-index: 999; ">
+<!--        <div id="main2" class="offset-sm-8 offset-md-9 col-sm-4 col-md-3 offset-xl-10 col-xl-2 m-0 p-0" style="display: none; height: 100%; position: absolute; top: 0; right: 0; background: transparent; z-index: 999; ">-->
+        <div id="main2" class="col-sm-4 offset-sm-8 col-md-2 offset-md-10 m-0 p-0" style="height: 100%; position: absolute; top: 10rem; right: 0; background: transparent; z-index: 999; ">
 
             <!-- last known container -->
             <!-- <div class="row m-0 p-0" style="height: 100%; width: 100%; "> -->
@@ -148,74 +165,78 @@
 <!--    <btn id="metadata-display-recover" class="btn btn-dark btn-sm" style="cursor: pointer; position: absolute; left: 60px; top: 0; z-index: 1000; border-top-left-radius: 0; border-top-right-radius: 0;">-->
 <!--        + Metadata...-->
 <!--    </btn>-->
-    <div style=" z-index: 1111; position: absolute; bottom: 60px; left: 0; background: transparent; width: 100px;">
-        <button id="lapsRenderButton" class="btn btn-lg btn-light mb-3 vshad" style="border: 3px dashed darkgreen; border-left: none; border-radius: 0;">Laps</button>
-    </div>
-    <div style=" z-index: 1111; position: absolute; bottom: 0; left: 0; background: transparent; width: 100px;">
-        <!--                    data-target="#snaps-display" data-toggle="collapse"-->
-        <button id="snapsRenderedSwitcher" class="btn btn-lg btn-light mb-3 vshad" style="border: 3px solid darkgray; border-left: none; border-radius: 0; ">Snaps</button>
-    </div>
 
-    <button id="catsRenderedSwitcher" class="btn btn-lg btn-light mb-3 vshad" style=" z-index: 1111; position: fixed; bottom: 0; right: 0; border: 3px solid darkgray; border-right: none; border-radius: 0;">Cats</button>
 
-    <div id="viewsettings-div" class="modal fade settings-modal" tabindex="-1" role="dialog" aria-labelledby="settingsModal" aria-hidden=" true">
-        <div class="modal-dialog modal-sm ">
-            <div class="modal-content">
-                <div class="row justify-content-center">
-                    <div class="col-9 py-3">
-                        <form>
+<!--    <div style=" z-index: 1111; position: absolute; bottom: 60px; left: 0; background: transparent; width: 100px;">-->
+<!--        <button id="lapsRenderButton" class="btn btn-lg btn-light mb-3 vshad" style="border: 3px dashed darkgreen; border-left: none; border-radius: 0;">Laps</button>-->
+<!--    </div>-->
+<!--    <div style=" z-index: 1111; position: absolute; bottom: 0; left: 0; background: transparent; width: 100px;">-->
+<!--        &lt;!&ndash;                    data-target="#snaps-display" data-toggle="collapse"&ndash;&gt;-->
+<!--        <button id="snapsRenderedSwitcher" class="btn btn-lg btn-light mb-3 vshad" style="border: 3px solid darkgray; border-left: none; border-radius: 0; ">Snaps</button>-->
+<!--    </div>-->
 
-                            <!-- show visits? -->
-<!--                            <div class="form-check">-->
-<!--                                <label for="visits-checkbox" class="form-check-label">-->
-<!--                                    <input id="visits-checkbox" name="" type="checkbox" value="yes" class="form-check-input" />-->
-<!--                                    Show visits-->
-<!--                                </label>-->
+<!--    <button id="catsRenderedSwitcher" class="btn btn-lg btn-light mb-3 vshad" style=" z-index: 1111; position: fixed; bottom: 0; right: 0; border: 3px solid darkgray; border-right: none; border-radius: 0;">Cats</button>-->
+
+
+
+<!--    <div id="viewsettings-div" class="modal fade settings-modal" tabindex="-1" role="dialog" aria-labelledby="settingsModal" aria-hidden=" true">-->
+<!--        <div class="modal-dialog modal-sm ">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="row justify-content-center">-->
+<!--                    <div class="col-9 py-3">-->
+<!--                        <form>-->
+
+<!--                            &lt;!&ndash; show visits? &ndash;&gt;-->
+<!--&lt;!&ndash;                            <div class="form-check">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <label for="visits-checkbox" class="form-check-label">&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <input id="visits-checkbox" name="" type="checkbox" value="yes" class="form-check-input" />&ndash;&gt;-->
+<!--&lt;!&ndash;                                    Show visits&ndash;&gt;-->
+<!--&lt;!&ndash;                                </label>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <div class="form-check">&ndash;&gt;-->
+<!--&lt;!&ndash;                                <label for="snaps-checkbox" class="form-check-label">&ndash;&gt;-->
+<!--&lt;!&ndash;                                    <input id="snaps-checkbox" name="" type="checkbox" value="yes" class="form-check-input" />&ndash;&gt;-->
+<!--&lt;!&ndash;                                    Show snaps&ndash;&gt;-->
+<!--&lt;!&ndash;                                </label>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </div>&ndash;&gt;-->
+
+<!--                            &lt;!&ndash; choose map drawing points style &ndash;&gt;-->
+<!--                            <div class="form-group">-->
+<!--                                <label for="settings-select-drawopts">Drawing style</label>-->
+<!--                                <select id="settings-select-drawopts" name="" class="form-control">-->
+<!--                                    <option value="activity">Activity</option>-->
+<!--                                    <option value="density">Density</option>-->
+<!--                                    <option value="recent">Recency (by cat)</option>-->
+<!--                                    <option value="speed">Speed (by cat)</option>-->
+<!--                                </select>-->
 <!--                            </div>-->
-<!--                            <div class="form-check">-->
-<!--                                <label for="snaps-checkbox" class="form-check-label">-->
-<!--                                    <input id="snaps-checkbox" name="" type="checkbox" value="yes" class="form-check-input" />-->
-<!--                                    Show snaps-->
-<!--                                </label>-->
+
+<!--                            <div class="form-group">-->
+<!--                                <label for="datetimepicker1">Period</label>-->
+<!--                                <input id="datetimepicker1" name="" type="text" class="form-control" />-->
+<!--                            </div>-->
+<!--                            <div>-->
+<!--                                <button id="btn-remove-date-filter" class="btn btn-md btn-warning">Remove date filter</button>-->
 <!--                            </div>-->
 
-                            <!-- choose map drawing points style -->
-                            <div class="form-group">
-                                <label for="settings-select-drawopts">Drawing style</label>
-                                <select id="settings-select-drawopts" name="" class="form-control">
-                                    <option value="activity">Activity</option>
-                                    <option value="density">Density</option>
-                                    <option value="recent">Recency (by cat)</option>
-                                    <option value="speed">Speed (by cat)</option>
-                                </select>
-                            </div>
+<!--                            <hr />-->
 
-                            <div class="form-group">
-                                <label for="datetimepicker1">Period</label>
-                                <input id="datetimepicker1" name="" type="text" class="form-control" />
-                            </div>
-                            <div>
-                                <button id="btn-remove-date-filter" class="btn btn-md btn-warning">Remove date filter</button>
-                            </div>
+<!--                            &lt;!&ndash; light or dark mode &ndash;&gt;-->
+<!--                            <div class="form-group">-->
+<!--                                <label for="settings-style-view">Website style</label>-->
+<!--                                <select id="settings-style-view" name="" class="form-control">-->
+<!--                                    <option value="light">Light mode</option>-->
+<!--                                    <option value="dark">Dark mode</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
 
-                            <hr />
+<!--                        </form>-->
 
-                            <!-- light or dark mode -->
-                            <div class="form-group">
-                                <label for="settings-style-view">Website style</label>
-                                <select id="settings-style-view" name="" class="form-control">
-                                    <option value="light">Light mode</option>
-                                    <option value="dark">Dark mode</option>
-                                </select>
-                            </div>
-
-                        </form>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 
     <!-- CDN -->
     <!-- SCRIPT -->

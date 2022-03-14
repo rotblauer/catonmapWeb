@@ -139,18 +139,19 @@ model.getMetadata = function() {
 
 model.doneMetadata = function(data) {
     cd("got metadata", data);
-    var m = moment();
-    var content = `<small class="metadataservercontent">Cats added ${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>
-TileDB was last updated ${moment(data.TileDBLastUpdated).fromNow()}.
-</small>`;
-
-    // cd("content", content);
-    var zin = $(".leaflet-top").first();
-    view.$metadataDisplay.children(".metadataservercontent").first().remove();
-    view.$metadataDisplay.append($(content));
-    if (!renderCatsView) {
-        view.$metadataDisplay.show();
-    }
+//     var m = moment();
+//     var content = `<small class="metadataservercontent">Cats added ${numberWithCommas( data.KeyN )} points in last ${moment(data.KeyNUpdated).fromNow(true).replace("a ", "").replace("an ","")}.<br>
+// TileDB was last updated ${moment(data.TileDBLastUpdated).fromNow()}.
+// </small>`;
+//
+//     // cd("content", content);
+//     var zin = $(".leaflet-top").first();
+//     view.$metadataDisplay.children(".metadataservercontent").first().remove();
+//     view.$metadataDisplay.append($(content));
+//
+//     if (!renderCatsView) {
+//         view.$metadataDisplay.show();
+//     }
     // view.$metadataDisplay.html(content);
 };
 
@@ -564,13 +565,13 @@ model.loadSnaps = function(snaps) {
 }
                  */
 
-                var $card = $(`<div class="col-sm-10 offset-sm-1 col-md-12 offset-md-0"><div class="card mb-3">
+                var $card = $(`<div class="col-12 p-0"><div class="card mb-3">
   <div class="card-body">
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
         <div class="d-flex w-100 justify-content-between">
             <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
-            <span class='text-right text-muted'>${minimalTimeDisplay(moment(snap.time))} ago</span>
+            <span class='small text-right text-muted'>${minimalTimeDisplay(moment(snap.time))} ago</span>
         </div>
         <div class="d-flex w-100 text-muted small justify-content-between">
             <span>${snap.lat.toFixed(3)}, ${snap.long.toFixed(3)}</span>
@@ -655,16 +656,16 @@ var catsViewOn = false;
 function renderCatsView() {
     if (catsViewOn) {
         $("#main2").show();
+        $("#brand").hide();
         if (isSmallScreen()) {
             $(".leaflet-control-container").hide();
-            $("#mymetadata").hide();
             // $("#snapsRenderedSwitcher").hide();
         }
     } else {
         $("#main2").hide();
+        $("#brand").show();
         if (isSmallScreen()) {
             $(".leaflet-control-container").show();
-            $("#mymetadata").show();
             // $("#snapsRenderedSwitcher").show();
         }
     }
@@ -885,6 +886,8 @@ view.init = function() {
         });
 
 
+
+
         $("#datetimepicker1").daterangepicker({
             timePicker: true,
             startDate: moment().startOf("week"),
@@ -934,6 +937,56 @@ view.init = function() {
             model.setState("tfend", null);
 
             view.mapState.setPBFOpt(view.$selectDrawOpts.val());
+        });
+
+
+
+
+
+
+        $('.leaflet-top.leaflet-left').first().append($('#my-view-togglers').remove());
+
+        $('#my-view-togglers-form input').on('change', function (){
+            const myVal = $('input[name=radio-show-list]:checked', '#my-view-togglers-form').val();
+            console.log('myval', myVal);
+
+            // turn everything off
+            catsViewOn = false;
+            renderCatsView();
+            $("#laps-column").hide();
+            $("#snaps-display-container").hide();
+
+            switch (myVal) {
+                case 'none':
+                    // on
+
+                    break;
+                case 'cats':
+                    // on
+                    catsViewOn = true;
+                    renderCatsView();
+
+                    break
+                case 'snaps':
+                    // on
+                    $("#snaps-display-container").show();
+
+                    break
+                case 'laps':
+                    // on
+                    $("#laps-column").show();
+                    view.mapState.refreshLapMaps();
+
+                    break
+            }
+
+            if (isSmallScreen() && myVal !== 'none') {
+                $('#brand').hide();
+            } else {
+                $('#brand').show();
+            }
+
+            // setTimeout(view.mapState.getMap().invalidateSize, 300);
         });
 
         // This is/was for the linestrings (aka laps) query.

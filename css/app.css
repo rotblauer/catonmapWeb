@@ -49,6 +49,14 @@ img.catsnap-img {
 	  opacity: 0.5;
 }
 
+.myoverlay {
+    z-index: 6000;
+}
+
+.card-body {
+    padding: 0.5rem !important;
+}
+
 .btn-dark {
     border-bottom: 2px solid whitesmoke;
 }
@@ -117,6 +125,13 @@ img.catsnap-img {
 
 .leaflet-bottom.leaflet-right {
     /*display: none !important;*/
+}
+
+.leaflet-control.leaflet-control-resource-views {
+    background-color: white !important;
+    padding: 0.5em;
+    border: 2px solid rgba(0,0,0,0.2);
+    background-clip: padding-box;
 }
 
 /*overrides*/
