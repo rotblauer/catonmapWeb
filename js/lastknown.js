@@ -201,9 +201,25 @@ var dataLastKnownEntry = {
                 .catch(model.errVisits);
         };
 
+
+
         if (!objExists(this.el())) {
             this.e = $(`
-<div href="#" id="${this.elid()}" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
+<div id="${this.elid()}"  class="text-right lastKnown lastknown-cat mb-2" style="line-height: 1.5rem !important;">
+<p>
+    <span style="color: ${this.getColor()};">${this.name}</span>
+    <img src="cat-icon.png"  style="max-height: 1.8em; vertical-align: middle; margin-bottom: 0.3em;"/>
+    <span class="small text-muted">${minimalTimeDisplay(this.time)}</span>
+</p>
+<!--<p class="links"></p>-->
+</div>
+`)
+
+                /*
+
+                THE ORIGINAL
+
+        <div href="#" id="${this.elid()}" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
     <div class="d-flex w-100 justify-content-between">
         <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' ><sup>${this.COVerified ? "Verified" : ""}</sup></small></h6>
         <small class="text-muted" >${minimalTimeDisplay(this.time)}</small>
@@ -212,13 +228,17 @@ var dataLastKnownEntry = {
     </div>
     <div class="d-flex w-100 justify-content-between lastVisit">
     </div>
-</div>`)
+</div>
+         */
+
                 .attr("data-uid", this.uid())
                 .attr("data-iid", this.iid())
                 .attr("data-name", this.name)
                 .attr("data-lat", this.lat)
                 .attr("data-unix", this.time.unix())
                 .attr("data-lng", this.long);
+
+                this.e.on('click', find);
 
             // if (this.version !== latestiOSVersion && this.uuid.indexOf("XXX") < 0) {
             //     this.e.find(".catname").append($("<a>").attr("href", "http://punktlich.rotblauer.com/install").attr("target", "_").text("Outdated Version " + this.version).addClass("badge badge-warning ml-2"));
@@ -237,25 +257,25 @@ var dataLastKnownEntry = {
             this.e.addClass("transparent50");
         }
 
-        var bsStyle = function(name, fn) {
-            return $("<span>")
-                .css("cursor", "pointer")
-                .css("font-size", "0.8em")
-                .css("color", "blue")
-                .css("text-decoration", "underline")
-                // .css("text-decoration", "underline")
-                .addClass("mr-3 mt-2")
-                .text(name)
-                .on("click", fn);
-        };
+        // var bsStyle = function(name, fn) {
+        //     return $("<span>")
+        //         .css("cursor", "pointer")
+        //         .css("font-size", "0.8em")
+        //         .css("color", "blue")
+        //         .css("text-decoration", "underline")
+        //         // .css("text-decoration", "underline")
+        //         .addClass("mr-3 mt-2")
+        //         .text(name)
+        //         .on("click", fn);
+        // };
 
-        var findlink = bsStyle("Find", find).addClass('');
-        var filterlink = bsStyle("Filter", filter).addClass('');
-        var followLink = bsStyle("follow", follow);
+        // var findlink = bsStyle("Find", find).addClass('');
+        // var filterlink = bsStyle("Filter", filter).addClass('');
+        // var followLink = bsStyle("follow", follow);
 
-        if (controller.settings.follow === this.iid()) {
-            followLink.addClass("follow-highlight");
-        }
+        // if (controller.settings.follow === this.iid()) {
+        //     followLink.addClass("follow-highlight");
+        // }
 
         if (this.hasNoteObject()) {
             var no = this.notes;
@@ -273,27 +293,27 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
             var batSpan = $("<small>").addClass("text-muted");
             this.el().find(".links").first().append(lastupNotes);
 
-            var hr = this.heartRate();
-            if (hr) {
-                var hhr = $(`<img class='heart-icon' src="/heart2.svg" style="height: 1em; display: none; margin-right: 0.3em;"/>`);
-                lastupNotes.prepend(hhr);
-
-                if (this.time.isAfter(moment().subtract(5, "minutes"))) {
-                    // var cms = hr / (60) * 1000 / 2;
-                    var cms = ((60 * 1000) / hr) / 2;
-                    hhr.flash(cms, 1000);
-                    // var bpm = $("<sub>").text(hr).css({
-                    //     color: "red",
-                    //     "font-weight": "lighter",
-                    //     "font-size": "0.7em",
-                    //     "margin-left": "-0.3em",
-                    //     "margin-right": "0.3em"
-                    // });
-                    // hhr.after(bpm);
-                } else {
-                    hhr.attr("src", "/heart-gray.png");
-                }
-            }
+            // var hr = this.heartRate();
+            // if (hr) {
+            //     var hhr = $(`<img class='heart-icon' src="/heart2.svg" style="height: 1em; display: none; margin-right: 0.3em;"/>`);
+            //     lastupNotes.prepend(hhr);
+            //
+            //     if (this.time.isAfter(moment().subtract(5, "minutes"))) {
+            //         // var cms = hr / (60) * 1000 / 2;
+            //         var cms = ((60 * 1000) / hr) / 2;
+            //         hhr.flash(cms, 1000);
+            //         // var bpm = $("<sub>").text(hr).css({
+            //         //     color: "red",
+            //         //     "font-weight": "lighter",
+            //         //     "font-size": "0.7em",
+            //         //     "margin-left": "-0.3em",
+            //         //     "margin-right": "0.3em"
+            //         // });
+            //         // hhr.after(bpm);
+            //     } else {
+            //         hhr.attr("src", "/heart-gray.png");
+            //     }
+            // }
 
             if (this.batteryLevel() > 0) {
                 var plusOrMin = "";
@@ -316,42 +336,42 @@ healthkit=(${no.numberOfSteps} steps, distance: ${no.distance.toFixed(0)}m, sinc
 
         }
 
-        if (this.lastVisit && this.lastVisit.exists()) {
-            var vv = this.lastVisit;
-            var con = vv.PlaceParsed.Identity;
-            if (vv.isArrival()) {
-                con = "Arrived at " + con + " " + vv.arrivalDate.fromNow();
-            } else if (vv.isDeparture()) {
-                con = "Departed " + con + " " + vv.arrivalDate.fromNow();
-            } else {
-                // con = "Spent " + vv.departureDateLocal.to(vv.arrivalDateLocal, true) + " + " at " + con "
-                con = `Spent ${vv.departureDateLocal.to(vv.arrivalDateLocal, true)} at ${vv.PlaceParsed.Identity}, left ${vv.departureDate.fromNow()}`;
-            }
-            var vis = $(`<small>${con}</small>`).css("cursor", "pointer").on("click", function() {
-                view.mapState.getMap().setView([vv.PlaceParsed.Lat, vv.PlaceParsed.Lng]);
-            })
-            // .css("color", "blue")
-            // .css("text-decoration", "underline")
-            ;
-            this.el().find(".lastVisit").last().html("");
-            this.el().find(".lastVisit").last().append(vis);
-        }
+        // if (this.lastVisit && this.lastVisit.exists()) {
+        //     var vv = this.lastVisit;
+        //     var con = vv.PlaceParsed.Identity;
+        //     if (vv.isArrival()) {
+        //         con = "Arrived at " + con + " " + vv.arrivalDate.fromNow();
+        //     } else if (vv.isDeparture()) {
+        //         con = "Departed " + con + " " + vv.arrivalDate.fromNow();
+        //     } else {
+        //         // con = "Spent " + vv.departureDateLocal.to(vv.arrivalDateLocal, true) + " + " at " + con "
+        //         con = `Spent ${vv.departureDateLocal.to(vv.arrivalDateLocal, true)} at ${vv.PlaceParsed.Identity}, left ${vv.departureDate.fromNow()}`;
+        //     }
+        //     var vis = $(`<small>${con}</small>`).css("cursor", "pointer").on("click", function() {
+        //         view.mapState.getMap().setView([vv.PlaceParsed.Lat, vv.PlaceParsed.Lng]);
+        //     })
+        //     // .css("color", "blue")
+        //     // .css("text-decoration", "underline")
+        //     ;
+        //     this.el().find(".lastVisit").last().html("");
+        //     this.el().find(".lastVisit").last().append(vis);
+        // }
+        //
+        // this.el().children(".maplinks").remove();
+        // // NOTE: 'follow' link is commented b/c not sure actually working w/r/t ajax updates
+        // // and/or filtering, state persisting
+        // var d = $("<div>").addClass("m-0 p-0 maplinks").append(findlink).append(filterlink); // .append(followLink);
+        // this.el().append(d);
 
-        this.el().children(".maplinks").remove();
-        // NOTE: 'follow' link is commented b/c not sure actually working w/r/t ajax updates
-        // and/or filtering, state persisting
-        var d = $("<div>").addClass("m-0 p-0 maplinks").append(findlink).append(filterlink); // .append(followLink);
-        this.el().append(d);
-
-        // init follow if following
-        if (controller.settings.follow !== "") {
-            if (objExists(model.lastKnownData)) {
-                var c = model.lastKnownData.get(controller.settings.follow);
-                if (objExists(c)) {
-                    view.mapState.getMap().flyTo([c.lat, c.long]);
-                }
-            }
-        }
+        // // init follow if following
+        // if (controller.settings.follow !== "") {
+        //     if (objExists(model.lastKnownData)) {
+        //         var c = model.lastKnownData.get(controller.settings.follow);
+        //         if (objExists(c)) {
+        //             view.mapState.getMap().flyTo([c.lat, c.long]);
+        //         }
+        //     }
+        // }
 
         return this.e; // .append(filterlink).append(findlink).append(metadata);
     },

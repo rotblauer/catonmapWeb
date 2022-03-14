@@ -164,11 +164,11 @@ var mapStateFn = function() {
         //     lays.push(l);
         // };
 
-        if (name === "activity") {
-            $('#activity-legend').show();
-        }  else {
-            $('#activity-legend').hide();
-        }
+        // if (name === "activity") {
+        //     $('#activity-legend').show();
+        // }  else {
+        //     $('#activity-legend').hide();
+        // }
         // setLinkValue();
     };
 
@@ -214,11 +214,19 @@ var mapStateFn = function() {
     };
 
     var _mapOnOverlayAdd = function(ev) {
+        console.log('map onOverlayAdd', ev);
         model.setState(`overlay_${ev.name}`, true);
+        if (ev.name === "activity") {
+            $('#activity-legend').show();
+        }
     };
 
     var _mapOnOverlayRemove = function(ev) {
+        console.log('map onOverlayRemove', ev);
         model.setState(`overlay_${ev.name}`, false);
+        if (ev.name === "activity") {
+            $('#activity-legend').hide();
+        }
     };
 
     var _mapOnLoad = function() {
@@ -356,7 +364,10 @@ var mapStateFn = function() {
                     // if (!$myLapCardAlreadyFocused) _map.fitBounds(bounds)
                     // ->           lm.map.setView(lm.bounds.getCenter());
                     if (force) {
-                        if (!$myLapCardAlreadyFocused && !_map.getBounds().contains(bounds)) _map.setView(bounds.getCenter());
+                        if (!$myLapCardAlreadyFocused && !_map.getBounds().contains(bounds)) {
+                            _map.invalidateSize();
+                            _map.fitBounds(bounds);
+                        }
                     } else {
                         const isIntersecting = _map.getBounds().intersects(bounds);
                         if (!$myLapCardAlreadyFocused && isIntersecting) _map.setView(bounds.getCenter());
@@ -404,6 +415,7 @@ var mapStateFn = function() {
                         $("#lapsRenderButton").toggleClass('btn-dark btn-light')
                         $("#laps-column").toggle();
                     }
+
                 }
             };
 
@@ -617,6 +629,11 @@ var mapStateFn = function() {
             .on("load", _mapOnLoad)
             .on("click", _mapOnClick);
 
+        // $('#map').resize(() => {
+        //     console.log('map resize event');
+        //     _map.invalidateSize();
+        // });
+
         // _map.zoomControl.setOptions({position: "bottomleft"});
 
         // base, over, opts
@@ -639,8 +656,10 @@ var mapStateFn = function() {
         const pbfOverlayLayerActivity = _overlays["activity"];
         if (s.overlay_activity === "true" || s.overlay_activity === true) {
             if (!_map.hasLayer(pbfOverlayLayerActivity)) _map.addLayer(pbfOverlayLayerActivity);
+            $('#activity-legend').show();
         } else {
             if (_map.hasLayer(pbfOverlayLayerActivity)) _map.removeLayer(pbfOverlayLayerActivity);
+            $('#activity-legend').hide();
         }
 
         const pbfOverlayLayerDensity = _overlays["density"];
@@ -656,8 +675,6 @@ var mapStateFn = function() {
         } else {
             if (_map.hasLayer(pbfOverlayLayerSnaps)) _map.removeLayer(pbfOverlayLayerSnaps);
         }
-
-
 
         // _currentPBFLayerOpt = s.tileLayer;
         // setPBFOpt(_currentPBFLayerOpt);

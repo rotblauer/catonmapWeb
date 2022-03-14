@@ -7,6 +7,7 @@ var model = model || {};
 view.sps = 0;
 
 model.lastKnownData = null;
+model.cats = null;
 model.visitsData = {};
 model.visitsParams = {
     // defacto defaults
@@ -102,11 +103,12 @@ model.getState = function() {
         zoom: s["zoom"] || 12,
         lat: s["lat"] || 44.987854003, // 38.613651383524335, // 32,
         lng: s["lng"] || -93.25876617, // -90.25388717651369,
-        baseLayer: s["baseLayer"] || "terrain",
+        baseLayer: s["baseLayer"] || "light",
         overlay_activity: s["overlay_activity"] || false,
         overlay_density: s["overlay_density"] || true,
         overlay_laps: s["overlay_laps"] || true,
-        overlay_snaps: s["overlay_snaps"] || true,
+        overlay_snaps: s["overlay_snaps"] || false,
+        current_view: s["current_view"] || 'none',
         tileLayer: s["tileLayer"] || "activity",
         visits: ((uriParam["visits"] || windowHistory["visits"] || localStore["visits"] || "false") === "false") ? false : true,
         snaps: ((uriParam["snaps"] || windowHistory["snaps"] || localStore["snaps"] || "true") === "false") ? false : true,
@@ -336,37 +338,62 @@ model.logAndMockInstead = function(err) {
     model.doneLastKnownCats(mockLastknown);
 };
 
-controller.dataLoop = function(n) {
-    controller.settings.follow = model.getState().follow; // localOrDefault("fc", "");
+// model.loadCats = function() {
+//     const endpoint = queryURL(trackHost, "/lastknown", null); // `https://cattracks.cc/catstatus?cats=yes`
+//     fetch(endpoint)
+//         .then((res) => {
+//             console.log('catstatus OK', res);
+//             res.json()
+//                 .then((body) => {
+//                     console.log('catstatus.json OK', body);
+//                 })
+//                 .catch((err) => {
+//                     alert(err);
+//                 })
+//         })
+//         .catch((err) => {
+//             console.error('fetch catstatus failed', err);
+//         })
+// }
 
-    model.getMetadata()
-        .done(model.doneMetadata)
-        .catch(model.errorMetadata);
+controller.fetchData = function(n) {
+    // controller.settings.follow = model.getState().follow; // localOrDefault("fc", "");
+
+    // model.getMetadata()
+    //     .done(model.doneMetadata)
+    //     .catch(model.errorMetadata);
 
     model.getLastKnownCats()
         .done(model.doneLastKnownCats)
-        .catch(model.logAndMockInstead)
-        // visits assigning to cats depends on cats being there
-        .then(function() {
-            model.visitsParams
-                .set("startReportedT", moment().add(-14, "days").format()) // TODO editable
-                .set("startArrivalT", moment().add(-500, "years").format())
-                // .set("startArrivalT", "")
-                // .set("endDepartureT", moment().add(500, "years").format()) // TODO allow last arrival/cat
-                .get()
-                .done(model.setVisits)
-                .catch(model.errVisits);
-        });
+        .catch((err) => {
+            console.error('get lastknown errored', err);
+        })
+        // .catch(model.logAndMockInstead)
 
-    if (model.getState().snaps) {
-        model.loadSnaps();
-        $("#snapsRenderedSwitcher").show();
-    } else {
-        $("#snapsRenderedSwitcher").hide();
-    }
+        // visits assigning to cats depends on cats being there
+        // .then(function() {
+        //     model.visitsParams
+        //         .set("startReportedT", moment().add(-14, "days").format()) // TODO editable
+        //         .set("startArrivalT", moment().add(-500, "years").format())
+        //         // .set("startArrivalT", "")
+        //         // .set("endDepartureT", moment().add(500, "years").format()) // TODO allow last arrival/cat
+        //         .get()
+        //         .done(model.setVisits)
+        //         .catch(model.errVisits);
+        // });
+        //
+    // model.loadCats();
+
+    model.loadSnaps();
+
+    // if (model.getState().snaps) {
+    //     $("#snapsRenderedSwitcher").show();
+    // } else {
+    //     $("#snapsRenderedSwitcher").hide();
+    // }
 
     // setTimeout(view.mapState.goUpdateEdge, 60*1000);
-    view.mapState.setPBFOpt("");
+    // view.mapState.setPBFOpt("");
     // setTimeout(ct.dataLoop, (n || 55) * 1000);
 };
 
@@ -381,8 +408,8 @@ controller.init = (function() {
     // (model.visitsOn) ? view.$visitsCheckbox.val("yes").attr("checked", true): view.$visitsCheckbox.val("no").attr("checked", false);
 
 
-    view.$visitsCheckbox.attr("checked", model.visitsOn);
-    view.$snapsCheckbox.attr("checked", model.snapsOn);
+    // view.$visitsCheckbox.attr("checked", model.visitsOn);
+    // view.$snapsCheckbox.attr("checked", model.snapsOn);
 
     var tfstart = model.getState().tfstart;
     var tfend = model.getState().tfend;
@@ -406,7 +433,7 @@ controller.init = (function() {
 
     view.mapState.init();
 
-    controller.dataLoop();
+    controller.fetchData();
 });
 
 controller.onLastKnown = function(data) {
@@ -655,17 +682,19 @@ var catsViewOn = false;
 
 function renderCatsView() {
     if (catsViewOn) {
-        $("#main2").show();
-        $("#brand").hide();
+        $('#my-cats-container').show();
+        // $("#main2").show();
+        // $("#brand").hide();
         if (isSmallScreen()) {
-            $(".leaflet-control-container").hide();
+            // $(".leaflet-control-container").hide();
             // $("#snapsRenderedSwitcher").hide();
         }
     } else {
-        $("#main2").hide();
-        $("#brand").show();
+        $('#my-cats-container').hide();
+        // $("#main2").hide();
+        // $("#brand").show();
         if (isSmallScreen()) {
-            $(".leaflet-control-container").show();
+            // $(".leaflet-control-container").show();
             // $("#snapsRenderedSwitcher").show();
         }
     }
@@ -699,8 +728,8 @@ function onSnapsButtonClick(e, el) {
     if (isSmallScreen()) view.$lapsViewButton.toggle();
 
 
-    if (model.getState().tileLayer === "activity" && isSmallScreen() && $snaps.is(':visible')) $('#activity-legend').hide();
-    else if (model.getState().tileLayer === "activity" && isSmallScreen()) $('#activity-legend').show();
+    // if (model.getState().tileLayer === "activity" && isSmallScreen() && $snaps.is(':visible')) $('#activity-legend').hide();
+    // else if (model.getState().tileLayer === "activity" && isSmallScreen()) $('#activity-legend').show();
 
 
     // if ($snapsRenderedSwitcher.html().indexOf("naps") >= 0) {
@@ -760,46 +789,46 @@ view.init = function() {
     var ms = model.getState();
     model.setState(ms);
 
-    if (!ms.snaps) {
-        $("#snapsRenderedSwitcher").hide();
-    }
+    // if (!ms.snaps) {
+    //     $("#snapsRenderedSwitcher").hide();
+    // }
 
-    view.$selectDrawOpts = $("#settings-select-drawopts");
-    view.$selectDrawOpts.val(ms.tileLayer);
-
-    view.$selectDrawOpts.on("change", function(e) { // FIXME on._ change, select, whatever
-        view.mapState.setPBFOpt($(e.target).val());
-    });
-
-    view.$visitsCheckbox = $("#visits-checkbox")
-        .attr("checked", ms.visits)
-        .on("change", function(e) {
-            model.visitsOn = $(this).is(":checked");
-            // model.setLocalStore("von", model.visitsOn);
-            model.setState("visits", model.visitsOn);
-            if (!model.visitsOn) {
-                $(".lastVisit").remove();
-            }
-            model.visitsParams.get()
-                .done(model.setVisits)
-                .catch(model.errVisits);
-        });
-
-    view.$snapsCheckbox = $("#snaps-checkbox")
-        .attr("checked", ms.snaps)
-        .on("change", function(e) {
-            model.snapsOn = $(this).is(":checked");
-            // model.setLocalStore("von", model.visitsOn);
-            model.setState("snaps", model.snapsOn);
-            if (!model.snapsOn) {
-                view.mapState.setLayer("snaps", null);
-                $("#snaps-display").html("");
-                $("#snapsRenderedSwitcher").hide();
-            } else {
-                model.loadSnaps();
-            }
-        });
-    $("#latest-version-ios").text(latestiOSVersion);
+    // view.$selectDrawOpts = $("#settings-select-drawopts");
+    // view.$selectDrawOpts.val(ms.tileLayer);
+    //
+    // view.$selectDrawOpts.on("change", function(e) { // FIXME on._ change, select, whatever
+    //     view.mapState.setPBFOpt($(e.target).val());
+    // });
+    //
+    // view.$visitsCheckbox = $("#visits-checkbox")
+    //     .attr("checked", ms.visits)
+    //     .on("change", function(e) {
+    //         model.visitsOn = $(this).is(":checked");
+    //         // model.setLocalStore("von", model.visitsOn);
+    //         model.setState("visits", model.visitsOn);
+    //         if (!model.visitsOn) {
+    //             $(".lastVisit").remove();
+    //         }
+    //         model.visitsParams.get()
+    //             .done(model.setVisits)
+    //             .catch(model.errVisits);
+    //     });
+    //
+    // view.$snapsCheckbox = $("#snaps-checkbox")
+    //     .attr("checked", ms.snaps)
+    //     .on("change", function(e) {
+    //         model.snapsOn = $(this).is(":checked");
+    //         // model.setLocalStore("von", model.visitsOn);
+    //         model.setState("snaps", model.snapsOn);
+    //         if (!model.snapsOn) {
+    //             view.mapState.setLayer("snaps", null);
+    //             $("#snaps-display").html("");
+    //             $("#snapsRenderedSwitcher").hide();
+    //         } else {
+    //             model.loadSnaps();
+    //         }
+    //     });
+    // $("#latest-version-ios").text(latestiOSVersion);
 };
 
 // http://gregfranko.com/jquery-best-practices/#/8
@@ -808,7 +837,7 @@ view.init = function() {
 
     // Listen for the jQuery ready event on the document
     $(function() {
-        if (!isSmallScreen()) $('[data-toggle="tooltip"]').tooltip()
+        // if (!isSmallScreen()) $('[data-toggle="tooltip"]').tooltip()
 
         var b = $("body");
         view.$map = $("#map");
@@ -824,6 +853,7 @@ view.init = function() {
         }
 
         controller.init();
+
         // var zin = $(".leaflet-top").first();
         // view.$metadataDisplay
         //     .css("position", "fixed")
@@ -854,101 +884,98 @@ view.init = function() {
 
         // view.$snapsCheckbox2Container.insertAfter(view.$viewSettingsToggleContainer);
 
-        var ld = model.getState().windowStyle; // localOrDefault("vm", "light");
+        // var ld = model.getState().windowStyle; // localOrDefault("vm", "light");
         // view.$settingsStyleView.val(ld);
-        controller.setViewStyle(ld);
+        // controller.setViewStyle(ld);
 
-        view.$catsViewButton = $("#catsRenderedSwitcher")
-        view.$catsViewButton.on("click", function() {
-            toggleCatsView();
-            renderCatsView();
-            $('#brand').toggle();
-            // $('#mymetadata').toggle();
-            $(this).toggleClass("btn-dark btn-light");
-        });
-
-        view.$snapsViewButton = $("#snapsRenderedSwitcher");
-        view.$snapsViewButton.on("click", onSnapsButtonClick);
-
-        view.$lapsViewButton = $("#lapsRenderButton");
-        view.$lapsViewButton.on('click', function (ev, el) {
-            const $lapsCol = $("#laps-column");
-            $lapsCol.toggle();
-            if ($lapsCol.is(':visible')) $("#lapsRenderButton").removeClass('btn-light').addClass('btn-dark');
-            else $("#lapsRenderButton").removeClass('btn-dark').addClass('btn-light')
-            view.mapState.refreshLapMaps();
-            setTimeout(view.mapState.getMap().invalidateSize, 300);
-
-            if (isSmallScreen()) $("#snapsRenderedSwitcher").toggle();
-
-            if (model.getState().tileLayer === "activity" && isSmallScreen() && $lapsCol.is(':visible')) $('#activity-legend').hide();
-            else if (model.getState().tileLayer === "activity" && isSmallScreen()) $('#activity-legend').show();
-        });
-
-
+        // view.$catsViewButton = $("#catsRenderedSwitcher")
+        // view.$catsViewButton.on("click", function() {
+        //     toggleCatsView();
+        //     renderCatsView();
+        //     // $('#brand').toggle();
+        //     // $('#mymetadata').toggle();
+        //     $(this).toggleClass("btn-dark btn-light");
+        // });
+        //
+        // view.$snapsViewButton = $("#snapsRenderedSwitcher");
+        // view.$snapsViewButton.on("click", onSnapsButtonClick);
+        //
+        // view.$lapsViewButton = $("#lapsRenderButton");
+        // view.$lapsViewButton.on('click', function (ev, el) {
+        //     const $lapsCol = $("#laps-column");
+        //     $lapsCol.toggle();
+        //     if ($lapsCol.is(':visible')) $("#lapsRenderButton").removeClass('btn-light').addClass('btn-dark');
+        //     else $("#lapsRenderButton").removeClass('btn-dark').addClass('btn-light')
+        //     view.mapState.refreshLapMaps();
+        //     setTimeout(view.mapState.getMap().invalidateSize, 300);
+        //
+        //     if (isSmallScreen()) $("#snapsRenderedSwitcher").toggle();
+        //
+        //     // if (model.getState().tileLayer === "activity" && isSmallScreen() && $lapsCol.is(':visible')) $('#activity-legend').hide();
+        //     // else if (model.getState().tileLayer === "activity" && isSmallScreen()) $('#activity-legend').show();
+        // });
 
 
-        $("#datetimepicker1").daterangepicker({
-            timePicker: true,
-            startDate: moment().startOf("week"),
-            endDate: moment().startOf("hour").add(2, "hour"),
-            ranges: {
-                'Today': [moment().startOf('day'), moment()],
-                'Yesterday': [moment().subtract(1, 'day').startOf("day"), moment().subtract(1, "day").endOf("day")],
-                'Last 7 Days': [moment().subtract(7, 'days').startOf('day'), moment()],
-                'Last 30 Days': [moment().subtract(30, 'days').startOf('day'), moment()],
-                "Last 6 Months": [moment().subtract(6, "months").startOf('day'), moment()],
-                'This Month': [moment().startOf('month'), moment()],
-                'This Year': [moment().startOf('year'), moment()]
-                    // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            },
-            locale: {
-                format: "M/DD hh:mm A"
-            }
+        // $("#datetimepicker1").daterangepicker({
+        //     timePicker: true,
+        //     startDate: moment().startOf("week"),
+        //     endDate: moment().startOf("hour").add(2, "hour"),
+        //     ranges: {
+        //         'Today': [moment().startOf('day'), moment()],
+        //         'Yesterday': [moment().subtract(1, 'day').startOf("day"), moment().subtract(1, "day").endOf("day")],
+        //         'Last 7 Days': [moment().subtract(7, 'days').startOf('day'), moment()],
+        //         'Last 30 Days': [moment().subtract(30, 'days').startOf('day'), moment()],
+        //         "Last 6 Months": [moment().subtract(6, "months").startOf('day'), moment()],
+        //         'This Month': [moment().startOf('month'), moment()],
+        //         'This Year': [moment().startOf('year'), moment()]
+        //             // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        //     },
+        //     locale: {
+        //         format: "M/DD hh:mm A"
+        //     }
+        //
+        // }, function(start, end, label) {
+        //     controller.setSettingsFilter("time_filter", function(p, z, l) {
+        //         if (objExists(p["UnixTime"])) {
+        //             if (start.unix() < p.UnixTime && end.unix() > p.UnixTime) {
+        //                 return true;
+        //             }
+        //             return false;
+        //         } else {
+        //             var punix = p.id / 1e9;
+        //             if (start.unix() < punix && end.unix() > punix) {
+        //                 return true;
+        //             }
+        //             cd("nogo snapo", tfstart, tfend, punix);
+        //             return false;
+        //         }
+        //     });
+        //     cd(start, end, label);
+        //
+        //     model.setState("tfstart", start.format());
+        //     model.setState("tfend", end.format());
+        //
+        //     view.mapState.setPBFOpt(view.$selectDrawOpts.val());
+        // });
+        //
+        // $("#btn-remove-date-filter").on("click", function(e) {
+        //     controller.setSettingsFilter("time_filter", null);
+        //
+        //     model.setState("tfstart", null);
+        //     model.setState("tfend", null);
+        //
+        //     view.mapState.setPBFOpt(view.$selectDrawOpts.val());
+        // });
 
-        }, function(start, end, label) {
-            controller.setSettingsFilter("time_filter", function(p, z, l) {
-                if (objExists(p["UnixTime"])) {
-                    if (start.unix() < p.UnixTime && end.unix() > p.UnixTime) {
-                        return true;
-                    }
-                    return false;
-                } else {
-                    var punix = p.id / 1e9;
-                    if (start.unix() < punix && end.unix() > punix) {
-                        return true;
-                    }
-                    cd("nogo snapo", tfstart, tfend, punix);
-                    return false;
-                }
-            });
-            cd(start, end, label);
-
-            model.setState("tfstart", start.format());
-            model.setState("tfend", end.format());
-
-            view.mapState.setPBFOpt(view.$selectDrawOpts.val());
-        });
-
-        $("#btn-remove-date-filter").on("click", function(e) {
-            controller.setSettingsFilter("time_filter", null);
-
-            model.setState("tfstart", null);
-            model.setState("tfend", null);
-
-            view.mapState.setPBFOpt(view.$selectDrawOpts.val());
-        });
-
-
-
-
-
-
-        $('.leaflet-top.leaflet-left').first().append($('#my-view-togglers').remove());
+        $('.leaflet-bottom.leaflet-left').first().append($('#my-view-togglers').remove());
+        // $('.leaflet-bottom.leaflet-right').first().prepend($('#cat-tracker-links').remove());
+        $('.leaflet-top.leaflet-right').first().append($('#my-top-right').remove().show());
 
         $('#my-view-togglers-form input').on('change', function (){
             const myVal = $('input[name=radio-show-list]:checked', '#my-view-togglers-form').val();
             console.log('myval', myVal);
+
+            model.setState('current_view', myVal);
 
             // turn everything off
             catsViewOn = false;
@@ -986,8 +1013,26 @@ view.init = function() {
                 $('#brand').show();
             }
 
+            view.mapState.getMap().invalidateSize();
+
+
             // setTimeout(view.mapState.getMap().invalidateSize, 300);
         });
+
+        $('#laps-column-closer').on('click', function () {
+            $(`input[name=radio-show-list]`).val(['none']).change();
+            // $("#laps-column").hide();
+        });
+
+        $('#snaps-column-closer').on('click', function () {
+            $(`input[name=radio-show-list]`).val(['none']).change();
+            // $(`#my-view-togglers-form input[value='none']`).prop('checked', true);
+            // $('#my-view-togglers-form').val('none');
+            // $("#snaps-display-container").hide();
+        });
+
+
+        $(`input[name=radio-show-list]`).val([model.getState().current_view]).change();
 
         // This is/was for the linestrings (aka laps) query.
 
