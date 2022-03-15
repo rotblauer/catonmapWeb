@@ -109,6 +109,7 @@ model.getState = function() {
         overlay_laps: s["overlay_laps"] || true,
         overlay_snaps: s["overlay_snaps"] || false,
         current_view: s["current_view"] || 'none',
+        settings_opt: s["settings_opt"] || 'none',
         tileLayer: s["tileLayer"] || "activity",
         visits: ((uriParam["visits"] || windowHistory["visits"] || localStore["visits"] || "false") === "false") ? false : true,
         snaps: ((uriParam["snaps"] || windowHistory["snaps"] || localStore["snaps"] || "true") === "false") ? false : true,
@@ -678,7 +679,7 @@ controller.setViewStyle = function(lightOrDark) {
     }
 };
 
-var catsViewOn = false;
+var catsViewOn = true;
 
 function renderCatsView() {
     if (catsViewOn) {
@@ -846,10 +847,10 @@ view.init = function() {
 
         view.init();
 
-        catsViewOn = false // !isSmallScreen();
+        // catsViewOn = false // !isSmallScreen();
         renderCatsView();
         if (catsViewOn) {
-            $("#catsRenderedSwitcher").hide();
+            // $("#catsRenderedSwitcher").hide();
         }
 
         controller.init();
@@ -967,72 +968,99 @@ view.init = function() {
         //     view.mapState.setPBFOpt(view.$selectDrawOpts.val());
         // });
 
-        $('.leaflet-bottom.leaflet-left').first().append($('#my-view-togglers').remove());
+
+        // $('#my-view-togglers').appendTo($('.leaflet-bottom.leaflet-left').first());
+        // $('#my-top-right').appendTo($('.leaflet-top.leaflet-right').first());
+
         // $('.leaflet-bottom.leaflet-right').first().prepend($('#cat-tracker-links').remove());
-        $('.leaflet-top.leaflet-right').first().append($('#my-top-right').remove().show());
-
-        $('#my-view-togglers-form input').on('change', function (){
-            const myVal = $('input[name=radio-show-list]:checked', '#my-view-togglers-form').val();
-            console.log('myval', myVal);
-
-            model.setState('current_view', myVal);
-
-            // turn everything off
-            catsViewOn = false;
-            renderCatsView();
-            $("#laps-column").hide();
-            $("#snaps-display-container").hide();
-
-            switch (myVal) {
-                case 'none':
-                    // on
-
-                    break;
-                case 'cats':
-                    // on
-                    catsViewOn = true;
-                    renderCatsView();
-
-                    break
-                case 'snaps':
-                    // on
-                    $("#snaps-display-container").show();
-
-                    break
-                case 'laps':
-                    // on
-                    $("#laps-column").show();
-                    view.mapState.refreshLapMaps();
-
-                    break
-            }
-
-            if (isSmallScreen() && myVal !== 'none') {
-                $('#brand').hide();
-            } else {
-                $('#brand').show();
-            }
-
-            view.mapState.getMap().invalidateSize();
 
 
-            // setTimeout(view.mapState.getMap().invalidateSize, 300);
-        });
+
+        // $('#my-view-togglers-form input').on('change', function (){
+        //
+        //     // Can I use this.:checked ?
+        //     // console.log('this.val', $(this).val());
+        //     // const myVal = $('input[name=radio-show-list]:checked', '#my-view-togglers-form').val();
+        //     const myVal = $(this).val();
+        //     console.log('view changed myval', myVal);
+        //
+        //     model.setState('current_view', myVal);
+        //
+        //     // turn everything off
+        //     catsViewOn = false;
+        //     renderCatsView();
+        //     $("#laps-column").hide();
+        //     $("#snaps-display-container").hide();
+        //
+        //     switch (myVal) {
+        //         case 'none':
+        //             // on
+        //
+        //             break;
+        //         // case 'cats':
+        //         //     // on
+        //         //     catsViewOn = true;
+        //         //     renderCatsView();
+        //         //
+        //         //     break
+        //         case 'snaps':
+        //             // on
+        //             $("#snaps-display-container").show();
+        //
+        //             break
+        //         case 'laps':
+        //             // on
+        //             $("#laps-column").show();
+        //             view.mapState.refreshLapMaps();
+        //
+        //             break
+        //     }
+        //
+        //     // if (isSmallScreen() && myVal !== 'none') {
+        //     //     $('#brand').hide();
+        //     // } else {
+        //     //     $('#brand').show();
+        //     // }
+        //
+        //     view.mapState.getMap().invalidateSize();
+        //
+        //     // setTimeout(view.mapState.getMap().invalidateSize, 300);
+        // });
+        //
+        // $('#my-settings-form input').on('change', function (){
+        //     const myVal = $('input[name=radio-settings-list]:checked', '#my-settings-form').val();
+        //     console.log('settings changed val', myVal);
+        //     model.setState(`settings_opt`, myVal);
+        //     switch (myVal) {
+        //         case 'none':
+        //             catsViewOn = false;
+        //         case 'cats':
+        //             catsViewOn = true;
+        //             break
+        //     }
+        //     renderCatsView();
+        //     if (isSmallScreen() && myVal !== 'none') {
+        //         $('#brand').hide();
+        //     } else {
+        //         $('#brand').show();
+        //     }
+        // });
 
         $('#laps-column-closer').on('click', function () {
-            $(`input[name=radio-show-list]`).val(['none']).change();
+            // $(`input[name=radio-settings-list]`).val('none').change();
             // $("#laps-column").hide();
         });
 
         $('#snaps-column-closer').on('click', function () {
-            $(`input[name=radio-show-list]`).val(['none']).change();
+            // $(`input[name=radio-settings-list]`).val(['none']).change();
             // $(`#my-view-togglers-form input[value='none']`).prop('checked', true);
             // $('#my-view-togglers-form').val('none');
             // $("#snaps-display-container").hide();
         });
 
 
-        $(`input[name=radio-show-list]`).val([model.getState().current_view]).change();
+        // $(`input[name=radio-show-list]`).val([model.getState().current_view || 'none']).change();
+        // $(`input[name=radio-settings-list]`).val([model.getState().settings_opt || 'none']).change();
 
         // This is/was for the linestrings (aka laps) query.
 

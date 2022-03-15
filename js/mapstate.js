@@ -1,5 +1,6 @@
 var mapStateFn = function() {
     var _map = null;
+    var _layerControl = null;
     var lapMaps = [];
     var _currentTileLayer = null;
     var _mapboxToken = "pk.eyJ1Ijoicm90YmxhdWVyIiwiYSI6ImNpeTdidjZxajAwMzEycW1waGdrNmh3NmsifQ.OpXHPqEHK2sTbQ4-pmhAMQ";
@@ -640,11 +641,11 @@ var mapStateFn = function() {
 
         // L.control.layers(_mapboxLayers, null, { position: "topleft", collapsed: isSmallScreen() }).addTo(_map);
 
-        L.control
+        _layerControl = L.control
             .layers(_mapboxLayers, _overlays,
             {
                 position: "topleft",
-                collapsed: isSmallScreen(),
+                collapsed: false,
             })
             .addTo(_map);
 
@@ -681,6 +682,10 @@ var mapStateFn = function() {
         view.$map.focus();
     };
 
+    var getLayerControl = function() {
+        return _layerControl;
+    }
+
     var getMap = function() {
         return _map;
     };
@@ -701,6 +706,7 @@ var mapStateFn = function() {
     return {
         init: initMap,
         getMap: getMap,
+        getLayerControl: getLayerControl,
         fetchLinestrings: fetchLinestrings,
         setLayer: setLayer,
         getOverlays: getOverlays,
