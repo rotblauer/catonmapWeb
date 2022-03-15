@@ -515,7 +515,8 @@ model.loadSnaps = function(snaps) {
                     cd(e);
                     var url = s3url; // close
                     var content = `<a target="_" href="${url}"><img src='${url}' style='width:${isSmallScreen()?150:300}px;' /></a>
-                        <div class="d-flex w-100 justify-content-between m-t-1">
+                        <div class="d-flex w-100 justify-content-between p-1" 
+                            style="background-color: rgba(255, 255, 255, 0.62); border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
                             <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
                             <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))}</span>
                         </div>
@@ -711,22 +712,25 @@ function onSnapsButtonClick(e, el) {
     // $("#snaps-display").toggle();
 
     const $snaps = $('#snaps-display-container')
-    const $snapsRenderedSwitcher = $("#snapsRenderedSwitcher");
 
-
-    $snaps.toggle()
-    const snapsShowing = $snaps.is(':visible');
-
-    // if (snapsShowing) $("#metadata-display").hide();
-    // else $("#metadata-display").show();
-
-    // $('#main1').toggleClass('col-12 col-md-10');
-
-    $snapsRenderedSwitcher.toggleClass('btn-dark btn-light');
+    $snaps.addClass('collapse').removeClass('show');
+    // const $snapsRenderedSwitcher = $("#snapsRenderedSwitcher");
+    //
+    //
+    // $snaps.toggle()
+    // const snapsShowing = $snaps.is(':visible');
+    //
+    // // if (snapsShowing) $("#metadata-display").hide();
+    // // else $("#metadata-display").show();
+    //
+    // // $('#main1').toggleClass('col-12 col-md-10');
+    //
+    // $snapsRenderedSwitcher.toggleClass('btn-dark btn-light');
 
     view.mapState.getMap().invalidateSize();
+    view.$map.focus();
 
-    if (isSmallScreen()) view.$lapsViewButton.toggle();
+    // if (isSmallScreen()) view.$lapsViewButton.toggle();
 
 
     // if (model.getState().tileLayer === "activity" && isSmallScreen() && $snaps.is(':visible')) $('#activity-legend').hide();
@@ -1049,13 +1053,28 @@ view.init = function() {
         $('#laps-column-closer').on('click', function () {
             // $(`input[name=radio-settings-list]`).val('none').change();
             // $("#laps-column").hide();
+            console.log('laps collapse');
+            $('#laps-column').addClass('collapse').removeClass('show');
+            view.mapState.getMap().invalidateSize();
+            view.$map.focus();
         });
 
         $('#snaps-column-closer').on('click', function () {
+            console.log('snaps collapse');
+            $('#snaps-display-container').addClass('collapse').removeClass('show');
+            view.mapState.getMap().invalidateSize();
+            view.$map.focus();
+
             // $(`input[name=radio-settings-list]`).val(['none']).change();
             // $(`#my-view-togglers-form input[value='none']`).prop('checked', true);
             // $('#my-view-togglers-form').val('none');
             // $("#snaps-display-container").hide();
+        });
+
+        $('#laps-clicker').on('click', function () {
+            setTimeout(() => {
+                view.mapState.refreshLapMaps();
+            }, 10);
         });
 
 

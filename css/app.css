@@ -80,6 +80,21 @@ img.catsnap-img {
 /*    overflow: hidden;*/
 /*}*/
 
+.leaflet-popup-content-wrapper {
+    /*background: #ffffffd9 !important;*/
+    background: none !important;
+    box-shadow: none !important;
+}
+
+.leaflet-popup-content {
+    border-radius: 5px !important;
+}
+
+.leaflet-popup-content img {
+    border-top-left-radius: 5px !important;
+    border-top-right-radius: 5px !important;
+}
+
 .lastknown-cat {
     /*border: 2px solid black;*/
 }

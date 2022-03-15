@@ -205,10 +205,10 @@ var dataLastKnownEntry = {
 
         if (!objExists(this.el())) {
             this.e = $(`
-<div id="${this.elid()}"  class="text-right lastKnown lastknown-cat mb-2" style="line-height: 1.5rem !important;">
+<div id="${this.elid()}"  class="text-right lastKnown lastknown-cat" style="line-height: 1rem !important;">
 <p>
     <span style="color: ${this.getColor()};">${this.name}</span>
-    <img src="cat-icon.png"  style="max-height: 1.8em; vertical-align: middle; margin-bottom: 0.3em;"/>
+    <img src="cat-icon.png"  style="max-height: 1.2rem; vertical-align: middle; margin-bottom: 0.3rem;"/>
     <span class="small text-muted">${minimalTimeDisplay(this.time)}</span>
 </p>
 <!--<p class="links"></p>-->
