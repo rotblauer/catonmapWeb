@@ -94,12 +94,35 @@ img.catsnap-img {
 
 .leaflet-popup-content-wrapper {
     /*background: #ffffffd9 !important;*/
+    /*background: rgba(255,255,255,0.3) !important;*/
     background: none !important;
     box-shadow: none !important;
 }
 
+.leaflet-popup-tip {
+    /*override*/
+    box-shadow: none !important;
+    background: black;
+
+    /*-webkit-transform: rotate(45deg);*/
+    /*-moz-transform: rotate(45deg);*/
+    /*-ms-transform: rotate(45deg);*/
+    /*-o-transform: rotate(45deg);*/
+    /*transform: rotate(45deg);*/
+
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+
+    height: 16px;
+    width: 2px;
+}
+
 .leaflet-popup-content {
     border-radius: 5px !important;
+    /*margin: 0px !important;*/
 }
 
 .leaflet-popup-content img {

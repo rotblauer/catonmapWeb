@@ -13,7 +13,8 @@ var mapStateFn = function() {
         "light": L.tileLayer(_mbtilesURL("ciy7ijqu3001a2rocq88pi8s4"), LtileLayerDefaults),
         "dark": L.tileLayer(_mbtilesURL("cjnlrb8hq0jgh2rozuxxzopgx"), LtileLayerDefaults),
         "satellite": L.tileLayer(_mbtilesURL("cjgel0gt300072rmc2s34f2ky"), LtileLayerDefaults),
-        "terrain": L.tileLayer(_mbtilesURL("cjok2q3ao6gfx2rlmioipy394"), LtileLayerDefaults)
+        "terrain": L.tileLayer(_mbtilesURL("cjok2q3ao6gfx2rlmioipy394"), LtileLayerDefaults),
+        // "OSM": L.tileLayer("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
     };
 
     // TODO
@@ -136,16 +137,7 @@ var mapStateFn = function() {
   ]
 }
          */
-        "plats": L.geoJSON(null, {
-            style: {
-                'color': 'gray',
-                'weight': 2,
-                'opacity': 0.5,
-            },
-            onEachFeature: (feature, layer) => {
-                console.log('plat onEachFeature feature', feature, layer);
-            }
-        })
+        "plats": L.layerGroup()
     };
 
     var lays = [];
@@ -736,13 +728,73 @@ var mapStateFn = function() {
             if (_map.hasLayer(pbfOverlayLayerSnaps)) _map.removeLayer(pbfOverlayLayerSnaps);
         }
 
-        fetch(`https://raw.githubusercontent.com/whilei/riverway-gis/main/orchard-bounds.geo.json`)
+        // fetch(`https://raw.githubusercontent.com/whilei/riverway-gis/main/orchard-bounds.geo.json`)
+        fetch(`/mock.geo.json`)
             .then((res) => {
                 res.json()
                     .then((data) => {
                         console.log('plats got data', data);
-                      _overlays["plats"].addData(data);
+                        if (!Array.isArray(data)) data = [data];
+
+                        const defaultProperties = {
+                            'layerOptions': {
+                                'color': '#00f',
+                                'weight': 2,
+                                'opacity': 0.5,
+                            }
+                        };
+
+                        let pops = [];
+                        for (let featureCollection of data) {
+                            let featureCollectionLayerOptions = defaultProperties;
+                            if (!!featureCollection.properties?.layerOptions) {
+                                   featureCollectionLayerOptions = featureCollection.properties.layerOptions;
+                            }
+                            // _overlays["plats"].addData(data);
+                            const newFeatureCollectionLayer = L.geoJSON(null, {
+                                style: featureCollectionLayerOptions,
+                                onEachFeature: (feature, layer) => {
+                                    console.log('plat onEachFeature feature', feature, layer);
+
+                                    // Assign the provided data properties to override the layer options directly.
+                                    Object.assign(layer.options, feature.properties?.layerOptions || {});
+
+                                    // https://leafletjs.com/SlavaUkraini/examples/geojson/
+                                    // does this feature have a property named popupContent?
+                                    if (feature.properties && feature.properties.popupContent) {
+                                        const l = layer.bindPopup(feature.properties.popupContent)
+                                        console.log('binding popup', l);
+                                        pops.push(l);
+                                    }
+                                },
+                                pointToLayer: function(feature, latlng) {
+                                    if (feature.properties?.marker) {
+                                        // https://leafletjs.com/SlavaUkraini/reference.html#icon
+                                        let marker = L.marker(latlng, feature.properties.marker);
+
+                                        if (feature.properties.marker.icon) marker.setIcon(L.icon(feature.properties.marker.icon));
+                                        else if (feature.properties.marker.divIcon) marker.setIcon(L.divIcon(feature.properties.marker.divIcon));
+
+                                        return marker;
+                                    }
+                                    // Default
+                                    return L.circleMarker(latlng, {
+                                        radius: 8,
+                                        color: "#00f",
+                                        opacity: 0,
+                                        fillColor: "#00f",
+                                        fillOpacity: 0.5,
+                                    })
+                                }
+                            });
+                            _overlays["plats"].addLayer(newFeatureCollectionLayer);
+                            // newFeatureCollectionLayer.addTo(_map);
+                            newFeatureCollectionLayer.addData(featureCollection);
+                        }
                         _overlays["plats"].addTo(_map);
+                        for (const pop of pops) {
+                            // pop.openPopup();
+                        }
                     })
             })
             .catch((err) => {

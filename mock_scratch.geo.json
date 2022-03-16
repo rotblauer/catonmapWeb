@@ -1,0 +1,20 @@
+{
+  "type": "Feature",
+  "properties": {
+    "popupContent": "<a href='https://water.weather.gov/resources/hydrographs/gcdw1_hg.png'>Source</a>",
+    "marker": {
+      "icon": {
+        "iconUrl": "https://water.weather.gov/resources/hydrographs/gcdw1_hg.png",
+        "iconSize": [300, 225],
+        "iconAnchor": [150, 112]
+      }
+    }
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -118.3781012892723,
+      48.03442270903723
+    ]
+  }
+}
