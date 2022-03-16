@@ -97,6 +97,55 @@ var mapStateFn = function() {
                 feature.properties.id = feature.properties.Name + feature.properties.Start;
             }
         }),
+
+        /*
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -118.37485447525978,
+              48.03406758485708
+            ],
+            [
+              -118.37483972311018,
+              48.03331787021701
+            ],
+            [
+              -118.37416246533394,
+              48.033289172789175
+            ],
+            [
+              -118.37412759661674,
+              48.03402005542502
+            ],
+            [
+              -118.37485447525978,
+              48.03406758485708
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
+         */
+        "plats": L.geoJSON(null, {
+            style: {
+                'color': 'gray',
+                'weight': 2,
+                'opacity': 0.5,
+            },
+            onEachFeature: (feature, layer) => {
+                console.log('plat onEachFeature feature', feature, layer);
+            }
+        })
     };
 
     var lays = [];
@@ -356,13 +405,14 @@ var mapStateFn = function() {
             // center on the linestring.
             // if falsey, the main map will only be adjusted to center on the linestring
             // if the linestring intersects with the current view.
-            const onMapFocus = function() {
+            const onMiniMapClick = function() {
 
                 const $myLapCard = $(`.lap-card#lap-card-${feature.properties.UUID}-${feature.properties.Start}`);
                 const $myLapCardAlreadyFocused = $myLapCard.hasClass('focused');
 
+
                 // on small (mobile) screens
-                if ($("#laps-column").width() > window.innerWidth * 3 / 4) {
+                if (!$myLapCardAlreadyFocused && $("#laps-column").width() > window.innerWidth * 3 / 4) {
                     // $("#lapsRenderButton").toggleClass('btn-dark btn-light')
                     $("#laps-column").addClass('collapse').removeClass('show');
                     // setTimeout(() => {
@@ -391,6 +441,7 @@ var mapStateFn = function() {
 
                 $('.lap-card').removeClass('focused');
 
+                // Set the style of the corresponding object on the big map.
                 _map.eachLayer((layer) => {
 
                     // Initial experiment:
@@ -428,7 +479,7 @@ var mapStateFn = function() {
 
             };
 
-            _mymap.on('click', onMapFocus);
+            _mymap.on('click', onMiniMapClick);
             // if (!isSmallScreen()) _mymap.on('mouseover', onMapFocus(false));
 
             lapMaps.push({map: _mymap, data: feature, bounds: bounds});
@@ -684,6 +735,19 @@ var mapStateFn = function() {
         } else {
             if (_map.hasLayer(pbfOverlayLayerSnaps)) _map.removeLayer(pbfOverlayLayerSnaps);
         }
+
+        fetch(`https://raw.githubusercontent.com/whilei/riverway-gis/main/orchard-bounds.geo.json`)
+            .then((res) => {
+                res.json()
+                    .then((data) => {
+                        console.log('plats got data', data);
+                      _overlays["plats"].addData(data);
+                        _overlays["plats"].addTo(_map);
+                    })
+            })
+            .catch((err) => {
+                console.error('fetch plats errored', err);
+            })
 
         // _currentPBFLayerOpt = s.tileLayer;
         // setPBFOpt(_currentPBFLayerOpt);
