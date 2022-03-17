@@ -108,17 +108,19 @@ model.getState = function() {
         overlay_density: s["overlay_density"] || true,
         overlay_laps: s["overlay_laps"] || true,
         overlay_snaps: s["overlay_snaps"] || false,
+        overlay_plats: s["overlay_plats"] || false,
         current_view: s["current_view"] || 'none',
         settings_opt: s["settings_opt"] || 'none',
         tileLayer: s["tileLayer"] || "activity",
-        visits: ((uriParam["visits"] || windowHistory["visits"] || localStore["visits"] || "false") === "false") ? false : true,
-        snaps: ((uriParam["snaps"] || windowHistory["snaps"] || localStore["snaps"] || "true") === "false") ? false : true,
-        follow: s["follow"] || "",
+        // visits: ((uriParam["visits"] || windowHistory["visits"] || localStore["visits"] || "false") === "false") ? false : true,
+        // snaps: ((uriParam["snaps"] || windowHistory["snaps"] || localStore["snaps"] || "true") === "false") ? false : true,
+        // follow: s["follow"] || "",
         windowStyle: s["window"] || "light",
         tfstart: s["tfstart"],
         tfend: s["tfend"],
         linestringStart: s["linestringStart"],
         linestringEnd: s["linestringEnd"],
+        platsEndpoint: s["plats_at"] || 'https://raw.githubusercontent.com/rotblauer/plats/main/catonmap.net.geo.json',
     };
 
     // return {

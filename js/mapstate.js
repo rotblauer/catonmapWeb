@@ -753,7 +753,7 @@ var mapStateFn = function() {
         }
 
         // fetch(`https://raw.githubusercontent.com/whilei/riverway-gis/main/orchard-bounds.geo.json`)
-        fetch(`/mock.geo.json`)
+        fetch(s.platsEndpoint)
             .then((res) => {
                 res.json()
                     .then((data) => {
@@ -778,7 +778,7 @@ var mapStateFn = function() {
                             const newFeatureCollectionLayer = L.geoJSON(null, {
                                 style: featureCollectionLayerOptions,
                                 onEachFeature: (feature, layer) => {
-                                    console.log('plat onEachFeature feature', feature, layer);
+                                    console.log('plat onEachFeature feature', feature, layer)
 
                                     // Assign the provided data properties to override the layer options directly.
                                     Object.assign(layer.options, feature.properties?.layerOptions || {});
@@ -792,6 +792,8 @@ var mapStateFn = function() {
                                     }
                                 },
                                 pointToLayer: function(feature, latlng) {
+                                    if (feature.geometry.type !== "Point") return;
+
                                     if (feature.properties?.marker) {
                                         // https://leafletjs.com/SlavaUkraini/reference.html#icon
                                         let marker = L.marker(latlng, feature.properties.marker);
@@ -799,8 +801,11 @@ var mapStateFn = function() {
                                         if (feature.properties.marker.icon) marker.setIcon(L.icon(feature.properties.marker.icon));
                                         else if (feature.properties.marker.divIcon) marker.setIcon(L.divIcon(feature.properties.marker.divIcon));
 
+                                        console.log('marker', marker);
                                         return marker;
                                     }
+
+                                    // marker.setOptions()
                                     // Default
                                     return L.circleMarker(latlng, {
                                         radius: 8,
@@ -815,19 +820,28 @@ var mapStateFn = function() {
                             // newFeatureCollectionLayer.addTo(_map);
                             newFeatureCollectionLayer.addData(featureCollection);
                         }
-                        _overlays["plats"].addTo(_map);
+                        if (s.overlay_plats === "true" || s.overlay_plats === true) _overlays["plats"].addTo(_map);
                         for (const pop of pops) {
                             // pop.openPopup();
                         }
                     })
+
             })
             .catch((err) => {
                 console.error('fetch plats errored', err);
             })
 
+        const pbfOverlayLayerPlats = _overlays["plats"];
+        if (s.overlay_plats === "true" || s.overlay_plats === true) {
+            if (!_map.hasLayer(pbfOverlayLayerPlats)) _map.addLayer(pbfOverlayLayerPlats);
+        } else {
+            if (_map.hasLayer(pbfOverlayLayerPlats)) _map.removeLayer(pbfOverlayLayerPlats);
+        }
+
         // _currentPBFLayerOpt = s.tileLayer;
         // setPBFOpt(_currentPBFLayerOpt);
         view.$map.focus();
+
     };
 
     var getLayerControl = function() {

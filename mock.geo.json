@@ -32,7 +32,8 @@
       "properties": {
         "name": "The orchard",
         "layerOptions": {
-          "color": "yellow"
+          "color": "yellow",
+          "className": "zoomMin-15 zoomMax-19"
         }
       },
       "type": "Feature"
@@ -80,7 +81,8 @@
     "properties": {
       "name": "Buildings",
       "layerOptions": {
-        "color": "black"
+        "color": "black",
+        "className": "zoomMin-15 zoomMax-19"
       }
     },
     "features": [
@@ -667,7 +669,11 @@
   },
   {
     "type": "FeatureCollection",
-    "properties": {},
+    "properties": {
+      "layerOptions": {
+        "className": "zoomMin-15 zoomMax-19 __THISWILLNOTWORKFORPOINTS_DOITINDIVIDUALLY__"
+      }
+    },
     "features": [
       {
         "type": "Feature",
@@ -687,7 +693,8 @@
         "properties": {
           "marker": {
             "divIcon": {
-              "html": "<div style='border: 1px solid red;'><h3>BIG MEADOW</h3></div>"
+              "html": "<div class='zoomMin-15 zoomMax-19' style='border: 1px solid red;'><h3>BIG MEADOW</h3></div>",
+              "className": "zoomMin-15 zoomMax-19"
             }
           }
         },
@@ -700,5 +707,108 @@
         }
       }
     ]
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "layerOptions": {
+        "className": "zoomMin-15 zoomMax-19"
+      },
+      "popupContent": "<a href='https://water.weather.gov/resources/hydrographs/gcdw1_hg.png'>Source</a>",
+      "marker": {
+        "icon": {
+          "iconUrl": "https://water.weather.gov/resources/hydrographs/gcdw1_hg.png",
+          "iconSize": [300, 225],
+          "iconAnchor": [150, 112],
+          "className": "zoomMin-14 zoomMax-19"
+        }
+      }
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -118.38704109191895,
+        48.03318693807253
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "name": "Secret trails",
+      "layerOptions": {
+        "className": "zoomMin-12 zoomMax-19",
+        "fillColor": "green",
+        "opacity": 0.5
+      },
+      "popupContent": "<h3>Pretty cool secret trails in here</h3>"
+    },
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            -92.11703538894653,
+            46.83603490105107
+          ],
+          [
+            -92.13031768798828,
+            46.835873432393946
+          ],
+          [
+            -92.13021039962769,
+            46.831895278622774
+          ],
+          [
+            -92.12881565093994,
+            46.833099031499984
+          ],
+          [
+            -92.12533950805664,
+            46.83414128355347
+          ],
+          [
+            -92.12289333343506,
+            46.83406788618313
+          ],
+          [
+            -92.12014675140381,
+            46.833421985001785
+          ],
+          [
+            -92.1193528175354,
+            46.832746716375524
+          ],
+          [
+            -92.12033987045288,
+            46.830735539984545
+          ],
+          [
+            -92.12033987045288,
+            46.82963449913332
+          ],
+          [
+            -92.1112847328186,
+            46.82959045703013
+          ],
+          [
+            -92.11145639419556,
+            46.83196867896032
+          ],
+          [
+            -92.11484670639038,
+            46.83258523783827
+          ],
+          [
+            -92.11690664291382,
+            46.83355410178405
+          ],
+          [
+            -92.11703538894653,
+            46.83603490105107
+          ]
+        ]
+      ]
+    }
   }
 ]
