@@ -134,6 +134,75 @@ img.catsnap-img {
     /*border: 2px solid black;*/
 }
 
+/*.leaflet-container.z16 path.zoomMin17 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z16 path.zoomMin18 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z16 path.zoomMin19 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z15 path.zoomMin16 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z15 path.zoomMin17 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z15 path.zoomMin18 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z15 path.zoomMin19 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z14 path.zoomMin15 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z14 path.zoomMin16 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z14 path.zoomMin17 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z14 path.zoomMin18 {*/
+/*    display: none;*/
+/*}*/
+
+/*.leaflet-container.z14 path.zoomMin19 {*/
+/*    display: none;*/
+/*}*/
+
+.leaflet-container.z0 .zoomMin1,.zoomMin2,.zoomMin3,.zoomMin4,.zoomMin5,.zoomMin6,.zoomMin7,.zoomMin8,.zoomMin9,.zoomMin10,.zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z1 .zoomMin2,.zoomMin3,.zoomMin4,.zoomMin5,.zoomMin6,.zoomMin7,.zoomMin8,.zoomMin9,.zoomMin10,.zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z2 .zoomMin3,.zoomMin4,.zoomMin5,.zoomMin6,.zoomMin7,.zoomMin8,.zoomMin9,.zoomMin10,.zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z3 .zoomMin4,.zoomMin5,.zoomMin6,.zoomMin7,.zoomMin8,.zoomMin9,.zoomMin10,.zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z4 .zoomMin5,.zoomMin6,.zoomMin7,.zoomMin8,.zoomMin9,.zoomMin10,.zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z5 .zoomMin6,.zoomMin7,.zoomMin8,.zoomMin9,.zoomMin10,.zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z6 .zoomMin7,.zoomMin8,.zoomMin9,.zoomMin10,.zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z7 .zoomMin8,.zoomMin9,.zoomMin10,.zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z8 .zoomMin9,.zoomMin10,.zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z9 .zoomMin10,.zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z10 .zoomMin11,.zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z11 .zoomMin12,.zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z12 .zoomMin13,.zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z13 .zoomMin14,.zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z14 .zoomMin15,.zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z15 .zoomMin16,.zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z16 .zoomMin17,.zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z17 .zoomMin18,.zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z18 .zoomMin19,.zoomMin20 {display: none;}
+.leaflet-container.z19 .zoomMin20 {display: none;}
+
 #lastknown:before{
     background: inherit;
     /* filter:blur(10px); */

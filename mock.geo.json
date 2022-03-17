@@ -206,7 +206,8 @@
       "layerOptions": {
         "color": "blue",
         "weight": 6,
-        "opacity":  0.3
+        "opacity":  0.3,
+        "className": "zoomMin-15 zoomMax-19"
       }
     },
     "features": [

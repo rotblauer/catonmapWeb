@@ -240,12 +240,29 @@ var mapStateFn = function() {
             else $lapCard.show();
         }
         refreshLapMaps();
-    };
+    }
+
+    var _zoomCSS = function() {
+        const z = _map.getZoom();
+        const container = _map.getContainer();
+
+        for (let i = 0; i<=20; i++) {
+            container.classList.remove(`z${String(i)}`);
+        }
+        if (z) {
+            container.classList.add(`z${String(z)}`);
+        }
+    }
 
     var _mapOnZoomEnd = function() {
         // model.setLocalStore("z", _map.getZoom());
-        cd("zoom", _map.getZoom());
-        model.setState("zoom", _map.getZoom());
+
+        const z = _map.getZoom();
+        cd("zoom", z);
+        model.setState("zoom", z);
+
+        _zoomCSS();
+
         // setLinkValue();
     };
     var _mapOnBaselayerChange = function(ev) {
@@ -276,7 +293,10 @@ var mapStateFn = function() {
         // model.setLocalStore("x", b.lng);
         // model.setLocalStore("z", _map.getZoom());
         // setLinkValue();
+        console.log('map loaded');
+
         view.$map.focus();
+        // _zoomCSS();
     };
     var _mapOnClick = function() {};
 
@@ -672,7 +692,9 @@ var mapStateFn = function() {
                 noWrap: true,
                 layers: [_mapboxLayers[s.baseLayer]],
                     // preferCanvas: true
-            })
+            });
+
+        _map
             .on("moveend", _mapOnMoveEnd)
             .on("zoomend", _mapOnZoomEnd)
             .on("baselayerchange", _mapOnBaselayerChange)
@@ -680,6 +702,8 @@ var mapStateFn = function() {
             .on("overlayremove", _mapOnOverlayRemove)
             .on("load", _mapOnLoad)
             .on("click", _mapOnClick);
+
+        _zoomCSS();
 
         // $('#map').resize(() => {
         //     console.log('map resize event');
