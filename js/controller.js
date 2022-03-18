@@ -1061,6 +1061,15 @@ view.init = function() {
             view.$map.focus();
         });
 
+        $('#plats-column-closer').on('click', function () {
+            // $(`input[name=radio-settings-list]`).val('none').change();
+            // $("#laps-column").hide();
+            console.log('plats collapse');
+            $('#plats-column').addClass('collapse').removeClass('show');
+            view.mapState.getMap().invalidateSize();
+            view.$map.focus();
+        });
+
         $('#snaps-column-closer').on('click', function () {
             console.log('snaps collapse');
             $('#snaps-display-container').addClass('collapse').removeClass('show');

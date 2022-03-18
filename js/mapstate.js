@@ -768,7 +768,6 @@ var mapStateFn = function() {
                             }
                         };
 
-                        let pops = [];
                         for (let featureCollection of data) {
                             let featureCollectionLayerOptions = defaultProperties;
                             if (!!featureCollection.properties?.layerOptions) {
@@ -786,9 +785,8 @@ var mapStateFn = function() {
                                     // https://leafletjs.com/SlavaUkraini/examples/geojson/
                                     // does this feature have a property named popupContent?
                                     if (feature.properties && feature.properties.popupContent) {
-                                        const l = layer.bindPopup(feature.properties.popupContent)
+                                        const l = layer.bindPopup(feature.properties.popupContent) // .openPopup()
                                         console.log('binding popup', l);
-                                        pops.push(l);
                                     }
                                 },
                                 pointToLayer: function(feature, latlng) {
@@ -821,9 +819,6 @@ var mapStateFn = function() {
                             newFeatureCollectionLayer.addData(featureCollection);
                         }
                         if (s.overlay_plats === "true" || s.overlay_plats === true) _overlays["plats"].addTo(_map);
-                        for (const pop of pops) {
-                            // pop.openPopup();
-                        }
                     })
 
             })
