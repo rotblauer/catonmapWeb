@@ -74,6 +74,14 @@ img.catsnap-img {
     -moz-box-shadow: -2px 1px 5px -2px rgba(0,0,0,0.49);
 }
 
+.icon-round {
+    border-radius: 50%;
+    border: 2px solid whitesmoke;
+    box-shadow: 2px 4px 8px 2px rgba(0,0,0,0.49);
+    -webkit-box-shadow: 2px 4px 8px 2px rgba(0,0,0,0.49);
+    -moz-box-shadow: 2px 4px 8px 2px rgba(0,0,0,0.49);
+}
+
 /*.lastknown-col {*/
 /*    background: rgba(255,255,255,0.45);*/
 /*    !* filter:blur(4px); *!*/

@@ -495,8 +495,6 @@ model.loadSnaps = function(snaps) {
             var snaps = data.reverse();
             cd("GOT SNAPS", snaps);
             // view.mapState.setLayer("snaps", null);
-            $("#snaps-display").html("");
-            $("#snapsRenderedSwitcher").show();
             var num = 0;
             snaps.forEach(function(snap) {
                 if (!controller.settingsFilter(snap, 3, "snaps")) {
@@ -625,7 +623,14 @@ model.loadSnaps = function(snaps) {
 
                 // add markers
                 var marker = L.marker([snap.lat, snap.long], {
-                    icon: iconSnap
+                    // icon: iconSnap
+                    icon: L.icon({
+                        iconUrl: s3url,
+                        iconSize: [32,32],
+                        iconAnchor: [16,16],
+                        popupAnchor: [0,16],
+                        className: 'icon-round'
+                    })
                 }).on("click", snapMapPopup);
                 controller.snapsClusterGroup.addLayer(marker);
                 // ct.markerClusterGroup.addLayer(marker);
