@@ -10,6 +10,7 @@
     <!-- CDN -->
     <!-- STYLE -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+    <link rel="stylesheet" href="/vendor/Leaflet.draw_dist/leaflet.draw.css">
     <!-- <link id="bootstrap-css-link" rel="stylesheet" href="/vendor/bootstrap-4.0.0-alpha.6-dist/css/bootstrap.min.css" /> -->
     <link id="bootstrap-css-link" rel="stylesheet" href="/vendor/bootstrap/4.2.1/css/bootstrap.min.css" />
 
@@ -156,6 +157,8 @@
             <span class="badge m-1" style="background-color: #00fa9a; color: white; ">Fly</span><br>
         </div>
 
+    <div id="zoom-display" style="z-index: 500; position: absolute; left: 50px; top: 10px; color: gray;"></div>
+
 
 
         <!-- // side or overlayd -->
@@ -253,6 +256,7 @@
     <!-- CDN -->
     <!-- SCRIPT -->
     <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+    <script src="/vendor/Leaflet.draw_dist/leaflet.draw.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" crossorigin="anonymous"></script>
