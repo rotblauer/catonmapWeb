@@ -263,6 +263,8 @@ var mapStateFn = function() {
 
         _zoomCSS();
 
+        $('#zoom-display').html(`<span>Z${z}</span>`);
+
         // setLinkValue();
     };
     var _mapOnBaselayerChange = function(ev) {
@@ -686,7 +688,7 @@ var mapStateFn = function() {
                 keyboard: true,
                 keyboardPanDelta: 140,
                 minZoom: 3,
-                maxZoom: 20,
+                maxZoom: 18,
                 center: [+s.lat, +s.lng], // [32, -80],
                 zoom: +s.zoom,
                 noWrap: true,
@@ -704,6 +706,7 @@ var mapStateFn = function() {
             .on("click", _mapOnClick);
 
         _zoomCSS();
+        _mapOnZoomEnd();
 
         // $('#map').resize(() => {
         //     console.log('map resize event');
