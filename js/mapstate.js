@@ -139,7 +139,7 @@ var mapStateFn = function() {
   ]
 }
          */
-        "plats": L.layerGroup()
+        "plats": new L.FeatureGroup()
     };
 
     var lays = [];
@@ -721,12 +721,14 @@ var mapStateFn = function() {
             position: 'bottomright',
             draw: {
                 polyline: {
+                    showLength: true,
                     shapeOptions: {
                         color: '#f357a1',
                         weight: 10
                     }
                 },
                 polygon: {
+                    showArea: true,
                     allowIntersection: false, // Restricts shapes to simple polygons
                     drawError: {
                         color: '#e1e100', // Color the shape will turn when intersects
@@ -747,7 +749,7 @@ var mapStateFn = function() {
                 }
             },
             edit: {
-                featureGroup: _editableLayers, //REQUIRED!!
+                featureGroup: _overlays["plats"], //REQUIRED!!
                 remove: true
             }
         };
@@ -755,19 +757,27 @@ var mapStateFn = function() {
         var drawControl = new L.Control.Draw(drawOptions);
         _map.addControl(drawControl);
 
-        _map.addLayer(_editableLayers);
+        _map.addLayer(_overlays["plats"]);
 
         _map.on(L.Draw.Event.CREATED, function (e) {
-            var type = e.layerType,
-                layer = e.layer;
+            console.log('created', e.layer.toGeoJSON());
+            // var type = e.layerType,
+            //     layer = e.layer;
+            //
+            // console.log('event created', e);
+            //
+            // if (type === 'marker') {
+            //     layer.bindPopup('A popup!');
+            // }
 
-            console.log('event created', e);
+            _overlays["plats"].addLayer(e.layer);
+        });
 
-            if (type === 'marker') {
-                layer.bindPopup('A popup!');
-            }
-
-            _editableLayers.addLayer(layer);
+        _map.on(L.Draw.Event.EDITED, (e) => {
+            console.log('edited', e);
+        });
+        _map.on(L.Draw.Event.DELETED, (e) => {
+            console.log('deleted', e);
         });
 
         // EO leaflet.draw
