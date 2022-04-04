@@ -696,6 +696,7 @@ var mapStateFn = function() {
                 noWrap: true,
                 layers: [_mapboxLayers[s.baseLayer]],
                     // preferCanvas: true
+                pmIgnore: false,
             });
 
         _map
@@ -709,79 +710,96 @@ var mapStateFn = function() {
 
         // leaflet.draw
 
-        var MyCustomMarker = L.Icon.extend({
-            options: {
-                shadowUrl: null,
-                iconAnchor: new L.Point(12, 12),
-                iconSize: new L.Point(24, 24),
-                iconUrl: 'link/to/image.png'
-            }
-        });
-        var drawOptions = {
-            position: 'bottomright',
-            draw: {
-                polyline: {
-                    showLength: true,
-                    shapeOptions: {
-                        color: '#f357a1',
-                        weight: 10
-                    }
-                },
-                polygon: {
-                    showArea: true,
-                    allowIntersection: false, // Restricts shapes to simple polygons
-                    drawError: {
-                        color: '#e1e100', // Color the shape will turn when intersects
-                        message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
-                    },
-                    shapeOptions: {
-                        color: '#bada55'
-                    }
-                },
-                circle: false, // Turns off this drawing tool
-                rectangle: {
-                    shapeOptions: {
-                        clickable: false
-                    }
-                },
-                marker: {
-                    icon: new MyCustomMarker()
-                }
-            },
-            edit: {
-                featureGroup: _overlays["plats"], //REQUIRED!!
-                remove: true
-            }
-        };
-
-        var drawControl = new L.Control.Draw(drawOptions);
-        _map.addControl(drawControl);
-
-        _map.addLayer(_overlays["plats"]);
-
-        _map.on(L.Draw.Event.CREATED, function (e) {
-            console.log('created', e.layer.toGeoJSON());
-            // var type = e.layerType,
-            //     layer = e.layer;
-            //
-            // console.log('event created', e);
-            //
-            // if (type === 'marker') {
-            //     layer.bindPopup('A popup!');
-            // }
-
-            _overlays["plats"].addLayer(e.layer);
-        });
-
-        _map.on(L.Draw.Event.EDITED, (e) => {
-            console.log('edited', e);
-        });
-        _map.on(L.Draw.Event.DELETED, (e) => {
-            console.log('deleted', e);
-        });
+        // var MyCustomMarker = L.Icon.extend({
+        //     options: {
+        //         shadowUrl: null,
+        //         iconAnchor: new L.Point(12, 12),
+        //         iconSize: new L.Point(24, 24),
+        //         iconUrl: 'link/to/image.png'
+        //     }
+        // });
+        // var drawOptions = {
+        //     position: 'bottomright',
+        //     draw: {
+        //         polyline: {
+        //             showLength: true,
+        //             shapeOptions: {
+        //                 color: '#f357a1',
+        //                 weight: 10
+        //             }
+        //         },
+        //         polygon: {
+        //             showArea: true,
+        //             allowIntersection: false, // Restricts shapes to simple polygons
+        //             drawError: {
+        //                 color: '#e1e100', // Color the shape will turn when intersects
+        //                 message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
+        //             },
+        //             shapeOptions: {
+        //                 color: '#bada55'
+        //             }
+        //         },
+        //         circle: false, // Turns off this drawing tool
+        //         rectangle: {
+        //             shapeOptions: {
+        //                 clickable: false
+        //             }
+        //         },
+        //         marker: {
+        //             icon: new MyCustomMarker()
+        //         }
+        //     },
+        //     edit: {
+        //         featureGroup: _overlays["plats"], //REQUIRED!!
+        //         remove: true
+        //     }
+        // };
+        //
+        // var drawControl = new L.Control.Draw(drawOptions);
+        // _map.addControl(drawControl);
+        //
+        // _map.addLayer(_overlays["plats"]);
+        //
+        // _map.on(L.Draw.Event.CREATED, function (e) {
+        //     console.log('created', e.layer.toGeoJSON());
+        //     // var type = e.layerType,
+        //     //     layer = e.layer;
+        //     //
+        //     // console.log('event created', e);
+        //     //
+        //     // if (type === 'marker') {
+        //     //     layer.bindPopup('A popup!');
+        //     // }
+        //
+        //     _overlays["plats"].addLayer(e.layer);
+        // });
+        //
+        // _map.on(L.Draw.Event.EDITED, (e) => {
+        //     console.log('edited', e);
+        // });
+        // _map.on(L.Draw.Event.DELETED, (e) => {
+        //     console.log('deleted', e);
+        // });
 
         // EO leaflet.draw
 
+        // add Leaflet-Geoman controls with some options to the map
+        _map.pm.addControls({
+            position: 'bottomright',
+            drawCircle: false,
+        });
+
+        _map.on('pm:drawend', (e) => {
+            console.log('drawend', e);
+        });
+        _map.on('pm:create', (e) => {
+            console.log('create', e);
+            e.layer.setStyle({ pmIgnore: false });
+            L.PM.reInitLayer(e.layer);
+        });
+        _map.on('pm:edit', (e) => {
+            console.log('edit', e);
+        });
         _zoomCSS();
         _mapOnZoomEnd();
 
