@@ -45,7 +45,8 @@ model.visitsParams = {
     }
 };
 
-URI.fragmentPrefix = "@";
+URI.fragmentPrefix = encodeURI("@");
+// URI.fragmentPrefix = "@";
 
 model.state = {};
 model.setState = function(k, v) {
