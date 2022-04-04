@@ -107,6 +107,7 @@ model.getState = function() {
         baseLayer: s["baseLayer"] || "light",
         overlay_activity: s["overlay_activity"] || false,
         overlay_density: s["overlay_density"] || true,
+        overlay_basic: s["overlay_basic"] || false,
         overlay_laps: s["overlay_laps"] || true,
         overlay_snaps: s["overlay_snaps"] || false,
         overlay_plats: s["overlay_plats"] || false,

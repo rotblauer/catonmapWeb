@@ -410,6 +410,17 @@ controller.densityFn = function(properties, zoom, layer) {
     return out;
 };
 
+controller.basicFn = function(properties, zoom, layer) {
+    return {
+        type: "Point",
+        stroke: false,
+        fill: true,
+        fillColor: "black",
+        fillOpacity: 1,
+        radius: 1
+    }
+};
+
 var vectorTileLayerStyles = {
     "speed": {
         'catTrack': controller.speedFn,
@@ -426,6 +437,10 @@ var vectorTileLayerStyles = {
     "density": {
         'catTrack': controller.densityFn,
         'catTrackEdge': controller.densityFn
+    },
+    "basic": {
+        "catTrack": controller.basicFn,
+        "catTrackEdge": controller.basicFn,
     }
 };
 

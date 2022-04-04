@@ -67,7 +67,8 @@ var mapStateFn = function() {
         "activity": controller.baseTilesLayerOptsF("activity"),
         "recent": controller.baseTilesLayerOptsF("recent"),
         "speed": controller.baseTilesLayerOptsF("speed"),
-        "density": controller.baseTilesLayerOptsF("density")
+        "density": controller.baseTilesLayerOptsF("density"),
+        "basic": controller.baseTilesLayerOptsF("basic"),
     };
 
     var _pbfOpts = function(optName) {
@@ -78,6 +79,10 @@ var mapStateFn = function() {
     };
 
     var _overlays = {
+        "basic": L.layerGroup([
+            L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("basic")),
+            L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("basic")),
+        ]),
         "activity": L.layerGroup([
             L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("activity")),
             L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("activity")),
@@ -783,23 +788,29 @@ var mapStateFn = function() {
 
         // EO leaflet.draw
 
-        // add Leaflet-Geoman controls with some options to the map
-        _map.pm.addControls({
-            position: 'bottomright',
-            drawCircle: false,
-        });
 
-        _map.on('pm:drawend', (e) => {
-            console.log('drawend', e);
-        });
-        _map.on('pm:create', (e) => {
-            console.log('create', e);
-            e.layer.setStyle({ pmIgnore: false });
-            L.PM.reInitLayer(e.layer);
-        });
-        _map.on('pm:edit', (e) => {
-            console.log('edit', e);
-        });
+        // // LEAFLET-GEOMAN
+        // // add Leaflet-Geoman controls with some options to the map
+        //
+        // _map.pm.addControls({
+        //     position: 'bottomright',
+        //     drawCircle: false,
+        // });
+        //
+        // _map.on('pm:drawend', (e) => {
+        //     console.log('drawend', e);
+        // });
+        // _map.on('pm:create', (e) => {
+        //     console.log('create', e);
+        //     e.layer.setStyle({ pmIgnore: false });
+        //     L.PM.reInitLayer(e.layer);
+        // });
+        // _map.on('pm:edit', (e) => {
+        //     console.log('edit', e);
+        // });
+
+        // // END LEAFLET GEOMAN
+
         _zoomCSS();
         _mapOnZoomEnd();
 
@@ -830,6 +841,7 @@ var mapStateFn = function() {
         const pbfOverlayLayerActivity = _overlays["activity"];
         if (s.overlay_activity === "true" || s.overlay_activity === true) {
             if (!_map.hasLayer(pbfOverlayLayerActivity)) _map.addLayer(pbfOverlayLayerActivity);
+            // _map.addLayer(pbfOverlayLayerActivity);
             $('#activity-legend').show();
         } else {
             if (_map.hasLayer(pbfOverlayLayerActivity)) _map.removeLayer(pbfOverlayLayerActivity);
@@ -842,6 +854,14 @@ var mapStateFn = function() {
         } else {
             if (_map.hasLayer(pbfOverlayLayerDensity)) _map.removeLayer(pbfOverlayLayerDensity);
         }
+
+        const pbfOverlayLayerBasic = _overlays["basic"];
+        if (s.overlay_basic === "true" || s.overlay_basic === true) {
+            if (!_map.hasLayer(pbfOverlayLayerBasic)) _map.addLayer(pbfOverlayLayerBasic);
+        } else {
+            if (_map.hasLayer(pbfOverlayLayerBasic)) _map.removeLayer(pbfOverlayLayerBasic);
+        }
+
 
         const pbfOverlayLayerSnaps = _overlays["snaps"];
         if (s.overlay_snaps === "true" || s.overlay_snaps === true) {
