@@ -419,25 +419,25 @@ controller.init = (function() {
     // view.$visitsCheckbox.attr("checked", model.visitsOn);
     // view.$snapsCheckbox.attr("checked", model.snapsOn);
 
-    var tfstart = model.getState().tfstart;
-    var tfend = model.getState().tfend;
-    if (objExists(tfstart) || objExists(tfend)) {
-        controller.setSettingsFilter("time_filter", function(p, z, l) {
-            if (objExists(p["UnixTime"])) {
-                if (moment(tfstart).unix() < p.UnixTime && moment(tfend).unix() > p.UnixTime) {
-                    return true;
-                }
-                return false;
-            } else {
-                var punix = p.id / 1e9;
-                if (moment(tfstart).unix() < punix && moment(tfend).unix() > punix) {
-                    return true;
-                }
-                cd("nogo snapo", moment(tfstart).unix(), tfend, punix);
-                return false;
-            }
-        });
-    }
+    // var tfstart = model.getState().tfstart;
+    // var tfend = model.getState().tfend;
+    // if (objExists(tfstart) || objExists(tfend)) {
+    //     controller.setSettingsFilter("time_filter", function(p, z, l) {
+    //         if (objExists(p["UnixTime"])) {
+    //             if (moment(tfstart).unix() < p.UnixTime && moment(tfend).unix() > p.UnixTime) {
+    //                 return true;
+    //             }
+    //             return false;
+    //         } else {
+    //             var punix = p.id / 1e9;
+    //             if (moment(tfstart).unix() < punix && moment(tfend).unix() > punix) {
+    //                 return true;
+    //             }
+    //             cd("nogo snapo", moment(tfstart).unix(), tfend, punix);
+    //             return false;
+    //         }
+    //     });
+    // }
 
     view.mapState.init();
 
@@ -503,7 +503,7 @@ model.loadSnaps = function(snaps) {
             var num = 0;
             snaps.forEach(function(snap) {
                 if (!controller.settingsFilter(snap, 3, "snaps")) {
-                    cd("snap return", snap);
+                    // cd("snap return", snap);
                     return;
                 }
                 num++;
