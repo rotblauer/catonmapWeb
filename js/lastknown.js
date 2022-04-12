@@ -194,11 +194,11 @@ var dataLastKnownEntry = {
             controller.setSettingsFilter("viewables", fn);
             view.mapState.setPBFOpt(localOrDefault("l", "activity"));
 
-            view.mapState.setLayer("visits", null);
-            model.visitsParams.set("names", filterers)
-                .get()
-                .done(model.setVisits)
-                .catch(model.errVisits);
+            // view.mapState.setLayer("visits", null);
+            // model.visitsParams.set("names", filterers)
+            //     .get()
+            //     .done(model.setVisits)
+            //     .catch(model.errVisits);
         };
 
 

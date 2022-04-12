@@ -9,11 +9,13 @@ var mapStateFn = function() {
     };
     var _mapboxLayers = {
         "none": L.tileLayer("", LtileLayerDefaults),
-        "outdoors": L.tileLayer(_mbtilesURL("cjgejdj91001c2snpjtgmt7gj"), LtileLayerDefaults),
+        // "outdoors": L.tileLayer(_mbtilesURL("cjgejdj91001c2snpjtgmt7gj"), LtileLayerDefaults),
+        // mapbox://styles/rotblauer/cl1l095yk000014mwjm3npd15
+        "outdoors": L.tileLayer(_mbtilesURL("cl1l095yk000014mwjm3npd15"), LtileLayerDefaults),
+        "terrain": L.tileLayer(_mbtilesURL("cjok2q3ao6gfx2rlmioipy394"), LtileLayerDefaults),
+        "satellite": L.tileLayer(_mbtilesURL("cjgel0gt300072rmc2s34f2ky"), LtileLayerDefaults),
         "light": L.tileLayer(_mbtilesURL("ciy7ijqu3001a2rocq88pi8s4"), LtileLayerDefaults),
         "dark": L.tileLayer(_mbtilesURL("cjnlrb8hq0jgh2rozuxxzopgx"), LtileLayerDefaults),
-        "satellite": L.tileLayer(_mbtilesURL("cjgel0gt300072rmc2s34f2ky"), LtileLayerDefaults),
-        "terrain": L.tileLayer(_mbtilesURL("cjok2q3ao6gfx2rlmioipy394"), LtileLayerDefaults),
         // "OSM": L.tileLayer("https://a.tile.openstreetmap.org/{z}/{x}/{y}.png")
     };
 

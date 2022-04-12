@@ -35,13 +35,16 @@ model.visitsParams = {
             cd("visits off");
             return $.ajax();
         } // return empty ajax to keep promise returnable
-        // var url = queryURL(trackHost, "/visits2?", this.data);
-        // var url = queryURL(trackHost, "/visits2?", this.data);
-        // hacky workaround cuz bouncer wants to fuck with the query params for ?url=...
-        var url = queryURL(trackHost, "/visits2", this.data);
 
-        cd("GET", url);
-        return $.ajax(qJSON(url));
+        return $.ajax();
+
+        // // var url = queryURL(trackHost, "/visits2?", this.data);
+        // // var url = queryURL(trackHost, "/visits2?", this.data);
+        // // hacky workaround cuz bouncer wants to fuck with the query params for ?url=...
+        // var url = queryURL(trackHost, "/visits2", this.data);
+        //
+        // cd("GET", url);
+        // return $.ajax(qJSON(url));
     }
 };
 
