@@ -48,7 +48,7 @@ model.visitsParams = {
     }
 };
 
-URI.fragmentPrefix = encodeURI("@");
+URI.fragmentPrefix = encodeURI("-");
 // URI.fragmentPrefix = "@";
 
 model.state = {};
