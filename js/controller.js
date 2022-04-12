@@ -622,7 +622,7 @@ model.loadSnaps = function(snaps) {
 
                 $card.prepend($img)
 
-                if (num < 50) {
+                if (num < 100) {
                     $("#snaps-display").append($card);
                 }
 

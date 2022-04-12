@@ -19,11 +19,13 @@ var catColors = (function() {
 
         "RyePhone": color_jl,
         "Rye8": color_jl,
-        "Rye13": color_jl,
         "F1634108-A3D7-4EC4-BCE4-5BDA3814067F": color_jl,
         "6C28C3AE-B723-4A25-9548-EA5C274038A1": color_jl,
         "jl": color_jl,
         "jal": color_jl,
+        "Rye13": color_jl,
+        "5F71E0BB-605D-4716-A3E0-96BA06769820": color_jl, // rye13!?
+        "19D88E12-9304-433C-93C5-F63905E34D7A": color_jl, // rye13!?
 
         "Big Mamma": "rgb(176,16,221)",
         "jra": "rgb(176,16,221)",
