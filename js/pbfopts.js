@@ -415,7 +415,7 @@ controller.basicFn = function(properties, zoom, layer) {
         type: "Point",
         stroke: false,
         fill: true,
-        fillColor: "black",
+        fillColor: catColors()[properties.Name] || catColors()[properties.UUID] || "black", // "black",
         fillOpacity: 1,
         radius: 1
     }
