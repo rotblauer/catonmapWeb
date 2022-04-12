@@ -19,6 +19,7 @@ var catColors = (function() {
 
         "RyePhone": color_jl,
         "Rye8": color_jl,
+        "Rye13": color_jl,
         "F1634108-A3D7-4EC4-BCE4-5BDA3814067F": color_jl,
         "6C28C3AE-B723-4A25-9548-EA5C274038A1": color_jl,
         "jl": color_jl,
