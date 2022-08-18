@@ -257,7 +257,7 @@ model.setLastKnown = function(data) {
 
 model.parseCatsFromData = function(data) {
     var out = {};
-    for (k in data) {
+    for (let k in data) {
         if (!data.hasOwnProperty(k)) {
             continue;
         }
