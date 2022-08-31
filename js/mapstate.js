@@ -10,10 +10,10 @@ var mapStateFn = function() {
     var _mapboxLayers = {
         "none": L.tileLayer("", LtileLayerDefaults),
         // "outdoors": L.tileLayer(_mbtilesURL("cjgejdj91001c2snpjtgmt7gj"), LtileLayerDefaults),
-        // mapbox://styles/rotblauer/cl1l095yk000014mwjm3npd15
         "outdoors": L.tileLayer(_mbtilesURL("cl1l095yk000014mwjm3npd15"), LtileLayerDefaults),
         // "offroad": L.tileLayer(_mbtilesURL("cl6z7x8il000b15o8d1ytgp4u"), LtileLayerDefaults),
-        "offroad": L.tileLayer(_mbtilesURL("cl7hx66zg000014o5dxx2zi6j"), LtileLayerDefaults),
+        "offroad": L.tileLayer(_mbtilesURL("cl7hx66zg000014o5dxx2zi6j"), LtileLayerDefaults), // <-- white road ways, light green ped ways
+        "bubble": L.tileLayer(_mbtilesURL("cl7i1brhp001l15pk7hint1gj"), LtileLayerDefaults), // <-- good color scheme for elevation/contours
         "terrain": L.tileLayer(_mbtilesURL("cjok2q3ao6gfx2rlmioipy394"), LtileLayerDefaults),
         "satellite": L.tileLayer(_mbtilesURL("cjgel0gt300072rmc2s34f2ky"), LtileLayerDefaults),
         "light": L.tileLayer(_mbtilesURL("ciy7ijqu3001a2rocq88pi8s4"), LtileLayerDefaults),
