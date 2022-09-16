@@ -632,7 +632,7 @@ var mapStateFn = function() {
         // HACK: Override
 
         tend = moment().unix();
-        tstart = moment().subtract(3, 'day').startOf('day').unix();
+        tstart = moment().subtract(5, 'day').startOf('day').unix();
 
         console.log(tstart, tend);
 
