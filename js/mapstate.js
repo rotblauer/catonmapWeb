@@ -99,10 +99,15 @@ var mapStateFn = function() {
         "snaps": controller.snapsClusterGroup,
         "laps": L.geoJSON(null, {
             style: {
-                'color': 'darkgreen',
-                'weight': 2,
-                'dashArray': '8 12', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
-                'opacity': 1.00,
+                'color': '#b40021',
+
+                'dashArray': '0', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+                'weight': 4,
+                'opacity': 0.62,
+
+                // 'dashArray': '4 4', // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray
+                // 'weight': 2,
+                // 'opacity': 1.00,
             },
             onEachFeature: function(feature, layer) {
                 layer.myTag = 'geojsonTag';
