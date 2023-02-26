@@ -11,6 +11,8 @@ var catColors = (function() {
         "iha": color_ia,
         "3582fb4e0c347601": color_ia,
         "sophia-moto-fdb7": color_ia,
+        "63b2bab96ca49573": color_ia,
+        "tonga-moto-63b2": color_ia,
 
         "edacfea41ee0d0fa": "rgb(255, 109, 238)", // pink
         "222d07fbf9c6ff9b": "rgb(255, 109, 238)", // pink
