@@ -1,10 +1,10 @@
-var mapStateFn = function() {
+var mapStateFn = function () {
     var _map = null;
     var _layerControl = null;
     var lapMaps = [];
     var _currentTileLayer = null;
     var _mapboxToken = "pk.eyJ1Ijoicm90YmxhdWVyIiwiYSI6ImNpeTdidjZxajAwMzEycW1waGdrNmh3NmsifQ.OpXHPqEHK2sTbQ4-pmhAMQ";
-    var _mbtilesURL = function(id) {
+    var _mbtilesURL = function (id) {
         return "https://api.mapbox.com/styles/v1/rotblauer/" + id + "/tiles/256/{z}/{x}/{y}?access_token=" + _mapboxToken;
     };
     var _mapboxLayers = {
@@ -28,7 +28,7 @@ var mapStateFn = function() {
 
     // add a layer, update a layer, or use layer=null to delete a layer
     // FOR OVERLAY LAYERS
-    var setLayer = function(name, layer) {
+    var setLayer = function (name, layer) {
         if (_map === null) {
             return;
         }
@@ -55,7 +55,7 @@ var mapStateFn = function() {
 
     var _currentPBFLayer = null;
     var _currentPBFLayerOpt = null; // activity, recency
-    var _pbfURL = function(id) {
+    var _pbfURL = function (id) {
         // tileHost = "/home/ia/tdata/ttiles";
         // return tileHost + "/services/db/tiles/{z}/{x}/{y}.pbf" ;// .pbf";
 
@@ -75,7 +75,7 @@ var mapStateFn = function() {
         "basic": controller.baseTilesLayerOptsF("basic"),
     };
 
-    var _pbfOpts = function(optName) {
+    var _pbfOpts = function (optName) {
         if (_pbfLayerOpts.hasOwnProperty(optName)) {
             return _pbfLayerOpts[optName];
         }
@@ -84,16 +84,76 @@ var mapStateFn = function() {
 
     var _overlays = {
         "basic": L.layerGroup([
-            L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("basic")),
-            L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("basic")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2012"), _pbfOpts("basic")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2013"), _pbfOpts("basic")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2014"), _pbfOpts("basic")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2015"), _pbfOpts("basic")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2016"), _pbfOpts("basic")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2017"), _pbfOpts("basic")),
+            // L.vectorGrid.protobuf(_pbfURL("2019"), {
+            //     rendererFactory: L.canvas.tile,
+            //     // vectorTileLayerStyles: {},
+            //     getFeatureId: function (f) {
+            //         return f.properties.name + f.properties.Time;
+            //     },
+            //     interactive: true
+            //     // , onEachFeature: oef
+            //     // onclick: function(a, b, c) {
+            //     //     cd("click pt", a, b, c);
+            //     // }
+            //     // onEachFeature: onEachFeature
+            //     // onEachFeature: function(feature, layer) {
+            //     //     if (feature.properties) {
+            //     //         layer.bindPopup(" " +feature.properties.name + " "  + "<br>Affected Bridges : " + feature.properties.Br_Affected + " ");
+            //     //     }
+            //     // }
+            //     // click: function(a,b,c) {
+            //     //     cd("abc", a, b,c);
+            //     // }
+            // }),
+            L.vectorGrid.protobuf(_pbfURL("2017"), _pbfOpts("basic")),
+            L.vectorGrid.protobuf(_pbfURL("2018"), _pbfOpts("basic")),
+            L.vectorGrid.protobuf(_pbfURL("2019"), _pbfOpts("basic")),
+            L.vectorGrid.protobuf(_pbfURL("2020"), _pbfOpts("basic")),
+            L.vectorGrid.protobuf(_pbfURL("2021"), _pbfOpts("basic")),
+            L.vectorGrid.protobuf(_pbfURL("2022"), _pbfOpts("basic")),
+
+            // L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("basic")),
+            // L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("basic")),
         ]),
         "activity": L.layerGroup([
-            L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("activity")),
-            L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("activity")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2012"), _pbfOpts("activity")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2013"), _pbfOpts("activity")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2014"), _pbfOpts("activity")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2015"), _pbfOpts("activity")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2016"), _pbfOpts("activity")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2017"), _pbfOpts("activity")),
+            L.vectorGrid.protobuf(_pbfURL("2017"), _pbfOpts("activity")),
+            L.vectorGrid.protobuf(_pbfURL("2018"), _pbfOpts("activity")),
+            L.vectorGrid.protobuf(_pbfURL("2019"), _pbfOpts("activity")),
+            L.vectorGrid.protobuf(_pbfURL("2020"), _pbfOpts("activity")),
+            L.vectorGrid.protobuf(_pbfURL("2021"), _pbfOpts("activity")),
+            L.vectorGrid.protobuf(_pbfURL("2022"), _pbfOpts("activity")),
+
+            // L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("activity")),
+            // L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("activity")),
         ]),
         "density": L.layerGroup([
-            L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("density")),
-            L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("density")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2012"), _pbfOpts("density")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2013"), _pbfOpts("density")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2014"), _pbfOpts("density")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2015"), _pbfOpts("density")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2016"), _pbfOpts("density")),
+            // L.vectorGrid.protobuf(_pbfURL("master-2017"), _pbfOpts("density")),
+            L.vectorGrid.protobuf(_pbfURL("2017"), _pbfOpts("density")),
+            L.vectorGrid.protobuf(_pbfURL("2018"), _pbfOpts("density")),
+            L.vectorGrid.protobuf(_pbfURL("2019"), _pbfOpts("density")),
+            L.vectorGrid.protobuf(_pbfURL("2020"), _pbfOpts("density")),
+            L.vectorGrid.protobuf(_pbfURL("2021"), _pbfOpts("density")),
+            L.vectorGrid.protobuf(_pbfURL("2022"), _pbfOpts("density")),
+
+            // L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("density")),
+            // L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("density")),
         ]),
         "cats": L.layerGroup(),
         "snaps": controller.snapsClusterGroup,
@@ -109,7 +169,7 @@ var mapStateFn = function() {
                 // 'weight': 2,
                 // 'opacity': 1.00,
             },
-            onEachFeature: function(feature, layer) {
+            onEachFeature: function (feature, layer) {
                 layer.myTag = 'geojsonTag';
                 feature.properties.id = feature.properties.Name + feature.properties.Start;
             }
@@ -156,29 +216,7 @@ var mapStateFn = function() {
         "plats": new L.FeatureGroup()
     };
 
-    var lays = [];
-    var _pbfLayers = function(n) {
-        if (Object.keys(_pbfOpts(n)).length === 0) {
-            ce("invalid pbf opt", n, _pbfLayerOpts);
-            n = "activity";
-        }
-        return {
-            "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n)),
-            // "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n)),
-            "master": L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts(n))
-
-            // "master": L.vectorGrid.protobuf(_pbfURL("finalfinal"), _pbfOpts(n))
-
-            // "edge": L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts(n))
-            // , "devop": L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts(n))
-
-            // .on("click", function(e) {
-            //     console.log("event", e);
-            // })
-        };
-    };
-
-    var setPBFOpt = function(name) {
+    var setPBFOpt = function (name) {
         view.sps = 0;
 
         const layer = _overlays[name];
@@ -230,7 +268,7 @@ var mapStateFn = function() {
         // setLinkValue();
     };
 
-    var _mapOnMoveEnd = function() {
+    var _mapOnMoveEnd = function () {
         var b = _map.getCenter();
         model.setState("lat", b.lat.toFixed(5)).setState("lng", b.lng.toFixed(5));
         // model.setLocalStore("y", b.lat);
@@ -258,11 +296,11 @@ var mapStateFn = function() {
         refreshLapMaps();
     }
 
-    var _zoomCSS = function() {
+    var _zoomCSS = function () {
         const z = _map.getZoom();
         const container = _map.getContainer();
 
-        for (let i = 0; i<=20; i++) {
+        for (let i = 0; i <= 20; i++) {
             container.classList.remove(`z${String(i)}`);
         }
         if (z) {
@@ -270,7 +308,7 @@ var mapStateFn = function() {
         }
     }
 
-    var _mapOnZoomEnd = function() {
+    var _mapOnZoomEnd = function () {
         // model.setLocalStore("z", _map.getZoom());
 
         const z = _map.getZoom();
@@ -283,14 +321,14 @@ var mapStateFn = function() {
 
         // setLinkValue();
     };
-    var _mapOnBaselayerChange = function(ev) {
+    var _mapOnBaselayerChange = function (ev) {
         // model.setLocalStore("t", ev.name);
         ev.layer.bringToBack();
         model.setState("baseLayer", ev.name);
         // setLinkValue();
     };
 
-    var _mapOnOverlayAdd = function(ev) {
+    var _mapOnOverlayAdd = function (ev) {
         console.log('map onOverlayAdd', ev);
         model.setState(`overlay_${ev.name}`, true);
         if (ev.name === "activity") {
@@ -298,7 +336,7 @@ var mapStateFn = function() {
         }
     };
 
-    var _mapOnOverlayRemove = function(ev) {
+    var _mapOnOverlayRemove = function (ev) {
         console.log('map onOverlayRemove', ev);
         model.setState(`overlay_${ev.name}`, false);
         if (ev.name === "activity") {
@@ -306,7 +344,7 @@ var mapStateFn = function() {
         }
     };
 
-    var _mapOnLoad = function() {
+    var _mapOnLoad = function () {
         // model.setLocalStore("y", b.lat);
         // model.setLocalStore("x", b.lng);
         // model.setLocalStore("z", _map.getZoom());
@@ -316,62 +354,61 @@ var mapStateFn = function() {
         view.$map.focus();
         // _zoomCSS();
     };
-    var _mapOnClick = function() {};
-
-    var refreshLapMaps = function() {
-      for (let i = 0; i < lapMaps.length; i++) {
-          const lm = lapMaps[i];
-          // console.log('invalidating map size', lm);
-
-          // L.geoJSON(lm.data, {
-          //     style: {
-          //         'color': activityColorLegend[lm.data.properties.Activity],
-          //         'weight': 2,
-          //     },
-          // }).addTo(lm.map);
-
-          // lm.map.fitBounds(lm.bounds);
-
-          const myLayer = lm.layer || L.geoJSON(lm.data, {
-              style: {
-                  'color': activityColorLegend[lm.data.properties.Activity],
-                  'weight': 2,
-              },
-          });
-
-          if (!lm.map.hasLayer(myLayer)) {
-              lapMaps[i].layer = myLayer;
-              lapMaps[i].layer.addTo(lm.map);
-          }
-
-
-          lm.map.invalidateSize();
-          lm.map.fitBounds(lm.bounds);
-          // if (!lm.map.hasLayer(myLayer)) {
-
-
-
-
-          // }
-
-          // const $mapContainer = $(lm.map.getContainer());
-          // if ($mapContainer.intersectsViewport()) lm.map.invalidateSize();
-          // else lm.map.invalidateSize();
-          // else setTimeout(() => {
-          //     lm.map.invalidateSize();
-          // }, 500);
-
-          // lm.map.layers.forEach((layer) => {
-          //     layer.remove();
-          // })
-      }
+    var _mapOnClick = function () {
     };
 
-    var geoCoords2LatLng = function(coordsArray) {
+    var refreshLapMaps = function () {
+        for (let i = 0; i < lapMaps.length; i++) {
+            const lm = lapMaps[i];
+            // console.log('invalidating map size', lm);
+
+            // L.geoJSON(lm.data, {
+            //     style: {
+            //         'color': activityColorLegend[lm.data.properties.Activity],
+            //         'weight': 2,
+            //     },
+            // }).addTo(lm.map);
+
+            // lm.map.fitBounds(lm.bounds);
+
+            const myLayer = lm.layer || L.geoJSON(lm.data, {
+                style: {
+                    'color': activityColorLegend[lm.data.properties.Activity],
+                    'weight': 2,
+                },
+            });
+
+            if (!lm.map.hasLayer(myLayer)) {
+                lapMaps[i].layer = myLayer;
+                lapMaps[i].layer.addTo(lm.map);
+            }
+
+
+            lm.map.invalidateSize();
+            lm.map.fitBounds(lm.bounds);
+            // if (!lm.map.hasLayer(myLayer)) {
+
+
+            // }
+
+            // const $mapContainer = $(lm.map.getContainer());
+            // if ($mapContainer.intersectsViewport()) lm.map.invalidateSize();
+            // else lm.map.invalidateSize();
+            // else setTimeout(() => {
+            //     lm.map.invalidateSize();
+            // }, 500);
+
+            // lm.map.layers.forEach((layer) => {
+            //     layer.remove();
+            // })
+        }
+    };
+
+    var geoCoords2LatLng = function (coordsArray) {
         return L.latLng({lat: coordsArray[1], lng: coordsArray[0]});
     }
 
-    var addMiniLeaflet = function(feature) {
+    var addMiniLeaflet = function (feature) {
         var swLat;
         var swLng;
         var neLat;
@@ -435,7 +472,7 @@ var mapStateFn = function() {
             // center on the linestring.
             // if falsey, the main map will only be adjusted to center on the linestring
             // if the linestring intersects with the current view.
-            const onMiniMapClick = function() {
+            const onMiniMapClick = function () {
 
                 const $myLapCard = $(`.lap-card#lap-card-${feature.properties.UUID}-${feature.properties.Start}`);
                 const $myLapCardAlreadyFocused = $myLapCard.hasClass('focused');
@@ -526,7 +563,7 @@ var mapStateFn = function() {
         // })
     }
 
-    var handleGeoJSONLaps = function(featureCollection) {
+    var handleGeoJSONLaps = function (featureCollection) {
         const $lapsContainer = $('#laps-display')
         $lapsContainer.html("")
         const features = featureCollection.features;
@@ -612,11 +649,11 @@ var mapStateFn = function() {
 </div>        
 `);
 
-//             const $tableRow = $(`<tr>
-//         <td><span style='color: ${catColors()[feature.properties.UUID]}'>${feature.properties.Name}</span></td>
-//         <td><span class='text-muted'>${minimalTimeDisplay(moment(feature.properties.Start))} ago</span></td>
-// </tr>`);
-//             $lapsTable.append($tableRow)
+            //             const $tableRow = $(`<tr>
+            //         <td><span style='color: ${catColors()[feature.properties.UUID]}'>${feature.properties.Name}</span></td>
+            //         <td><span class='text-muted'>${minimalTimeDisplay(moment(feature.properties.Start))} ago</span></td>
+            // </tr>`);
+            //             $lapsTable.append($tableRow)
 
             $lapsContainer.append($card);
             addMiniLeaflet(feature);
@@ -629,7 +666,7 @@ var mapStateFn = function() {
      * @param {number} tstart is start time in seconds
      * @param {number} tend is end time in seconds
      */
-    var fetchLinestrings = function() {
+    var fetchLinestrings = function () {
 
         let tstart = model.getState().linestringStart
         let tend = model.getState().linestringEnd
@@ -695,23 +732,23 @@ var mapStateFn = function() {
             })
     }
 
-    var initMap = function() {
+    var initMap = function () {
         var s = model.getState();
 
         cd('map init state', s);
 
         _map = L.map('map', {
-                keyboard: true,
-                keyboardPanDelta: 140,
-                minZoom: 3,
-                maxZoom: 18,
-                center: [+s.lat, +s.lng], // [32, -80],
-                zoom: +s.zoom,
-                noWrap: true,
-                layers: [_mapboxLayers[s.baseLayer]],
-                    // preferCanvas: true
-                pmIgnore: false,
-            });
+            keyboard: true,
+            keyboardPanDelta: 140,
+            minZoom: 3,
+            maxZoom: 18,
+            center: [+s.lat, +s.lng], // [32, -80],
+            zoom: +s.zoom,
+            noWrap: true,
+            layers: [_mapboxLayers[s.baseLayer]],
+            // preferCanvas: true
+            pmIgnore: false,
+        });
 
         _map
             .on("moveend", _mapOnMoveEnd)
@@ -836,10 +873,10 @@ var mapStateFn = function() {
 
         _layerControl = L.control
             .layers(_mapboxLayers, _overlays,
-            {
-                position: "topleft",
-                collapsed: isSmallScreen(),
-            })
+                {
+                    position: "topleft",
+                    collapsed: isSmallScreen(),
+                })
             .addTo(_map);
 
         // L.control.zoom({position: "bottomleft"}).addTo(_map);
@@ -898,7 +935,7 @@ var mapStateFn = function() {
                         for (let featureCollection of data) {
                             let featureCollectionLayerOptions = defaultProperties;
                             if (!!featureCollection.properties?.layerOptions) {
-                                   featureCollectionLayerOptions = featureCollection.properties.layerOptions;
+                                featureCollectionLayerOptions = featureCollection.properties.layerOptions;
                             }
                             // _overlays["plats"].addData(data);
                             const newFeatureCollectionLayer = L.geoJSON(null, {
@@ -916,7 +953,7 @@ var mapStateFn = function() {
                                         console.log('binding popup', l);
                                     }
                                 },
-                                pointToLayer: function(feature, latlng) {
+                                pointToLayer: function (feature, latlng) {
                                     if (feature.geometry.type !== "Point") return;
 
                                     if (feature.properties?.marker) {
@@ -966,24 +1003,24 @@ var mapStateFn = function() {
 
     };
 
-    var getLayerControl = function() {
+    var getLayerControl = function () {
         return _layerControl;
     }
 
-    var getMap = function() {
+    var getMap = function () {
         return _map;
     };
 
-    var goUpdateEdge = function() {
+    var goUpdateEdge = function () {
         setPBFOpt("");
         setTimeout(goUpdateEdge, 60 * 1000);
     };
 
-    var getLapMaps = function() {
+    var getLapMaps = function () {
         return lapMaps;
     }
 
-    var getOverlays = function() {
+    var getOverlays = function () {
         return _overlays;
     }
 

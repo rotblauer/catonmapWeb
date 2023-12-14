@@ -22,42 +22,48 @@ var activityColorLegend = {
 var nnn = 0;
 var ps = null;
 controller.activityFn = function(props, z, layer) {
-    if (nnn === 0) {
-        cd("props", props);
-        nnn++;
-        ps = props;
+
+    const pointdefault = {
+        type: "Point",
+        stroke: false,
+        fill: true,
+        fillColor: "black",
+        fillOpacity: 1,
+        radius: 1
     }
+
+    // if (nnn === 0) {
+    //     cd("props", props);
+    //     nnn++;
+    //     ps = props;
+    // }
     // if (!props.Accuracy || props.Accuracy !== 5) {
     //     return {};
     // }
-    if (!controller.settingsFilter(props, z, layer)) {
-        return {};
+    // if (!controller.settingsFilter(props, z, layer)) {
+    //     return {};
+    // }
+    // view.sps++;
+    if (typeof props.Activity === "undefined") {
+        return pointdefault;
     }
-    view.sps++;
-    var c = activityColorLegend[props["Activity"]];
+    var color = activityColorLegend[props["Activity"]];
     if (props.Speed > 80 || props.Elevation > 4000) {
-        c = activityColorLegend["Fly"];
+        color = activityColorLegend["Fly"];
     }
     var pp = props.point_count ^ (1 / 2);
-    if (c === "lightgray" || typeof c === "undefined") {
-        return {
-            stroke: false,
-            fill: true,
-            fillColor: "black",
-            // radius: pp > 1 ? pp : 1,
-            radius: 1.5,
-            type: "Point"
-        };
+    if (color === pointdefault.fillColor || typeof color === "undefined") {
+        return pointdefault;
         //     return {};
     }
     return {
-        stroke: false,
-        fill: true,
-        fillColor: c || "lightgray",
-        fillOpacity: c !== "lightgray" ? 0.9 : 0.1,
-        radius: 1.5,
+        stroke: pointdefault.stroke,
+        fill: pointdefault.fill,
+        fillColor: color || pointdefault.fillColor,
+        fillOpacity: color !== pointdefault.fillColor ? 0.9 : 0.8,
+        radius: pointdefault.radius,
         // radius: pp > 1 ? pp : 1,
-        type: "Point"
+        type: pointdefault.type
     };
 };
 
@@ -410,7 +416,12 @@ controller.densityFn = function(properties, zoom, layer) {
     return out;
 };
 
+let nnnn = 0;
 controller.basicFn = function(properties, zoom, layer) {
+    if (nnnn < 3) {
+        cd("basic props", properties);
+        nnnn++;
+    }
     return {
         type: "Point",
         stroke: false,
@@ -432,20 +443,161 @@ var vectorTileLayerStyles = {
     },
     "activity": {
         'catTrack': controller.activityFn,
-        'catTrackEdge': controller.activityFn
+        'catTrackEdge': controller.activityFn,
+        "pickme": controller.activityFn,
+
+        // 2017
+        "2017-01.json.gz-layer": controller.activityFn,
+        "2017-02.json.gz-layer": controller.activityFn,
+        "2017-03.json.gz-layer": controller.activityFn,
+        "2017-04.json.gz-layer": controller.activityFn,
+        "2017-05.json.gz-layer": controller.activityFn,
+        "2017-06.json.gz-layer": controller.activityFn,
+        "2017-07.json.gz-layer": controller.activityFn,
+        "2017-08.json.gz-layer": controller.activityFn,
+        "2017-09.json.gz-layer": controller.activityFn,
+        "2017-10.json.gz-layer": controller.activityFn,
+        "2017-11.json.gz-layer": controller.activityFn,
+        "2017-12.json.gz-layer": controller.activityFn,
+        // 2018
+        "2018-01.json.gz-layer": controller.activityFn,
+        "2018-02.json.gz-layer": controller.activityFn,
+        "2018-03.json.gz-layer": controller.activityFn,
+        "2018-04.json.gz-layer": controller.activityFn,
+        "2018-05.json.gz-layer": controller.activityFn,
+        "2018-06.json.gz-layer": controller.activityFn,
+        "2018-07.json.gz-layer": controller.activityFn,
+        "2018-08.json.gz-layer": controller.activityFn,
+        "2018-09.json.gz-layer": controller.activityFn,
+        "2018-10.json.gz-layer": controller.activityFn,
+        "2018-11.json.gz-layer": controller.activityFn,
+        "2018-12.json.gz-layer": controller.activityFn,
+        // 2019
+        "2019-01.json.gz-layer": controller.activityFn,
+        "2019-02.json.gz-layer": controller.activityFn,
+        "2019-03.json.gz-layer": controller.activityFn,
+        "2019-04.json.gz-layer": controller.activityFn,
+        "2019-05.json.gz-layer": controller.activityFn,
+        "2019-06.json.gz-layer": controller.activityFn,
+        "2019-07.json.gz-layer": controller.activityFn,
+        "2019-08.json.gz-layer": controller.activityFn,
+        "2019-09.json.gz-layer": controller.activityFn,
+        "2019-10.json.gz-layer": controller.activityFn,
+        "2019-11.json.gz-layer": controller.activityFn,
+        "2019-12.json.gz-layer": controller.activityFn,
+        // 2020
+        "2020-01.json.gz-layer": controller.activityFn,
+        "2020-02.json.gz-layer": controller.activityFn,
+        "2020-03.json.gz-layer": controller.activityFn,
+        "2020-04.json.gz-layer": controller.activityFn,
+        "2020-05.json.gz-layer": controller.activityFn,
+        "2020-06.json.gz-layer": controller.activityFn,
+        "2020-07.json.gz-layer": controller.activityFn,
+        "2020-08.json.gz-layer": controller.activityFn,
+        "2020-09.json.gz-layer": controller.activityFn,
+        "2020-10.json.gz-layer": controller.activityFn,
+        "2020-11.json.gz-layer": controller.activityFn,
+        "2020-12.json.gz-layer": controller.activityFn,
+        // 2021
+        "2021-01.json.gz-layer": controller.activityFn,
+        "2021-02.json.gz-layer": controller.activityFn,
+        "2021-03.json.gz-layer": controller.activityFn,
+        "2021-04.json.gz-layer": controller.activityFn,
+        "2021-05.json.gz-layer": controller.activityFn,
+        "2021-06.json.gz-layer": controller.activityFn,
+        "2021-07.json.gz-layer": controller.activityFn,
+        "2021-08.json.gz-layer": controller.activityFn,
+        "2021-09.json.gz-layer": controller.activityFn,
+        "2021-10.json.gz-layer": controller.activityFn,
+        "2021-11.json.gz-layer": controller.activityFn,
+        "2021-12.json.gz-layer": controller.activityFn,
     },
     "density": {
         'catTrack': controller.densityFn,
         'catTrackEdge': controller.densityFn
     },
+    // "basic": {
+    //     "catTrack": controller.basicFn,
+    //     "catTrackEdge": controller.basicFn,
+    // },
     "basic": {
-        "catTrack": controller.basicFn,
-        "catTrackEdge": controller.basicFn,
+        "pickme": controller.basicFn,
+        // 2017
+        "2017-01.json.gz-layer": controller.basicFn,
+        "2017-02.json.gz-layer": controller.basicFn,
+        "2017-03.json.gz-layer": controller.basicFn,
+        "2017-04.json.gz-layer": controller.basicFn,
+        "2017-05.json.gz-layer": controller.basicFn,
+        "2017-06.json.gz-layer": controller.basicFn,
+        "2017-07.json.gz-layer": controller.basicFn,
+        "2017-08.json.gz-layer": controller.basicFn,
+        "2017-09.json.gz-layer": controller.basicFn,
+        "2017-10.json.gz-layer": controller.basicFn,
+        "2017-11.json.gz-layer": controller.basicFn,
+        "2017-12.json.gz-layer": controller.basicFn,
+        // 2018
+        "2018-01.json.gz-layer": controller.basicFn,
+        "2018-02.json.gz-layer": controller.basicFn,
+        "2018-03.json.gz-layer": controller.basicFn,
+        "2018-04.json.gz-layer": controller.basicFn,
+        "2018-05.json.gz-layer": controller.basicFn,
+        "2018-06.json.gz-layer": controller.basicFn,
+        "2018-07.json.gz-layer": controller.basicFn,
+        "2018-08.json.gz-layer": controller.basicFn,
+        "2018-09.json.gz-layer": controller.basicFn,
+        "2018-10.json.gz-layer": controller.basicFn,
+        "2018-11.json.gz-layer": controller.basicFn,
+        "2018-12.json.gz-layer": controller.basicFn,
+        // 2019
+        "2019-01.json.gz-layer": controller.basicFn,
+        "2019-02.json.gz-layer": controller.basicFn,
+        "2019-03.json.gz-layer": controller.basicFn,
+        "2019-04.json.gz-layer": controller.basicFn,
+        "2019-05.json.gz-layer": controller.basicFn,
+        "2019-06.json.gz-layer": controller.basicFn,
+        "2019-07.json.gz-layer": controller.basicFn,
+        "2019-08.json.gz-layer": controller.basicFn,
+        "2019-09.json.gz-layer": controller.basicFn,
+        "2019-10.json.gz-layer": controller.basicFn,
+        "2019-11.json.gz-layer": controller.basicFn,
+        "2019-12.json.gz-layer": controller.basicFn,
+        // 2020
+        "2020-01.json.gz-layer": controller.basicFn,
+        "2020-02.json.gz-layer": controller.basicFn,
+        "2020-03.json.gz-layer": controller.basicFn,
+        "2020-04.json.gz-layer": controller.basicFn,
+        "2020-05.json.gz-layer": controller.basicFn,
+        "2020-06.json.gz-layer": controller.basicFn,
+        "2020-07.json.gz-layer": controller.basicFn,
+        "2020-08.json.gz-layer": controller.basicFn,
+        "2020-09.json.gz-layer": controller.basicFn,
+        "2020-10.json.gz-layer": controller.basicFn,
+        "2020-11.json.gz-layer": controller.basicFn,
+        "2020-12.json.gz-layer": controller.basicFn,
+        // 2021
+        "2021-01.json.gz-layer": controller.basicFn,
+        "2021-02.json.gz-layer": controller.basicFn,
+        "2021-03.json.gz-layer": controller.basicFn,
+        "2021-04.json.gz-layer": controller.basicFn,
+        "2021-05.json.gz-layer": controller.basicFn,
+        "2021-06.json.gz-layer": controller.basicFn,
+        "2021-07.json.gz-layer": controller.basicFn,
+        "2021-08.json.gz-layer": controller.basicFn,
+        "2021-09.json.gz-layer": controller.basicFn,
+        "2021-10.json.gz-layer": controller.basicFn,
+        "2021-11.json.gz-layer": controller.basicFn,
+        "2021-12.json.gz-layer": controller.basicFn,
+
+
+
+
+        // "catTrackEdge": controller.basicFn,
     }
 };
 
 controller.baseTilesLayerOptsF = function(name) {
     var b = Object.create(baseTileLayerOpts);
+    if (typeof vectorTileLayerStyles[name] === "undefined") ce("no vectorTileLayerStyles for " + name);
     b["vectorTileLayerStyles"] = vectorTileLayerStyles[name];
     return b;
 };
