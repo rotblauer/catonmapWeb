@@ -82,6 +82,7 @@ var mapStateFn = function () {
         return {};
     };
 
+    // https://leaflet.github.io/Leaflet.VectorGrid/vectorgrid-api-docs.html
     var _overlays = {
         "basic": L.layerGroup([
             // L.vectorGrid.protobuf(_pbfURL("master-2012"), _pbfOpts("basic")),

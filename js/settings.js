@@ -50,12 +50,14 @@ var tileHost = "http://127.0.0.1:8002";
 // }
 
 var baseTileLayerOpts = {
-    rendererFactory: L.canvas.tile,
+    // rendererFactory: L.svg.tile, // slower, but smoother (antialiasing)
+    rendererFactory: L.canvas.tile, // faster, but grainier (no antialiasing)
     // vectorTileLayerStyles: {},
     getFeatureId: function (f) {
         return f.properties.name + f.properties.Time;
     },
-    interactive: true
+    // interactive: true
+    interactive: false,
     // , onEachFeature: oef
     // onclick: function(a, b, c) {
     //     cd("click pt", a, b, c);

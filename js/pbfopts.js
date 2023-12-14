@@ -521,6 +521,8 @@ var vectorTileLayerStyles = {
     //     "catTrackEdge": controller.basicFn,
     // },
     "basic": {
+            "catTrack": controller.basicFn,
+            "catTrackEdge": controller.basicFn,
         "pickme": controller.basicFn,
         // 2017
         "2017-01.json.gz-layer": controller.basicFn,
@@ -596,6 +598,10 @@ var vectorTileLayerStyles = {
 };
 
 controller.baseTilesLayerOptsF = function(name) {
+    // var b = Object.create(baseTileLayerOpts);
+    // b["vectorTileLayerStyles"] = vectorTileLayerStyles["pickme"];
+    // return b;
+
     var b = Object.create(baseTileLayerOpts);
     if (typeof vectorTileLayerStyles[name] === "undefined") ce("no vectorTileLayerStyles for " + name);
     b["vectorTileLayerStyles"] = vectorTileLayerStyles[name];
