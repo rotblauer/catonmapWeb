@@ -1,5 +1,5 @@
-var color_ia = "rgb(255,0,0)"; //"rgb(254,65,26)"; // "rgb(235,41,0)";
-var color_jl = "rgb(0,0,255)"; // "rgb(0,162,235)";
+var color_ia = "rgba(255,0,0)"; //"rgb(254,65,26)"; // "rgb(235,41,0)";
+var color_jl = "rgba(0,0,255)"; // "rgb(0,162,235)";
 var catColors = (function() {
     return {
         "Big Papa": color_ia,

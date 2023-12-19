@@ -21,11 +21,13 @@ var activityColorLegend = {
 
 var nnn = 0;
 var ps = null;
-controller.activityFn = function(props, z, layer) {
+controller.activityFn = function (props, z, layer) {
 
     const pointdefault = {
         type: "Point",
-        stroke: false,
+        stroke: true,
+        weight: 1,
+        color: "black",
         fill: true,
         fillColor: "black",
         fillOpacity: 1,
@@ -58,9 +60,11 @@ controller.activityFn = function(props, z, layer) {
     }
     return {
         stroke: pointdefault.stroke,
+        weight: pointdefault.weight,
+        color: color || pointdefault.color,
         fill: pointdefault.fill,
         fillColor: color || pointdefault.fillColor,
-        fillOpacity: color !== pointdefault.fillColor ? 0.9 : 0.8,
+        fillOpacity: 1, // color !== pointdefault.fillColor ? 0.9 : 0.8,
         radius: pointdefault.radius,
         // radius: pp > 1 ? pp : 1,
         type: pointdefault.type
@@ -74,7 +78,7 @@ var oneDay = 1000 * 60 * 60 * 24;
 
 // var maxDateDiff = now - oneWeek; // diff in millis
 
-var recencyScale = function(props, color) {
+var recencyScale = function (props, color) {
     var dateString = props.Time;
     var density = props.tippecanoe_feature_density;
     if (density === 0) {
@@ -130,7 +134,7 @@ function invert(rgb) {
 }
 
 var n = 0;
-controller.recencyFn = function(properties, zoom, layer) {
+controller.recencyFn = function (properties, zoom, layer) {
     if (!controller.settingsFilter(properties, zoom, layer)) {
         return {};
     }
@@ -149,7 +153,7 @@ controller.recencyFn = function(properties, zoom, layer) {
     return out;
 };
 
-controller.speedFn = function(properties, zoom, layer) {
+controller.speedFn = function (properties, zoom, layer) {
     if (!controller.settingsFilter(properties, zoom, layer)) {
         return {};
     }
@@ -253,7 +257,7 @@ var minTFD = 0,
     maxTFD = 0, // 62,
     rangeTFD = maxTFD - minTFD;
 
-controller.densityFn = function(properties, zoom, layer) {
+controller.densityFn = function (properties, zoom, layer) {
 
     const mapZoom = view.mapState.getMap().getZoom();
     maxPC = 100 * Math.sqrt(mapZoom)
@@ -332,14 +336,14 @@ controller.densityFn = function(properties, zoom, layer) {
         return {};
     }
 
-    var fillColor = function(p) {
+    var fillColor = function (p) {
         return percentToRGB((p) * 100);
     };
-    var fillOpacity = function(p) {
-        var o = 1- (1/p.toFixed(2));
+    var fillOpacity = function (p) {
+        var o = 1 - (1 / p.toFixed(2));
         return o > 0.2 ? o : 0.2;
     };
-    var radius = function(p) {
+    var radius = function (p) {
         p = (p > 1 ? 1 : p);
         var r = (maxRadius * p);
         return r > 1 ? r : 1;
@@ -417,20 +421,47 @@ controller.densityFn = function(properties, zoom, layer) {
 };
 
 let nnnn = 0;
-controller.basicFn = function(properties, zoom, layer) {
+controller.basicFn = function (properties, zoom, layer) {
     if (nnnn < 3) {
         cd("basic props", properties);
         nnnn++;
     }
     return {
         type: "Point",
-        stroke: false,
+        stroke: true,
+        color: catColors()[properties.Name] || catColors()[properties.UUID] || "black", // "black",
+        weight: 0.5,
+
         fill: true,
         fillColor: catColors()[properties.Name] || catColors()[properties.UUID] || "black", // "black",
-        fillOpacity: 1,
-        radius: 1
+        fillOpacity: 0.5,
+
+        radius: 1,
     }
 };
+
+controller.basicFnForCat = function (color) {
+    return function (properties, zoom, layer) {
+
+        // hide the big outliers
+        if (properties.Accuracy > 100) {
+            return {};
+        }
+        return {
+            type: "Point",
+            stroke: true,
+            color: color,
+            weight: 0.3,
+
+            fill: true,
+            fillColor: color,
+            fillOpacity: 0.2,
+
+            radius: 1,
+        };
+    };
+}
+
 
 var vectorTileLayerStyles = {
     "speed": {
@@ -446,164 +477,174 @@ var vectorTileLayerStyles = {
         'catTrackEdge': controller.activityFn,
         "pickme": controller.activityFn,
 
-        // 2017
-        "2017-01.json.gz-layer": controller.activityFn,
-        "2017-02.json.gz-layer": controller.activityFn,
-        "2017-03.json.gz-layer": controller.activityFn,
-        "2017-04.json.gz-layer": controller.activityFn,
-        "2017-05.json.gz-layer": controller.activityFn,
-        "2017-06.json.gz-layer": controller.activityFn,
-        "2017-07.json.gz-layer": controller.activityFn,
-        "2017-08.json.gz-layer": controller.activityFn,
-        "2017-09.json.gz-layer": controller.activityFn,
-        "2017-10.json.gz-layer": controller.activityFn,
-        "2017-11.json.gz-layer": controller.activityFn,
-        "2017-12.json.gz-layer": controller.activityFn,
-        // 2018
-        "2018-01.json.gz-layer": controller.activityFn,
-        "2018-02.json.gz-layer": controller.activityFn,
-        "2018-03.json.gz-layer": controller.activityFn,
-        "2018-04.json.gz-layer": controller.activityFn,
-        "2018-05.json.gz-layer": controller.activityFn,
-        "2018-06.json.gz-layer": controller.activityFn,
-        "2018-07.json.gz-layer": controller.activityFn,
-        "2018-08.json.gz-layer": controller.activityFn,
-        "2018-09.json.gz-layer": controller.activityFn,
-        "2018-10.json.gz-layer": controller.activityFn,
-        "2018-11.json.gz-layer": controller.activityFn,
-        "2018-12.json.gz-layer": controller.activityFn,
-        // 2019
-        "2019-01.json.gz-layer": controller.activityFn,
-        "2019-02.json.gz-layer": controller.activityFn,
-        "2019-03.json.gz-layer": controller.activityFn,
-        "2019-04.json.gz-layer": controller.activityFn,
-        "2019-05.json.gz-layer": controller.activityFn,
-        "2019-06.json.gz-layer": controller.activityFn,
-        "2019-07.json.gz-layer": controller.activityFn,
-        "2019-08.json.gz-layer": controller.activityFn,
-        "2019-09.json.gz-layer": controller.activityFn,
-        "2019-10.json.gz-layer": controller.activityFn,
-        "2019-11.json.gz-layer": controller.activityFn,
-        "2019-12.json.gz-layer": controller.activityFn,
-        // 2020
-        "2020-01.json.gz-layer": controller.activityFn,
-        "2020-02.json.gz-layer": controller.activityFn,
-        "2020-03.json.gz-layer": controller.activityFn,
-        "2020-04.json.gz-layer": controller.activityFn,
-        "2020-05.json.gz-layer": controller.activityFn,
-        "2020-06.json.gz-layer": controller.activityFn,
-        "2020-07.json.gz-layer": controller.activityFn,
-        "2020-08.json.gz-layer": controller.activityFn,
-        "2020-09.json.gz-layer": controller.activityFn,
-        "2020-10.json.gz-layer": controller.activityFn,
-        "2020-11.json.gz-layer": controller.activityFn,
-        "2020-12.json.gz-layer": controller.activityFn,
-        // 2021
-        "2021-01.json.gz-layer": controller.activityFn,
-        "2021-02.json.gz-layer": controller.activityFn,
-        "2021-03.json.gz-layer": controller.activityFn,
-        "2021-04.json.gz-layer": controller.activityFn,
-        "2021-05.json.gz-layer": controller.activityFn,
-        "2021-06.json.gz-layer": controller.activityFn,
-        "2021-07.json.gz-layer": controller.activityFn,
-        "2021-08.json.gz-layer": controller.activityFn,
-        "2021-09.json.gz-layer": controller.activityFn,
-        "2021-10.json.gz-layer": controller.activityFn,
-        "2021-11.json.gz-layer": controller.activityFn,
-        "2021-12.json.gz-layer": controller.activityFn,
+        "ia.level-23": controller.activityFn,
+        "rye.level-23": controller.activityFn,
+
+        // // 2017
+        // "2017-01.json.gz-layer": controller.activityFn,
+        // "2017-02.json.gz-layer": controller.activityFn,
+        // "2017-03.json.gz-layer": controller.activityFn,
+        // "2017-04.json.gz-layer": controller.activityFn,
+        // "2017-05.json.gz-layer": controller.activityFn,
+        // "2017-06.json.gz-layer": controller.activityFn,
+        // "2017-07.json.gz-layer": controller.activityFn,
+        // "2017-08.json.gz-layer": controller.activityFn,
+        // "2017-09.json.gz-layer": controller.activityFn,
+        // "2017-10.json.gz-layer": controller.activityFn,
+        // "2017-11.json.gz-layer": controller.activityFn,
+        // "2017-12.json.gz-layer": controller.activityFn,
+        // // 2018
+        // "2018-01.json.gz-layer": controller.activityFn,
+        // "2018-02.json.gz-layer": controller.activityFn,
+        // "2018-03.json.gz-layer": controller.activityFn,
+        // "2018-04.json.gz-layer": controller.activityFn,
+        // "2018-05.json.gz-layer": controller.activityFn,
+        // "2018-06.json.gz-layer": controller.activityFn,
+        // "2018-07.json.gz-layer": controller.activityFn,
+        // "2018-08.json.gz-layer": controller.activityFn,
+        // "2018-09.json.gz-layer": controller.activityFn,
+        // "2018-10.json.gz-layer": controller.activityFn,
+        // "2018-11.json.gz-layer": controller.activityFn,
+        // "2018-12.json.gz-layer": controller.activityFn,
+        // // 2019
+        // "2019-01.json.gz-layer": controller.activityFn,
+        // "2019-02.json.gz-layer": controller.activityFn,
+        // "2019-03.json.gz-layer": controller.activityFn,
+        // "2019-04.json.gz-layer": controller.activityFn,
+        // "2019-05.json.gz-layer": controller.activityFn,
+        // "2019-06.json.gz-layer": controller.activityFn,
+        // "2019-07.json.gz-layer": controller.activityFn,
+        // "2019-08.json.gz-layer": controller.activityFn,
+        // "2019-09.json.gz-layer": controller.activityFn,
+        // "2019-10.json.gz-layer": controller.activityFn,
+        // "2019-11.json.gz-layer": controller.activityFn,
+        // "2019-12.json.gz-layer": controller.activityFn,
+        // // 2020
+        // "2020-01.json.gz-layer": controller.activityFn,
+        // "2020-02.json.gz-layer": controller.activityFn,
+        // "2020-03.json.gz-layer": controller.activityFn,
+        // "2020-04.json.gz-layer": controller.activityFn,
+        // "2020-05.json.gz-layer": controller.activityFn,
+        // "2020-06.json.gz-layer": controller.activityFn,
+        // "2020-07.json.gz-layer": controller.activityFn,
+        // "2020-08.json.gz-layer": controller.activityFn,
+        // "2020-09.json.gz-layer": controller.activityFn,
+        // "2020-10.json.gz-layer": controller.activityFn,
+        // "2020-11.json.gz-layer": controller.activityFn,
+        // "2020-12.json.gz-layer": controller.activityFn,
+        // // 2021
+        // "2021-01.json.gz-layer": controller.activityFn,
+        // "2021-02.json.gz-layer": controller.activityFn,
+        // "2021-03.json.gz-layer": controller.activityFn,
+        // "2021-04.json.gz-layer": controller.activityFn,
+        // "2021-05.json.gz-layer": controller.activityFn,
+        // "2021-06.json.gz-layer": controller.activityFn,
+        // "2021-07.json.gz-layer": controller.activityFn,
+        // "2021-08.json.gz-layer": controller.activityFn,
+        // "2021-09.json.gz-layer": controller.activityFn,
+        // "2021-10.json.gz-layer": controller.activityFn,
+        // "2021-11.json.gz-layer": controller.activityFn,
+        // "2021-12.json.gz-layer": controller.activityFn,
     },
     "density": {
         'catTrack': controller.densityFn,
-        'catTrackEdge': controller.densityFn
+        'catTrackEdge': controller.densityFn,
+        "ia.level-23": controller.densityFn,
+        "rye.level-23": controller.densityFn,
+
     },
     // "basic": {
     //     "catTrack": controller.basicFn,
     //     "catTrackEdge": controller.basicFn,
     // },
     "basic": {
-            "catTrack": controller.basicFn,
-            "catTrackEdge": controller.basicFn,
+        "catTrack": controller.basicFn,
+        "catTrackEdge": controller.basicFn,
         "pickme": controller.basicFn,
-        // 2017
-        "2017-01.json.gz-layer": controller.basicFn,
-        "2017-02.json.gz-layer": controller.basicFn,
-        "2017-03.json.gz-layer": controller.basicFn,
-        "2017-04.json.gz-layer": controller.basicFn,
-        "2017-05.json.gz-layer": controller.basicFn,
-        "2017-06.json.gz-layer": controller.basicFn,
-        "2017-07.json.gz-layer": controller.basicFn,
-        "2017-08.json.gz-layer": controller.basicFn,
-        "2017-09.json.gz-layer": controller.basicFn,
-        "2017-10.json.gz-layer": controller.basicFn,
-        "2017-11.json.gz-layer": controller.basicFn,
-        "2017-12.json.gz-layer": controller.basicFn,
-        // 2018
-        "2018-01.json.gz-layer": controller.basicFn,
-        "2018-02.json.gz-layer": controller.basicFn,
-        "2018-03.json.gz-layer": controller.basicFn,
-        "2018-04.json.gz-layer": controller.basicFn,
-        "2018-05.json.gz-layer": controller.basicFn,
-        "2018-06.json.gz-layer": controller.basicFn,
-        "2018-07.json.gz-layer": controller.basicFn,
-        "2018-08.json.gz-layer": controller.basicFn,
-        "2018-09.json.gz-layer": controller.basicFn,
-        "2018-10.json.gz-layer": controller.basicFn,
-        "2018-11.json.gz-layer": controller.basicFn,
-        "2018-12.json.gz-layer": controller.basicFn,
-        // 2019
-        "2019-01.json.gz-layer": controller.basicFn,
-        "2019-02.json.gz-layer": controller.basicFn,
-        "2019-03.json.gz-layer": controller.basicFn,
-        "2019-04.json.gz-layer": controller.basicFn,
-        "2019-05.json.gz-layer": controller.basicFn,
-        "2019-06.json.gz-layer": controller.basicFn,
-        "2019-07.json.gz-layer": controller.basicFn,
-        "2019-08.json.gz-layer": controller.basicFn,
-        "2019-09.json.gz-layer": controller.basicFn,
-        "2019-10.json.gz-layer": controller.basicFn,
-        "2019-11.json.gz-layer": controller.basicFn,
-        "2019-12.json.gz-layer": controller.basicFn,
-        // 2020
-        "2020-01.json.gz-layer": controller.basicFn,
-        "2020-02.json.gz-layer": controller.basicFn,
-        "2020-03.json.gz-layer": controller.basicFn,
-        "2020-04.json.gz-layer": controller.basicFn,
-        "2020-05.json.gz-layer": controller.basicFn,
-        "2020-06.json.gz-layer": controller.basicFn,
-        "2020-07.json.gz-layer": controller.basicFn,
-        "2020-08.json.gz-layer": controller.basicFn,
-        "2020-09.json.gz-layer": controller.basicFn,
-        "2020-10.json.gz-layer": controller.basicFn,
-        "2020-11.json.gz-layer": controller.basicFn,
-        "2020-12.json.gz-layer": controller.basicFn,
-        // 2021
-        "2021-01.json.gz-layer": controller.basicFn,
-        "2021-02.json.gz-layer": controller.basicFn,
-        "2021-03.json.gz-layer": controller.basicFn,
-        "2021-04.json.gz-layer": controller.basicFn,
-        "2021-05.json.gz-layer": controller.basicFn,
-        "2021-06.json.gz-layer": controller.basicFn,
-        "2021-07.json.gz-layer": controller.basicFn,
-        "2021-08.json.gz-layer": controller.basicFn,
-        "2021-09.json.gz-layer": controller.basicFn,
-        "2021-10.json.gz-layer": controller.basicFn,
-        "2021-11.json.gz-layer": controller.basicFn,
-        "2021-12.json.gz-layer": controller.basicFn,
+        "ia.level-23": controller.basicFnForCat("rgb(255, 0,0)"),
+        "rye.level-23": controller.basicFnForCat("rgb(0, 0,255)"),
 
 
+        // // 2017
+        // "2017-01.json.gz-layer": controller.basicFn,
+        // "2017-02.json.gz-layer": controller.basicFn,
+        // "2017-03.json.gz-layer": controller.basicFn,
+        // "2017-04.json.gz-layer": controller.basicFn,
+        // "2017-05.json.gz-layer": controller.basicFn,
+        // "2017-06.json.gz-layer": controller.basicFn,
+        // "2017-07.json.gz-layer": controller.basicFn,
+        // "2017-08.json.gz-layer": controller.basicFn,
+        // "2017-09.json.gz-layer": controller.basicFn,
+        // "2017-10.json.gz-layer": controller.basicFn,
+        // "2017-11.json.gz-layer": controller.basicFn,
+        // "2017-12.json.gz-layer": controller.basicFn,
+        // // 2018
+        // "2018-01.json.gz-layer": controller.basicFn,
+        // "2018-02.json.gz-layer": controller.basicFn,
+        // "2018-03.json.gz-layer": controller.basicFn,
+        // "2018-04.json.gz-layer": controller.basicFn,
+        // "2018-05.json.gz-layer": controller.basicFn,
+        // "2018-06.json.gz-layer": controller.basicFn,
+        // "2018-07.json.gz-layer": controller.basicFn,
+        // "2018-08.json.gz-layer": controller.basicFn,
+        // "2018-09.json.gz-layer": controller.basicFn,
+        // "2018-10.json.gz-layer": controller.basicFn,
+        // "2018-11.json.gz-layer": controller.basicFn,
+        // "2018-12.json.gz-layer": controller.basicFn,
+        // // 2019
+        // "2019-01.json.gz-layer": controller.basicFn,
+        // "2019-02.json.gz-layer": controller.basicFn,
+        // "2019-03.json.gz-layer": controller.basicFn,
+        // "2019-04.json.gz-layer": controller.basicFn,
+        // "2019-05.json.gz-layer": controller.basicFn,
+        // "2019-06.json.gz-layer": controller.basicFn,
+        // "2019-07.json.gz-layer": controller.basicFn,
+        // "2019-08.json.gz-layer": controller.basicFn,
+        // "2019-09.json.gz-layer": controller.basicFn,
+        // "2019-10.json.gz-layer": controller.basicFn,
+        // "2019-11.json.gz-layer": controller.basicFn,
+        // "2019-12.json.gz-layer": controller.basicFn,
+        // // 2020
+        // "2020-01.json.gz-layer": controller.basicFn,
+        // "2020-02.json.gz-layer": controller.basicFn,
+        // "2020-03.json.gz-layer": controller.basicFn,
+        // "2020-04.json.gz-layer": controller.basicFn,
+        // "2020-05.json.gz-layer": controller.basicFn,
+        // "2020-06.json.gz-layer": controller.basicFn,
+        // "2020-07.json.gz-layer": controller.basicFn,
+        // "2020-08.json.gz-layer": controller.basicFn,
+        // "2020-09.json.gz-layer": controller.basicFn,
+        // "2020-10.json.gz-layer": controller.basicFn,
+        // "2020-11.json.gz-layer": controller.basicFn,
+        // "2020-12.json.gz-layer": controller.basicFn,
+        // // 2021
+        // "2021-01.json.gz-layer": controller.basicFn,
+        // "2021-02.json.gz-layer": controller.basicFn,
+        // "2021-03.json.gz-layer": controller.basicFn,
+        // "2021-04.json.gz-layer": controller.basicFn,
+        // "2021-05.json.gz-layer": controller.basicFn,
+        // "2021-06.json.gz-layer": controller.basicFn,
+        // "2021-07.json.gz-layer": controller.basicFn,
+        // "2021-08.json.gz-layer": controller.basicFn,
+        // "2021-09.json.gz-layer": controller.basicFn,
+        // "2021-10.json.gz-layer": controller.basicFn,
+        // "2021-11.json.gz-layer": controller.basicFn,
+        // "2021-12.json.gz-layer": controller.basicFn,
 
 
         // "catTrackEdge": controller.basicFn,
     }
 };
 
-controller.baseTilesLayerOptsF = function(name) {
+// name is [activity, speed, recency, density, basic]
+controller.baseTilesLayerOptsF = function (name) {
     // var b = Object.create(baseTileLayerOpts);
     // b["vectorTileLayerStyles"] = vectorTileLayerStyles["pickme"];
     // return b;
 
     var b = Object.create(baseTileLayerOpts);
     if (typeof vectorTileLayerStyles[name] === "undefined") ce("no vectorTileLayerStyles for " + name);
+
     b["vectorTileLayerStyles"] = vectorTileLayerStyles[name];
     return b;
 };
