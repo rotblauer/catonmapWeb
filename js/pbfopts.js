@@ -480,6 +480,9 @@ var vectorTileLayerStyles = {
         "ia.level-23": controller.activityFn,
         "rye.level-23": controller.activityFn,
 
+        "ia.level-23.json.gz-layer": controller.activityFn,
+        "rye.level-23.json.gz-layer": controller.activityFn,
+
         // // 2017
         // "2017-01.json.gz-layer": controller.activityFn,
         // "2017-02.json.gz-layer": controller.activityFn,
@@ -551,6 +554,8 @@ var vectorTileLayerStyles = {
         'catTrackEdge': controller.densityFn,
         "ia.level-23": controller.densityFn,
         "rye.level-23": controller.densityFn,
+        "ia.level-23.json.gz-layer": controller.densityFn,
+        "rye.level-23.json.gz-layer": controller.densityFn,
 
     },
     // "basic": {
@@ -563,6 +568,8 @@ var vectorTileLayerStyles = {
         "pickme": controller.basicFn,
         "ia.level-23": controller.basicFnForCat("rgb(255, 0,0)"),
         "rye.level-23": controller.basicFnForCat("rgb(0, 0,255)"),
+        "ia.level-23.json.gz-layer": controller.basicFnForCat("rgb(255, 0,0)"),
+        "rye.level-23.json.gz-layer": controller.basicFnForCat("rgb(0, 0,255)"),
 
 
         // // 2017
