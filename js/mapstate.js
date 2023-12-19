@@ -87,7 +87,7 @@ var mapStateFn = function () {
         "basic": L.layerGroup([
             L.vectorGrid.protobuf(_pbfURL("ia.level-23"), _pbfOpts("basic")),
             L.vectorGrid.protobuf(_pbfURL("rye.level-23"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("genpop", _pbfOpts("basic"))), // TODO
+            // L.vectorGrid.protobuf(_pbfURL("genpop.level-23", _pbfOpts("basic"))), // TODO
 
             // L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("basic")),
             L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts("basic")),
@@ -96,7 +96,7 @@ var mapStateFn = function () {
         "activity": L.layerGroup([
             L.vectorGrid.protobuf(_pbfURL("ia.level-23"), _pbfOpts("activity")),
             L.vectorGrid.protobuf(_pbfURL("rye.level-23"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("genpop", _pbfOpts("activity"))),
+            // L.vectorGrid.protobuf(_pbfURL("genpop.level-23", _pbfOpts("activity"))),
 
             // L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("activity")),
             L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts("activity")),
@@ -105,7 +105,7 @@ var mapStateFn = function () {
         "density": L.layerGroup([
             L.vectorGrid.protobuf(_pbfURL("ia.level-23"), _pbfOpts("density")),
             L.vectorGrid.protobuf(_pbfURL("rye.level-23"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("genpop", _pbfOpts("density"))),
+            // L.vectorGrid.protobuf(_pbfURL("genpop.level-23", _pbfOpts("density"))),
 
             // L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("density")),
             L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts("density")),
