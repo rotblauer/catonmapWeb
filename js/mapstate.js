@@ -85,40 +85,6 @@ var mapStateFn = function () {
     // https://leaflet.github.io/Leaflet.VectorGrid/vectorgrid-api-docs.html
     var _overlays = {
         "basic": L.layerGroup([
-            // L.vectorGrid.protobuf(_pbfURL("master-2012"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2013"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2014"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2015"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2016"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2017"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("2019"), {
-            //     rendererFactory: L.canvas.tile,
-            //     // vectorTileLayerStyles: {},
-            //     getFeatureId: function (f) {
-            //         return f.properties.name + f.properties.Time;
-            //     },
-            //     interactive: true
-            //     // , onEachFeature: oef
-            //     // onclick: function(a, b, c) {
-            //     //     cd("click pt", a, b, c);
-            //     // }
-            //     // onEachFeature: onEachFeature
-            //     // onEachFeature: function(feature, layer) {
-            //     //     if (feature.properties) {
-            //     //         layer.bindPopup(" " +feature.properties.name + " "  + "<br>Affected Bridges : " + feature.properties.Br_Affected + " ");
-            //     //     }
-            //     // }
-            //     // click: function(a,b,c) {
-            //     //     cd("abc", a, b,c);
-            //     // }
-            // }),
-            // L.vectorGrid.protobuf(_pbfURL("2017"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("2018"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("2019"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("2020"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("2021"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("2022"), _pbfOpts("basic")),
-
             L.vectorGrid.protobuf(_pbfURL("ia.level-23"), _pbfOpts("basic")),
             L.vectorGrid.protobuf(_pbfURL("rye.level-23"), _pbfOpts("basic")),
             // L.vectorGrid.protobuf(_pbfURL("genpop", _pbfOpts("basic"))), // TODO
@@ -128,19 +94,6 @@ var mapStateFn = function () {
             L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("basic")),
         ]),
         "activity": L.layerGroup([
-            // L.vectorGrid.protobuf(_pbfURL("master-2012"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2013"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2014"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2015"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2016"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2017"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("2017"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("2018"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("2019"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("2020"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("2021"), _pbfOpts("activity")),
-            // L.vectorGrid.protobuf(_pbfURL("2022"), _pbfOpts("activity")),
-
             L.vectorGrid.protobuf(_pbfURL("ia.level-23"), _pbfOpts("activity")),
             L.vectorGrid.protobuf(_pbfURL("rye.level-23"), _pbfOpts("activity")),
             // L.vectorGrid.protobuf(_pbfURL("genpop", _pbfOpts("activity"))),
@@ -150,19 +103,6 @@ var mapStateFn = function () {
             L.vectorGrid.protobuf(_pbfURL("edge"), _pbfOpts("activity")),
         ]),
         "density": L.layerGroup([
-            // L.vectorGrid.protobuf(_pbfURL("master-2012"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2013"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2014"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2015"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2016"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("master-2017"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("2017"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("2018"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("2019"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("2020"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("2021"), _pbfOpts("density")),
-            // L.vectorGrid.protobuf(_pbfURL("2022"), _pbfOpts("density")),
-
             L.vectorGrid.protobuf(_pbfURL("ia.level-23"), _pbfOpts("density")),
             L.vectorGrid.protobuf(_pbfURL("rye.level-23"), _pbfOpts("density")),
             // L.vectorGrid.protobuf(_pbfURL("genpop", _pbfOpts("density"))),
