@@ -87,7 +87,7 @@ var mapStateFn = function () {
         "basic": L.layerGroup([
             L.vectorGrid.protobuf(_pbfURL("ia.level-23"), _pbfOpts("basic")),
             L.vectorGrid.protobuf(_pbfURL("rye.level-23"), _pbfOpts("basic")),
-            // L.vectorGrid.protobuf(_pbfURL("genpop.level-23", _pbfOpts("basic"))), // TODO
+            // L.vectorGrid.protobuf(_pbfURL("genpop.level-23", _pbfOpts("basic-genpop"))), // TODO
 
             // L.vectorGrid.protobuf(_pbfURL("master"), _pbfOpts("basic")),
             L.vectorGrid.protobuf(_pbfURL("devop"), _pbfOpts("basic")),

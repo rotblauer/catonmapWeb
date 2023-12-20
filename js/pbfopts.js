@@ -500,7 +500,17 @@ var vectorTileLayerStyles = {
         "rye.level-23": controller.basicFnForCat("rgb(0, 0,255)"),
         "ia.level-23.json.gz-layer": controller.basicFnForCat("rgb(255, 0,0)"),
         "rye.level-23.json.gz-layer": controller.basicFnForCat("rgb(0, 0,255)"),
-    }
+    },
+    "basic-genpop": {
+        "QP1A.191005.007.A3_Pixel_XL.level-23": controller.basicFnForCat("rgba(0, 0, 0, 1)"),
+        "ric.level-23": controller.basicFnForCat("rgba(0, 0, 0, 1)"),
+        "tester.level-23": controller.basicFnForCat("rgba(0, 0, 0, 1)"),
+        "kd.level-23": controller.basicFnForCat("rgba(0, 0, 0, 1)"),
+        "pr.level-23": controller.basicFnForCat("rgba(0, 0, 0, 1)"),
+        "pancho.level-23": controller.basicFnForCat("rgba(0, 0, 0, 1)"),
+        "jlc.level-23": controller.basicFnForCat("rgba(0, 0, 0, 1)"),
+        "rj.level-23": controller.basicFnForCat("rgba(0, 0, 0, 1)"),
+    },
 };
 
 // name is [activity, speed, recency, density, basic]
