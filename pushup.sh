@@ -2,8 +2,8 @@
 
 set -x
 
-push_target_beta=catonmap-frontend:/www/beta.catonmap.net
-push_target_pro=catonmap-frontend:/www/catonmap.net/
+push_target_beta=rotblauer.catonmap:/www/beta.catonmap.net
+push_target_pro=rotblauer.catonmap:/www/catonmap.net/
 push_target="$push_target_beta"
 
 if [[ "$1" == "beta" ]]; then
