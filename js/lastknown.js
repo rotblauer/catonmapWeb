@@ -36,7 +36,96 @@ var visitsData = {
     }
 };
 
+/*
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-92.39954376220703, 46.89632034301758]
+      },
+      "properties": {
+        "Accuracy": 4.719039440155029,
+        "Activity": "Unknown",
+        "AverageActivePace": 0.62,
+        "CurrentCadence": 1.38,
+        "CurrentPace": 1.11,
+        "CurrentTripStart": "2024-01-25T03:22:52.586Z",
+        "Distance": 36903.88,
+        "Elevation": 428.4293212890625,
+        "FloorsAscended": 31,
+        "FloorsDescended": 16,
+        "Heading": 92.8917465209961,
+        "Name": "Rye13",
+        "NumberOfSteps": 36263,
+        "Pressure": 97.05,
+        "Speed": 1.7934373617172241,
+        "Time": "2024-01-28T15:42:41Z",
+        "UUID": "05C63745-BFA3-4DE3-AF2F-CDE2173C0E11",
+        "UnixTime": 1706456561,
+        "Version": "V.customizableCatTrackHat",
+        "BatteryStatus": "charging",
+        "BatteryLevel": 0.89,
+      }
+    },
+    {
+      "type": "Feature",
+      "id": 1,
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-111.6902838, 45.5710573]
+      },
+      "properties": {
+        "AccelerometerX": 0.02,
+        "AccelerometerY": 0.91,
+        "AccelerometerZ": 9.79,
+        "Accuracy": 4.9,
+        "Activity": "Stationary",
+        "ActivityConfidence": 100,
+        "CurrentTripStart": "2024-01-28T02:25:48.37207Z",
+        "Elevation": 1463.3,
+        "GyroscopeX": 0,
+        "GyroscopeY": 0,
+        "GyroscopeZ": 0,
+        "Heading": -1,
+        "Name": "tonga-moto-63b2",
+        "NumberOfSteps": 4953,
+        "Pressure": 859.39,
+        "Speed": 0.01,
+        "Time": "2024-01-28T15:25:07.122Z",
+        "UUID": "63b2bab96ca49573",
+        "UnixTime": 1706455507,
+        "UserAccelerometerX": 0,
+        "UserAccelerometerY": 0.01,
+        "UserAccelerometerZ": 0.03,
+        "Version": "gcps/v0.0.0+4",
+        "vAccuracy": 1,
+        "BatteryStatus": "charging",
+        "BatteryLevel": 0.89,
+      }
+    }
+  ]
+}
+
+ */
+
 var dataLastKnownEntry = {
+
+    // GeoJSON-Feature
+    geometry: {
+        coordinates: [],
+        type: "Point"
+    },
+    properties: {
+        Name: "boots",
+        UUID: "abc-def-123",
+        Time: "",
+        // ... other properties
+    },
+
     e: null, // jquery element
     on: true, // for per-cat toggling feature
     uuid: "",
@@ -57,7 +146,7 @@ var dataLastKnownEntry = {
     // heartTime: null,
     // identifier per cat device or accomplices
     uid: function() {
-        return "|COLOR|" + this.getColor() + "|NAME|" + this.name + "|UUID|" + this.uuid;
+        return "|COLOR|" + this.getColor() + "|NAME|" + this.properties.Name + "|UUID|" + this.properties.UUID;
     },
     // identifier per cat identity
     iid: function() {
@@ -67,46 +156,20 @@ var dataLastKnownEntry = {
         return this.getColor().replace(",", "").replace(",", "").replace("(", "").replace(")", "");
     },
     getColor: function() {
-        if (objExists(catColors()[this.uuid])) {
-            return catColors()[this.uuid];
+        if (objExists(catColors()[this.properties.UUID])) {
+            return catColors()[this.properties.UUID];
         }
-        return catColors()[this.name] || "lightgray";
+        return catColors()[this.properties.Name] || "lightgray";
     },
     batteryLevel: function() {
-        var n = this.parseNotes();
-        if (n) {
-            if (n["batteryStatus"]) {
-                var b = JSON.parse(n["batteryStatus"]);
-                return +b.level;
-            }
-        }
-        return -1;
+        return typeof this.properties.BatteryLevel === "undefined" ? -1: +this.properties.BatteryLevel;
     },
     batteryStatus: function() {
-        var n = this.parseNotes();
-        if (n) {
-            if (n["batteryStatus"]) {
-                var b = JSON.parse(n["batteryStatus"]);
-                return b.status;
-            }
-        }
-        return "n/a/";
-    },
-    parseNotes: function() {
-        // parse notes
-        if (this.notes !== "") {
-            try {
-                var jnotes = JSON.parse(this.notes);
-                return jnotes;
-            } catch {
-                return this.notes;
-            }
-        }
-        return false;
+        return this.properties.BatteryStatus || "n/a/";
     },
     parseTime: function() {
-        if (this.time !== "") {
-            return moment(this.time);
+        if (this.properties.Time !== "") {
+            return moment(this.properties.Time);
         } else {
             return moment();
         }
@@ -133,9 +196,14 @@ var dataLastKnownEntry = {
     init: function() {
         this.color = this.getColor();
         this.key = this.color; // randHex(8);
-        this.notes = this.parseNotes();
+        // this.notes = this.parseNotes();
         this.time = this.parseTime();
-        this.aliases = [this.name];
+        this.aliases = [this.properties.Name];
+        this.uuid = this.properties.UUID;
+        this.lat = this.geometry.coordinates[1];
+        this.long = this.geometry.coordinates[0];
+        this.COVerified = true;
+
         // this.elInit();
         return this;
     },
@@ -207,7 +275,7 @@ var dataLastKnownEntry = {
             this.e = $(`
 <div id="${this.elid()}"  class="text-right lastKnown lastknown-cat" style="line-height: 1rem !important;">
 <p>
-    <span style="color: ${this.getColor()};">${this.name}</span>
+    <span style="color: ${this.getColor()};">${this.properties.Name}</span>
     <img src="cat-icon.png"  style="max-height: 1.2rem; vertical-align: middle; margin-bottom: 0.3rem;"/>
     <span class="small text-muted">${minimalTimeDisplay(this.time)}</span>
 </p>
@@ -221,7 +289,7 @@ var dataLastKnownEntry = {
 
         <div href="#" id="${this.elid()}" class="list-group-item list-group-item-action flex-column align-items-start lastKnown" style="border-color: ${this.getColor()} !important;">
     <div class="d-flex w-100 justify-content-between">
-        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.name} <small class='text-${this.COVerified ? "success" : "muted"}' ><sup>${this.COVerified ? "Verified" : ""}</sup></small></h6>
+        <h6 class="mb-1 catname" style="color: ${this.getColor()};">${this.properties.Name} <small class='text-${this.COVerified ? "success" : "muted"}' ><sup>${this.COVerified ? "Verified" : ""}</sup></small></h6>
         <small class="text-muted" >${minimalTimeDisplay(this.time)}</small>
     </div>
     <div class="d-flex w-100 justify-content-between links" style="">
@@ -233,7 +301,7 @@ var dataLastKnownEntry = {
 
                 .attr("data-uid", this.uid())
                 .attr("data-iid", this.iid())
-                .attr("data-name", this.name)
+                .attr("data-name", this.properties.Name)
                 .attr("data-lat", this.lat)
                 .attr("data-unix", this.time.unix())
                 .attr("data-lng", this.long);

@@ -510,9 +510,12 @@ model.loadSnaps = function(snaps) {
                 // if (num > 50) {
                 // return;
                 // }
-                var n = JSON.parse(snap.properties);
+                if (num === 1) {
+                    cd("snap", snap);
+                }
                 // cd("snap notes", n);
-                if (!objExists(n["imgS3"]) || !n.hasOwnProperty("imgS3") || n["imgS3"] === "") {
+                const imgS3 = snap.properties.imgS3;
+                if (typeof imgS3 === 'undefined') {
                     return;
                 }
 
@@ -533,7 +536,7 @@ model.loadSnaps = function(snaps) {
                     L.DomEvent.stop(e);
                 };
 
-                var s3url = "https://s3.us-east-2.amazonaws.com/" + n["imgS3"];
+                var s3url = "https://s3.us-east-2.amazonaws.com/" + imgS3;
                 var $img = $("<img>")
                     .attr("src", s3url)
                     // .addClass('catsnap-img')
@@ -578,7 +581,7 @@ model.loadSnaps = function(snaps) {
     "activity": "Stationary",
     "numberOfSteps": 2397,
     "averageActivePace": 0,
-    "currentPace": 0,
+    "currentPace": 0,l
     "currentCadence": 0,
     "distance": 0,
     "customNote": "",
