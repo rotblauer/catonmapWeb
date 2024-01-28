@@ -4,8 +4,8 @@ const latestiOSVersion = "V.customizableCatTrackHat";
 // var trackHost = "https://bigger.space?reset=true&url=track.areteh.co:3001";
 
 // LIVE:
-var trackHost = "http://localhost:3001";
-// var trackHost = "https://api.catonmap.info";
+// var trackHost = "http://localhost:3001";
+var trackHost = "https://api.catonmap.info";
 
 // var tileHost =  "https://bigger.space?reset=true&url=catonmap.info:8080";
 // var tileHost =  "https://icanhazbounce.com/http://catonmap.info:8080";
