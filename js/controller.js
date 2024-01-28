@@ -528,7 +528,7 @@ model.loadSnaps = function(snaps) {
                         `;
                     L.popup()
                         .setContent(content)
-                        .setLatLng([snap.geometry[1], snap.geometry[0]])
+                        .setLatLng([snap.geometry.coordinates[1], snap.geometry.coordinates[0]])
                         .openOn(view.mapState.getMap());
                     L.DomEvent.stop(e);
                 };
@@ -542,7 +542,7 @@ model.loadSnaps = function(snaps) {
                     // "max-width": "100%",
                     //     'max-height': '60vh',
                 }).on("click", function(e) {
-                    view.mapState.getMap().setView([snap.geometry[1], snap.geometry[0]]);
+                    view.mapState.getMap().setView([snap.geometry.coordinates[1], snap.geometry.coordinates[0]]);
                     snapMapPopup(e);
 
                     const $snaps = $('#snaps-display');
@@ -608,7 +608,7 @@ model.loadSnaps = function(snaps) {
             <span class='small text-right text-muted'>${minimalTimeDisplay(moment(snap.properties.Time))} ago</span>
         </div>
         <div class="d-flex w-100 text-muted small justify-content-between">
-            <span>${snap.geometry[1].toFixed(3)}, ${snap.geometry[0].toFixed(3)}</span>
+            <span>${snap.geometry.coordinates[1].toFixed(3)}, ${snap.geometry.coordinates[0].toFixed(3)}</span>
             <span class="text-right">${moment(snap.properties.Time).format('llll')}</span>
         </div>
 <!--    </p>-->
@@ -627,7 +627,7 @@ model.loadSnaps = function(snaps) {
                 }
 
                 // add markers
-                var marker = L.marker([snap.geometry[1], snap.geometry[0]], {
+                var marker = L.marker([snap.geometry.coordinates[1], snap.geometry.coordinates[0]], {
                     // icon: iconSnap
                     icon: L.icon({
                         iconUrl: s3url,
