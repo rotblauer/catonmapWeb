@@ -510,7 +510,7 @@ model.loadSnaps = function(snaps) {
                 // if (num > 50) {
                 // return;
                 // }
-                var n = JSON.parse(snap.notes);
+                var n = JSON.parse(snap.properties);
                 // cd("snap notes", n);
                 if (!objExists(n["imgS3"]) || !n.hasOwnProperty("imgS3") || n["imgS3"] === "") {
                     return;
@@ -522,13 +522,13 @@ model.loadSnaps = function(snaps) {
                     var content = `<a target="_" href="${url}"><img src='${url}' style='width:${isSmallScreen()?150:300}px;' /></a>
                         <div class="d-flex w-100 justify-content-between p-1" 
                             style="background-color: rgba(255, 255, 255, 0.62); border-bottom-left-radius: 5px; border-bottom-right-radius: 5px;">
-                            <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
-                            <span class='text-muted'>${minimalTimeDisplay(moment(snap.time))}</span>
+                            <strong style='color: ${catColors()[snap.properties.UUID]}'>${snap.properties.Name}</strong>
+                            <span class='text-muted'>${minimalTimeDisplay(moment(snap.properties.Time))}</span>
                         </div>
                         `;
                     L.popup()
                         .setContent(content)
-                        .setLatLng([snap.lat, snap.long])
+                        .setLatLng([snap.geometry[1], snap.geometry[0]])
                         .openOn(view.mapState.getMap());
                     L.DomEvent.stop(e);
                 };
@@ -542,7 +542,7 @@ model.loadSnaps = function(snaps) {
                     // "max-width": "100%",
                     //     'max-height': '60vh',
                 }).on("click", function(e) {
-                    view.mapState.getMap().setView([snap.lat, snap.long]);
+                    view.mapState.getMap().setView([snap.geometry[1], snap.geometry[0]]);
                     snapMapPopup(e);
 
                     const $snaps = $('#snaps-display');
@@ -604,12 +604,12 @@ model.loadSnaps = function(snaps) {
 <!--    <h5 class="card-title"></h5>-->
 <!--    <p class="card-text">-->
         <div class="d-flex w-100 justify-content-between">
-            <strong style='color: ${catColors()[snap.uuid]}'>${snap.name}</strong>
-            <span class='small text-right text-muted'>${minimalTimeDisplay(moment(snap.time))} ago</span>
+            <strong style='color: ${catColors()[snap.properties.UUID]}'>${snap.properties.Name}</strong>
+            <span class='small text-right text-muted'>${minimalTimeDisplay(moment(snap.properties.Time))} ago</span>
         </div>
         <div class="d-flex w-100 text-muted small justify-content-between">
-            <span>${snap.lat.toFixed(3)}, ${snap.long.toFixed(3)}</span>
-            <span class="text-right">${moment(snap.time).format('llll')}</span>
+            <span>${snap.geometry[1].toFixed(3)}, ${snap.geometry[0].toFixed(3)}</span>
+            <span class="text-right">${moment(snap.properties.Time).format('llll')}</span>
         </div>
 <!--    </p>-->
   </div>
@@ -627,7 +627,7 @@ model.loadSnaps = function(snaps) {
                 }
 
                 // add markers
-                var marker = L.marker([snap.lat, snap.long], {
+                var marker = L.marker([snap.geometry[1], snap.geometry[0]], {
                     // icon: iconSnap
                     icon: L.icon({
                         iconUrl: s3url,
