@@ -491,13 +491,31 @@ controller.onLastKnown = function(data) {
     // view.mapState.setLayer("lastKnown", lg);
 };
 
+/*
+compareFn(a, b) return value 	sort order
+> 0 	sort a after b, e.g. [b, a]
+< 0 	sort a before b, e.g. [a, b]
+=== 0 	keep original order of a and b
+ */
+function compareSnaps(a, b) {
+    if (moment(a.properties.Time) > moment(b.properties.Time)) {
+        return -1;
+    }
+    if (moment(a.properties.Time) < moment(b.properties.Time)) {
+        return 1;
+    }
+    return 0;
+}
+
 model.loadSnaps = function(snaps) {
     let snapsStart = Math.floor(Date.now() / 1000) - 60*60*24*30; // start time in unix seconds of T-1month
     var url = queryURL(trackHost, "/catsnaps?tstart=" + snapsStart);
     cd("GET", url);
     $.ajax(qJSON(url))
         .done(function(data) {
-            var snaps = data.reverse();
+            // var snaps = data.reverse();
+
+            var snaps = data.sort(compareSnaps);
             cd("GOT SNAPS", snaps);
             // view.mapState.setLayer("snaps", null);
             var num = 0;
